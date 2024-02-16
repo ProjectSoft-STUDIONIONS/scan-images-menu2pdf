@@ -1,0 +1,34 @@
+# Builds
+build/
+# Logs
+logs
+*.log
+log/
+
+# Dependency directories
+node_modules/
+
+# Packages lock
+# *-lock.json
+
+# Sublime
+*.sublime-workspace
+
+**/*.sh
+**/*.txt
+*.spec
+
+# delphi
+__history
+__recovery
+*.dproj.local
+*.identcache
+*.vlb
+*.dcu
+*_.json
+settings.ini
+programm.ini
+desktop.ini
+Desktop.ini
+Win32
+

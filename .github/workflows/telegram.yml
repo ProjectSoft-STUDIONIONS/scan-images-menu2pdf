@@ -1,0 +1,23 @@
+name: Telegram Message
+on:
+  release:
+    types: [published]
+jobs:
+  notify:
+    name: Notify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Message on Push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          disable_web_page_preview: false
+          format: markdown
+          message: |
+            🎉🎉🎉 Новый релиз: 🎉🎉🎉
+            *${{ github.event.release.name }}*
+            
+            ${{ github.event.release.body }}
+            [Подробнее](https://github.com/KSOSH/scan-images-menu2pdf/releases/latest)
+            Автор: *ProjectSoft*

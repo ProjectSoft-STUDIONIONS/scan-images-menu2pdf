@@ -1,0 +1,21 @@
+{
+	"closing_in": "Закрытие через",
+	"closing_the_program": "Закрытие программы",
+	"completed_by_user": "Завершено пользователем",
+	"deleting_img_files": "Удаляем директорию с обработанными изображениями",
+	"deleting_pdf_files": "Удаляем содержимое директории с PDF файлами",
+	"directory_is_empty": "Директория пустая",
+	"error": "Ошибка",
+	"error_close": "Для продолжения нажмите любую клавишу...",
+	"error_generating_pdf": "Ошибка при генерации PDF",
+	"error_reading_json": "Ошибка при чтении JSON",
+	"file_menu_error": "Файл `%s` поврежден или не существует",
+	"generating_pdf_files": "Генерация PDF файлов",
+	"image_optimization": "Оптимизация изображений",
+	"processing_will_end": "Обработка закончится через",
+	"selected_date": "Выбранная Дата",
+	"selected_directory": "Выбранная директория",
+	"selected_menu_type": "Выбранный тип меню",
+	"start": "ЗАПУСК",
+	"time_spent_in_seconds": "Затраченное время в секундах"
+}

@@ -1,0 +1,21 @@
+{
+	"closing_in": "Schließt in",
+	"closing_the_program": "Programm schließen",
+	"completed_by_user": "Vom Benutzer abgeschlossen",
+	"deleting_img_files": "Verzeichnis mit verarbeiteten Bildern löschen",
+	"deleting_pdf_files": "Inhalt des Verzeichnisses mit PDF-Dateien löschen",
+	"directory_is_empty": "Verzeichnis ist leer",
+	"error": "Fehler",
+	"error_close": "Um fortzufahren, drücken Sie eine beliebige Taste ...",
+	"error_generating_pdf": "Fehler beim Generieren von PDF",
+	"error_reading_json": "Fehler beim Lesen von JSON",
+	"file_menu_error": "Datei |%s| ist beschädigt oder existiert nicht",
+	"generating_pdf_files": "PDF-Dateien generieren",
+	"image_optimization": "Bildoptimierung",
+	"processing_will_end": "Die Verarbeitung endet in",
+	"selected_date": "Ausgewähltes Datum",
+	"selected_directory": "Ausgewähltes Verzeichnis",
+	"selected_menu_type": "Ausgewählter Menütyp",
+	"start": "START",
+	"time_spent_in_seconds": "Verbrachte Zeit in Sekunden"
+}

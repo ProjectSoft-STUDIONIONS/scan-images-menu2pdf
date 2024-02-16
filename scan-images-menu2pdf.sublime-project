@@ -1,0 +1,53 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"name": "Конвертирование отсканированных изображений меню в PDF файлы",
+			"file_include_patterns": [
+				"*.exe",
+				"*.*"
+			],
+			"file_exclude_patterns": [
+				"*.dcu",
+				"*.spec",
+				"*.dproj.local",
+				"*.identcache",
+				"*_.json",
+				"*.sublime-workspace",
+				"programm.ini",
+				"*.txt"
+			],
+			"folder_exclude_patterns": [
+				"__history",
+				"__recovery",
+				"node_modules"
+			]
+		}
+	],
+    "settings":
+	{
+		"tab_size": 4,
+		"font_size": 12,
+		"font_face": "JetBrains Mono"
+	},
+	"build_systems":
+	[
+		{
+			"name": "Запуск проекта",
+			"working_dir": "${project_path}",
+			"cmd": ["start", "node", "${project_path}/index.js"],
+			"shell": true
+		},
+		{
+			"name": "Проверка eslint",
+			"working_dir": "${project_path}",
+			"shell_cmd": "npm run lint"
+		},
+		{
+			"name": "Полная сборка проекта",
+			"working_dir": "${project_path}",
+			"shell_cmd": "npm run build"
+		}
+	]
+}

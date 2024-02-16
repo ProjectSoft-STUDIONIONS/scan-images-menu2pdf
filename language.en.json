@@ -1,0 +1,21 @@
+{
+	"closing_in": "Closing in",
+	"closing_the_program": "Closing the program",
+	"completed_by_user": "Completed by user",
+	"deleting_img_files": "Deleting the directory with processed images",
+	"deleting_pdf_files": "Deleting the contents of the directory with PDF files",
+	"directory_is_empty": "Directory is empty",
+	"error": "Error",
+	"error_close": "To continue, press any key...",
+	"error_generating_pdf": "Error generating PDF",
+	"error_reading_json": "Error reading JSON",
+	"file_menu_error": "File |%s| is damaged or does not exist",
+	"generating_pdf_files": "Generating PDF files",
+	"image_optimization": "Image optimization",
+	"processing_will_end": "Processing will end in",
+	"selected_date": "Selected Date",
+	"selected_directory": "Selected directory",
+	"selected_menu_type": "Selected menu type",
+	"start": "START",
+	"time_spent_in_seconds": "Time spent in seconds"
+}
