@@ -28,14 +28,14 @@ const fs = require('fs'),
 		return new Promise(function(resolve, reject){
 			let app = `csc.exe`,
 				args = [
-					"/win32icon:favicon.ico",
-					"/resource:programm.resource",
+					"/win32icon:app\\favicon.ico",
+					"/resource:app\\programm.resource",
 					"/out:" + config.product + ".exe",
-					"/win32manifest:app.manifest",
+					"/win32manifest:app\\app.manifest",
 					"/target:exe",
-					"img_menu2pdf.cs",
-					"img_ini.cs",
-					"AssemblyInfo.cs"
+					"app\\img_menu2pdf.cs",
+					"app\\img_ini.cs",
+					"app\\AssemblyInfo.cs"
 				],
 				ls = spawn( app, args );
 			ls.stdout.on('data', (data) => {});
@@ -51,10 +51,10 @@ const fs = require('fs'),
 	};
 
 (async function(){
-	try { await unlink(`./app.manifest`); } catch (error) { }
-	try { await unlink(`./AssemblyInfo.cs`); } catch (error) { }
-	fs.writeFileSync(`./app.manifest`, app_manifest, {encoding: "utf8"});
-	fs.writeFileSync(`./AssemblyInfo.cs`, assemblyinfo_cs, {encoding: "utf8"});
+	try { await unlink(`./app/app.manifest`); } catch (error) { }
+	try { await unlink(`./app/AssemblyInfo.cs`); } catch (error) { }
+	fs.writeFileSync(`./app/app.manifest`, app_manifest, {encoding: "utf8"});
+	fs.writeFileSync(`./app/AssemblyInfo.cs`, assemblyinfo_cs, {encoding: "utf8"});
 	try { await unlink(`./${config.product}.exe`); } catch (error) { }
 	compile().then((data) => {
 		console.log("successfully compiled");
