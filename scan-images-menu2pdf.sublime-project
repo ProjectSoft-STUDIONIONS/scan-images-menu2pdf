@@ -40,14 +40,10 @@
 			"shell": true
 		},
 		{
-			"name": "Проверка eslint",
-			"working_dir": "${project_path}",
-			"shell_cmd": "npm run lint"
-		},
-		{
 			"name": "Полная сборка проекта",
 			"working_dir": "${project_path}",
-			"shell_cmd": "npm run build"
+			"cmd": ["start", "npm", "run", "build"],
+			"shell": true
 		}
 	]
 }
