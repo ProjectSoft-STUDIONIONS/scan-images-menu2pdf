@@ -22,8 +22,7 @@
 		fMenu = 'menu.json';
 
 	config.description = config.description.trim();
-	let ttl = config.description;
-	process.title = (process.title != ttl) ? ttl : process.title;
+	process.title = (process.title != config.description) ? config.description : process.title;
 
 	require('events').EventEmitter.defaultMaxListeners = 15;
 
@@ -57,9 +56,8 @@
 			"error_close"                : "Для продолжения нажмите любую клавишу..."
 		},
 
-		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld;
-
-	let indexStr = '',
+		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
+		indexStr = '',
 		indexArr = [];
 
 	const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
@@ -539,10 +537,8 @@
 						log(`${lang.error_reading_json}!`.bold.red);
 						log(err_json);
 						log(" ");
-						if(process.argv.find((i) => i === 'pause') !== undefined){
-							log(`${lang.closing_the_program}...`.bold.yellow);
-							log(" ");
-						}
+						log(`${lang.closing_the_program}...`.bold.yellow);
+						log(" ");
 						st_resolve(" ");
 						return;
 					}
@@ -678,9 +674,7 @@
 									log(" ");
 									log((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.red);
 									log(" ");
-									if(process.argv.find((i) => i === 'pause') !== undefined){
-										log(`${lang.closing_the_program}...`.bold.yellow);
-									}
+									log(`${lang.closing_the_program}...`.bold.yellow);
 									log(" ");
 									st_resolve(" ");
 								}).catch(async function(err){
@@ -693,9 +687,7 @@
 										fs.rmSync(resize_dir, { recursive: true, force: true });
 									}
 									log(" ");
-									if(process.argv.find((i) => i === 'pause') !== undefined){
-										log(`${lang.closing_the_program}...`.bold.yellow);
-									}
+									log(`${lang.closing_the_program}...`.bold.yellow);
 									log(" ");
 									st_resolve(" ");
 								});
@@ -710,11 +702,7 @@
 									fs.rmSync(resize_dir, { recursive: true, force: true });
 								}
 								log(" ");
-								if(process.argv.find((i) => i === 'pause') !== undefined){
-									log(`${lang.closing_the_program}...`.bold.yellow);
-									log(" ");
-									st_resolve(" ");
-								}
+								log(`${lang.closing_the_program}...`.bold.yellow);
 								log(" ");
 								st_resolve(" ");
 							})
@@ -723,9 +711,7 @@
 						log(" ");
 						log(`${lang.completed_by_user}`.bold.yellow);
 						log(" ");
-						if(process.argv.find((i) => i === 'pause') !== undefined){
-							log(`${lang.closing_the_program}...`.bold.yellow);
-						}
+						log(`${lang.closing_the_program}...`.bold.yellow);
 						log(" ");
 						st_resolve(" ");
 					}
@@ -734,11 +720,7 @@
 					log(`${lang.error}!`.bold.red);
 					log(error);
 					log(" ");
-					if(process.argv.find((i) => i === 'pause') !== undefined){
-						log(`${lang.closing_the_program}...`.bold.yellow);
-						log(" ");
-						st_resolve(" ");
-					}
+					log(`${lang.closing_the_program}...`.bold.yellow);
 					log(" ");
 					st_resolve(" ");
 				});
@@ -772,14 +754,22 @@
 		log(data);
 		process.stdin.setRawMode(false);
 		process.stdin.pause();
-		ddr = spawn( 'taskkill', [ '/F', '/IM', 'cmd.exe' ] );
+		ddr = spawn( 'taskkill', [
+			'/F',
+			'/IM',
+			'cmd.exe'
+		]);
 		await delay(pauseDelay - pauseError);
 		log(" ");
 	}).catch(async function(error) {
 		log(error);
 		process.stdin.setRawMode(false);
 		process.stdin.pause();
-		ddr = spawn( 'taskkill', [ '/F', '/IM', 'cmd.exe' ] );
+		ddr = spawn( 'taskkill', [
+			'/F',
+			'/IM',
+			'cmd.exe' 
+		]);
 		await delay(pauseDelay - pauseError);
 		log(" ");
 	});
