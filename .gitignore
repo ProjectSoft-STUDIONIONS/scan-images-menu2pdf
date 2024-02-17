@@ -5,9 +5,6 @@ logs
 *.log
 log/
 
-# Dependency directories
-node_modules/
-
 # Packages lock
 # *-lock.json
 

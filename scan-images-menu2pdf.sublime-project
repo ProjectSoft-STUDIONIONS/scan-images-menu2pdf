@@ -15,13 +15,11 @@
 				"*.identcache",
 				"*_.json",
 				"*.sublime-workspace",
-				"programm.ini",
 				"*.txt"
 			],
 			"folder_exclude_patterns": [
 				"__history",
-				"__recovery",
-				"node_modules"
+				"__recovery"
 			]
 		}
 	],
