@@ -22,6 +22,10 @@
 		strLength = 40,
 		fMenu = 'menu.json';
 
+	config.description = config.description.trim();
+	let ttl = config.description;
+	process.title = (process.title != ttl) ? ttl : process.title;
+
 	require('events').EventEmitter.defaultMaxListeners = 15;
 
 	let barPdf,
@@ -73,7 +77,7 @@
 			barsize: 50, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: '  {bar}' + `  {percentage}% | {value}/{total} | {timeRun}  | ${lang.processing_will_end}: {eta}s`.bold.yellow, // Шаблон прогресс бара
+			format: '  {bar}' + `  {percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`.bold.yellow, // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -159,21 +163,6 @@
 		start = function(){
 			return new Promise(function(st_resolve, st_reject){
 				let menuFile = path.normalize(path.join(__dirname, fMenu));
-				function appClose(){
-					process.stdin.setRawMode(true);
-					process.stdin.setEncoding('utf8')
-					process.stdin.on('keypress', async function (ch, key) {
-						if (key){
-							log(" ");
-							if(process.argv.find((i) => i === 'pause') != -1){
-								await delay(pauseDelay - pauseError);
-							}
-							process.stdin.pause();
-							process.exit();
-							log(" ");
-						}
-					});
-				}
 				var date,
 					jsonPars,
 					json,
@@ -196,7 +185,7 @@
 						log(arr.join(""));
 						log(" ");
 						log(lang.error_close);
-						appClose();
+						st_reject(" ");
 						return;
 					}
 					// Ошибка парсинга
@@ -296,7 +285,6 @@
 							});
 						});
 					},
-
 					pdfGenerator = function (outDir, imgs) {
 						return new Promise(async function(resolve, reject){
 							/**
@@ -320,10 +308,6 @@
 									indexArr.forEach(function(a, b, c){
 										mapsFiles.push(tmpArray[parseInt(a)]);
 									});
-
-
-
-
 									/**
 									 * done.
 									 */
@@ -373,162 +357,162 @@
 											 * Если директория не существует и multidir включен - создаём директорию
 											 */
 											pdfDir = await isDir(path.join(outDir, mask)),
-
 											fImage = path.join(imgs, file),
 											/**
 											 * Читаем изображение в буффер
 											 */
 											image = await fs.readFileSync(fImage),
 											ext = path.extname(file);
+											
 										ext = ext.toLowerCase();
-											/**
-											 * Если счётчик страниц на старте i == 0
-											 * Создаём PDF документ 
-											 */
+										/**
+										 * Если счётчик страниц на старте i == 0
+										 * Создаём PDF документ 
+										 */
 										// Сделать сохранении в соответствии с индексами
-											if(i == 0){
-												
-												if(!pdfDir && jsonPars[typeMenu]["multidir"]){
-													fs.mkdirSync(path.join(outDir, mask));
-												}
-												pdfDoc = await PDFDocument.create();
+										if(i == 0){
+											
+											if(!pdfDir && jsonPars[typeMenu]["multidir"]){
+												fs.mkdirSync(path.join(outDir, mask));
 											}
+											pdfDoc = await PDFDocument.create();
+										}
+										/**
+										 * Загружаем изображение в PDF файл
+										 */
+										let pdfImage;
+										if(ext == '.jpg' || ext == '.jpeg'){
+											pdfImage = await pdfDoc.embedJpg(image);
+										}else if(ext == '.png'){
+											pdfImage = await pdfDoc.embedPng(image);
+										}
+										if(pdfImage){
 											/**
-											 * Загружаем изображение в PDF файл
+											 * Масштабируем страницу
+											 * При сканировании страниц в формате 300dpi
+											 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
+											 * Приблизительно выставил 0.7
 											 */
-											let pdfImage;
-											if(ext == '.jpg' || ext == '.jpeg'){
-												pdfImage = await pdfDoc.embedJpg(image);
-											}else if(ext == '.png'){
-												pdfImage = await pdfDoc.embedPng(image);
-											}
-											if(pdfImage){
+											let pdfDims = pdfImage.scale(0.7),
 												/**
-												 * Масштабируем страницу
-												 * При сканировании страниц в формате 300dpi
-												 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
-												 * Приблизительно выставил 0.7
+												 * Добавляем страницу по рамерам полученного изображения
 												 */
-												let pdfDims = pdfImage.scale(0.7),
-													/**
-													 * Добавляем страницу по рамерам полученного изображения
-													 */
-													page = pdfDoc.addPage([pdfDims.width, pdfDims.height]);
-												/**
-												 * Рисуем изображение на странице
-												 */
-												page.drawImage(pdfImage, {
-													x: 0,
-													y: 0,
-													width: pdfDims.width,
-													height: pdfDims.height,
-												});
-											}
+												page = pdfDoc.addPage([pdfDims.width, pdfDims.height]);
 											/**
-											 * Увеличиваем счётчик страниц
+											 * Рисуем изображение на странице
 											 */
-											++i;
+											page.drawImage(pdfImage, {
+												x: 0,
+												y: 0,
+												width: pdfDims.width,
+												height: pdfDims.height,
+											});
+										}
+										/**
+										 * Увеличиваем счётчик страниц
+										 */
+										++i;
+										/**
+										 * Если счётчик страниц в PDF равен установленному количеству
+										 */
+										if(i == c){
 											/**
-											 * Если счётчик страниц в PDF равен установленному количеству
+											 * Автор
+											 * Создатель
+											 * Продюсер
 											 */
-											if(i == c){
-												/**
-												 * Автор
-												 * Создатель
-												 * Продюсер
-												 */
-												/**
-												 * Автор документа - откуда получили документ.
-												 * Проще говоря, кто организовывает питание в школе
-												 */
-												pdfDoc.setAuthor(jsonPars[typeMenu]["author"]);
-												/**
-												 * Кто создаёт документ
-												 * Проще говоря - это школа и т. п.
-												 */
-												pdfDoc.setProducer(jsonPars[typeMenu]["produser"]);
-												/**
-												 * Приложение, которое создаёт документ.
-												 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
-												 * Производителем файла должна быть программа, которая является официальной версией!
-												 * Мы сюда так же добавляем ссылку на библиотеку pdf-lib
-												 */
-												pdfDoc.setCreator("pdf-lib, ProjectSoft®");
-												/**
-												 * Заполнение метатегов документа
-												 * Это обязательное действие.
-												 **
-												 * Заголовок
-												 * Ключевые слова
-												 * Тема (Описание)
-												 */
-												pdfDoc.setTitle(mapsFiles[k].title + " на " + mask);
-												pdfDoc.setKeywords([mapsFiles[k].title + " на " + mask]);
-												pdfDoc.setSubject(mapsFiles[k].title + " на " + mask);
-												/**
-												 * Время создания файла
-												 * Время модификации файла
-												 */
-												pdfDoc.setCreationDate(new Date());
-												pdfDoc.setModificationDate(new Date());
-												/**
-												 * Сохраняем
-												 */
-												let pdfBytes = await pdfDoc.save();
-												/**
-												 * Прогресс PDF
-												 */
-												++progressPDfIndex;
-												let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
-												barPdf.update(progressPDfIndex, {
-													timeRun: eta
-												});
-												/**
-												 * Пишем в файл
-												 */
-												/**
-												 * Если multidir включен, то mask не меняет значение и директория создана
-												 * Иначе оно пустое и файлы сохраняются в pdf директорию
-												 */
-												mask = !jsonPars[typeMenu]["multidir"] ? `` : `${mask}${sp}`;
+											/**
+											 * Автор документа - откуда получили документ.
+											 * Проще говоря, кто организовывает питание в школе
+											 */
+											pdfDoc.setAuthor(jsonPars[typeMenu]["author"]);
+											/**
+											 * Кто создаёт документ
+											 * Проще говоря - это школа и т. п.
+											 */
+											pdfDoc.setProducer(jsonPars[typeMenu]["produser"]);
+											/**
+											 * Приложение, которое создаёт документ.
+											 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
+											 * Производителем файла должна быть программа, которая является официальной версией!
+											 * Мы сюда так же добавляем ссылку на библиотеку pdf-lib
+											 */
+											pdfDoc.setCreator("pdf-lib, ProjectSoft®");
+											/**
+											 * Заполнение метатегов документа
+											 * Это обязательное действие.
+											 **
+											 * Заголовок
+											 * Ключевые слова
+											 * Тема (Описание)
+											 */
+											pdfDoc.setTitle(mapsFiles[k].title + " на " + mask);
+											pdfDoc.setKeywords([mapsFiles[k].title + " на " + mask]);
+											pdfDoc.setSubject(mapsFiles[k].title + " на " + mask);
+											/**
+											 * Время создания файла
+											 * Время модификации файла
+											 */
+											pdfDoc.setCreationDate(new Date());
+											pdfDoc.setModificationDate(new Date());
+											/**
+											 * Сохраняем
+											 */
+											let pdfBytes = await pdfDoc.save();
+											/**
+											 * Прогресс PDF
+											 */
+											++progressPDfIndex;
+											let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
+											barPdf.update(progressPDfIndex, {
+												timeRun: eta
+											});
+											/**
+											 * Пишем в файл
+											 */
+											/**
+											 * Если multidir включен, то mask не меняет значение и директория создана
+											 * Иначе оно пустое и файлы сохраняются в pdf директорию
+											 */
+											mask = !jsonPars[typeMenu]["multidir"] ? `` : `${mask}${sp}`;
+											fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
+											/**
+											 * Без суффикса
+											 */
+											if(mapsFiles[k].saveNoSufix){
+												pdfFile =  `${frm}.pdf`;
 												fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-												/**
-												 * Без суффикса
-												 */
-												if(mapsFiles[k].saveNoSufix){
-													pdfFile =  `${frm}.pdf`;
-													fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-												}
-												/**
-												 * Увеличиваем счётчик типов меню
-												 */
-												++k;
-												/**
-												 * Если счётчик равен кол-ву типов меню
-												 * Увеличиваем дату
-												 * Счётчик обнуляем
-												 */
-												if(k == f){
-													day = date.getDay();
-													/**
-													 * Если пятница - увеличиваем на 3 дня
-													 * или увеличиваем на один (следующий день).
-													 */
-													if(day == 5){
-														day = 3
-													}else{
-														day = 1;
-													}
-													k = 0;
-													date.setDate(d + day);
-												}
-												i = 0;
-												/**
-												 * Для красоты
-												 * Сделаем маленькую паузу без прогрессбара
-												 */
-												await delay(100, false);
 											}
+											/**
+											 * Увеличиваем счётчик типов меню
+											 */
+											++k;
+											/**
+											 * Если счётчик равен кол-ву типов меню
+											 * Увеличиваем дату
+											 * Счётчик обнуляем
+											 */
+											if(k == f){
+												day = date.getDay();
+												/**
+												 * Если пятница - увеличиваем на 3 дня
+												 * или увеличиваем на один (следующий день).
+												 */
+												if(day == 5){
+													day = 3
+												}else{
+													day = 1;
+												}
+												k = 0;
+												date.setDate(d + day);
+											}
+											i = 0;
+											/**
+											 * Для красоты
+											 * Сделаем маленькую паузу без прогрессбара
+											 */
+											await delay(100, false);
+										}
 									}
 									barPdf.terminal.cursor(true);
 									barPdf.stop();
@@ -561,8 +545,8 @@
 						if(process.argv.find((i) => i === 'pause') !== undefined){
 							log(`${lang.closing_the_program}...`.bold.yellow);
 							log(" ");
-							await delay(pauseDelay - pauseError);
 						}
+						st_resolve(" ");
 						return;
 					}
 					if(parseInt(data.typemenu) > -1 && data.directory != "None" && data.data.length) {
@@ -697,7 +681,10 @@
 									log(" ");
 									log((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.red);
 									log(" ");
-									await delay(pauseDelay - pauseError);
+									if(process.argv.find((i) => i === 'pause') !== undefined){
+										log(`${lang.closing_the_program}...`.bold.yellow);
+									}
+									log(" ");
 									st_resolve(" ");
 								}).catch(async function(err){
 									log(" ");
@@ -711,9 +698,8 @@
 									log(" ");
 									if(process.argv.find((i) => i === 'pause') !== undefined){
 										log(`${lang.closing_the_program}...`.bold.yellow);
-										log(" ");
-										await delay(pauseDelay - pauseError);
 									}
+									log(" ");
 									st_resolve(" ");
 								});
 							}).catch(async function(err){
@@ -730,8 +716,9 @@
 								if(process.argv.find((i) => i === 'pause') !== undefined){
 									log(`${lang.closing_the_program}...`.bold.yellow);
 									log(" ");
-									await delay(pauseDelay - pauseError);
+									st_resolve(" ");
 								}
+								log(" ");
 								st_resolve(" ");
 							})
 						}
@@ -741,11 +728,9 @@
 						log(" ");
 						if(process.argv.find((i) => i === 'pause') !== undefined){
 							log(`${lang.closing_the_program}...`.bold.yellow);
-							log(" ");
-							await delay(pauseDelay - pauseError);
-							st_resolve(" ");
 						}
 						log(" ");
+						st_resolve(" ");
 					}
 				}).catch(async function(error) {
 					log(" ");
@@ -755,10 +740,10 @@
 					if(process.argv.find((i) => i === 'pause') !== undefined){
 						log(`${lang.closing_the_program}...`.bold.yellow);
 						log(" ");
-						await delay(pauseDelay - pauseError);
 						st_resolve(" ");
 					}
 					log(" ");
+					st_resolve(" ");
 				});
 			});
 		};
@@ -785,15 +770,20 @@
 	log(" ");
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
-	start().then((data) => {
+	let ddr;
+	start().then(async function(data) {
 		log(data);
 		process.stdin.setRawMode(false);
 		process.stdin.pause();
-		process.exit();
-	}).catch((error) => {
+		ddr = spawn( 'taskkill', [ '/F', '/IM', 'cmd.exe' ] );
+		await delay(pauseDelay - pauseError);
+		log(" ");
+	}).catch(async function(error) {
 		log(error);
 		process.stdin.setRawMode(false);
 		process.stdin.pause();
-		process.exit();
+		ddr = spawn( 'taskkill', [ '/F', '/IM', 'cmd.exe' ] );
+		await delay(pauseDelay - pauseError);
+		log(" ");
 	});
 })();
