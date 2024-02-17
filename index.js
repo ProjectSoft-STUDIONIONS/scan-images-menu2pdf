@@ -13,7 +13,6 @@
 		fs = require('fs'),
 		path = require('path'),
 		colors = require('colors'),
-		keypress = require('keypress'),
 		cliProgress = require('cli-progress'),
 		{ spawn, exec } = require('child_process'),
 		{ PDFDocument } =  require('pdf-lib'),
@@ -59,8 +58,6 @@
 		},
 
 		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld;
-
-	keypress(process.stdin);
 
 	let indexStr = '',
 		indexArr = [];
