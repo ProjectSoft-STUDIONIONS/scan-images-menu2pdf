@@ -13,6 +13,13 @@ jobs:
     name: Notify
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Read file contents
+        id: read_file
+        uses: andstor/file-reader-action@master
+        with:
+          path: "assets/message.html"
       - name: Send Telegram Message on Push
         uses: appleboy/telegram-action@master
         with:
@@ -20,4 +27,4 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           disable_web_page_preview: false
           format: html
-          message_file: ./.github/workflows/message.html
+          message: ${{ steps.read_file.outputs.contents }}
