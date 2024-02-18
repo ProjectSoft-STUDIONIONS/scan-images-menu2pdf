@@ -19,12 +19,11 @@ jobs:
         id: read_file
         uses: andstor/file-reader-action@master
         with:
-          path: "assets/message.html"
+          path: "assets/message.md"
       - name: Send Telegram Message on Push
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           disable_web_page_preview: false
-          format: html
           message: ${{ steps.read_file.outputs.contents }}
