@@ -13,7 +13,7 @@
 
 #### Формат данных в JSON
 Каждодневное меню одного файла включает в себя два файла изображений. Двухнедельное состоит из одиннадцати файлов изображений. Править можно под себя.   
-Файл для правки [menu.json](https://github.com/KSOSH/scan-images-menu2pdf/blob/main/menu.json).   
+Файл для правки [menu.json](https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/blob/main/menu.json).   
 <details>
 	<summary><u><strong>Формат данных в JSON</strong>s</u></summary>
 
@@ -121,7 +121,7 @@
 
 Обязательно!
 ```Batchfile
-$ git clone https://github.com/KSOSH/scan-images-menu2pdf.git
+$ git clone https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf.git
 $ cd scan-images-menu2pdf
 $ npm run inst
 ```
@@ -140,12 +140,18 @@ $ npm run build
 ```
 ## Этапы работы программы
 
+Запуск программы
+
 ![Запуск программы](/assets/screenshots/0001.png?raw=true "Запуск программы")
+
+Выбор папки с изображениями
 
 ![Выбор папки с изображениями](/assets/screenshots/0002.png?raw=true "Выбор папки с изображениями")
 
+Выполнение программы. Обработка изображений. Генерация PDF файлов
+
 ![Выполнение программы. Обработка изображений. Генерация PDF файлов](/assets/screenshots/0003.png?raw=true "Выполнение программы. Обработка изображений. Генерация PDF файлов")
 
-![Завершение работы программы](/assets/screenshots/0004.png?raw=true "Директория с полученными PDF файлами")
+Завершение работы программы
 
-![Директория с полученными PDF файлами](/assets/screenshots/0005.png?raw=true "Директория с полученными PDF файлами")
+![Завершение работы программы](/assets/screenshots/0004.png?raw=true "Директория с полученными PDF файлами")

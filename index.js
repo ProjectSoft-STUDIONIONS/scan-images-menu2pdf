@@ -61,18 +61,18 @@
 		indexArr = [];
 
 	const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
-		log = function(args) {
-			console.log(args);
+		log = function(...args) {
+			console.log.apply(null, args);
 		},
 		timeRun = "0.00s",
 		lang = Object.fromEntries(Object.entries(Object.assign(langOld, langLoad)).sort()),
 		fsPromises = fs.promises,
 		// Опции для создания прогресс бара
 		optionsBar = {
-			barsize: 50, // Длина прогресс бара в символах 
+			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: '  {bar}' + `  {percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`.bold.yellow, // Шаблон прогресс бара
+			format: `  {bar}  ` + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow, // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -103,15 +103,15 @@
 			}
 			return sep;
 		},
-		delay = function(ms, rtn = true) {
+		closeDelay = function(ms, rtn = true) {
 			if (rtn) {
 				let value = 0,
-					mms = parseInt(ms / 1000);
+					mms = Math.ceil(ms / 1000);
 				barPdf = new cliProgress.Bar({
-					barsize: 50,
+					barsize: strLength - 2,
 					autopadding: true,
 					autopaddingChar: '000',
-					format: '  {bar}' + `  {percentage}% | ${lang.closing_in}: {eta}s/${mms}s`.bold.yellow,
+					format: `  {bar}  ` + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow,
 					barCompleteChar: '\u2588',
 					barIncompleteChar: '\u2591',
 					hideCursor: true,
@@ -119,22 +119,18 @@
 					forceRedraw: true
 				});
 				barPdf.start(mms, value);
-				let inCal = setInterval(async function(){
-					++value;
+				let inCal = setInterval(function(){
+					value += 0.1;
 					barPdf.update(value);
 					if(value > mms){
 						barPdf.terminal.cursor(true);
 						barPdf.stop();
 						clearInterval(inCal);
 					}
-				}, 1000);
-				/**
-				 * Пауза подобрана
-				 */
-				return new Promise(resolve => setTimeout(resolve, ms + 1000));
-			}else{
-				return new Promise(resolve => setTimeout(resolve, ms));
+				}, 100);
+				return new Promise(resolve => setTimeout(resolve, ms + 1050));
 			}
+			return new Promise(resolve => setTimeout(resolve, ms));
 		},
 		emptyDir = function(dirPath) {
 			let dirContents = fs.readdirSync(dirPath);
@@ -506,7 +502,7 @@
 											 * Для красоты
 											 * Сделаем маленькую паузу без прогрессбара
 											 */
-											await delay(100, false);
+											await closeDelay(25, false);
 										}
 									}
 									barPdf.terminal.cursor(true);
@@ -759,7 +755,7 @@
 			'/IM',
 			'cmd.exe'
 		]);
-		await delay(pauseDelay - pauseError);
+		await closeDelay(pauseDelay - pauseError);
 		log(" ");
 	}).catch(async function(error) {
 		log(error);
@@ -770,7 +766,7 @@
 			'/IM',
 			'cmd.exe' 
 		]);
-		await delay(pauseDelay - pauseError);
+		await closeDelay(pauseDelay - pauseError);
 		log(" ");
 	});
 })();
