@@ -23,10 +23,8 @@ jobs:
           message: |
 
             🎉🎉🎉 *Новый релиз* 🎉🎉🎉
-            ${{  github.ref_name }}
-            
             ${{ github.event.release.name }}
-            [Подробнее](https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/releases/latest)
+            [Подробнее](https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/releases/tag/${{github.ref_name}})
 
             *Описание*
             Обрабатывается два типа меню. Каждодневное и Двухнедельное.
