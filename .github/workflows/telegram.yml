@@ -22,10 +22,9 @@ jobs:
           format: html
           message: |
             🎉🎉🎉 Новый релиз: 🎉🎉🎉
-            ${{ toJson(github) }}
+            ${{ toJson(github.event.release) }}
             
             *${{ github.event.release.name }}*
             
-            ${{ github.event.release.body }}
             <p><a href="https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/releases/latest">Подробнее</a></p>
             <p>Автор: <strong>ProjectSoft</strong></p>
