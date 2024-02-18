@@ -20,4 +20,4 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           disable_web_page_preview: false
           format: html
-          message_file: https://raw.githubusercontent.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/main/assets/message.html
+          message_file: message.html
