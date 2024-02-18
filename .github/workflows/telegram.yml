@@ -2,6 +2,12 @@ name: Telegram Message
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+        Name:
+            description: Telegram Message
+            required: true
+            default: 'Telegram Message'
 jobs:
   notify:
     name: Notify
