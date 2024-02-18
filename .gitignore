@@ -4,6 +4,11 @@ build/
 logs
 *.log
 log/
+# Arhive
+*.zip
+*.tar
+*.rar
+*.7z
 
 # Packages lock
 # *-lock.json
