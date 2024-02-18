@@ -21,7 +21,7 @@ jobs:
           disable_web_page_preview: false
           format: html
           message: |
-            <h1>🎉🎉🎉 Новый релиз: 🎉🎉🎉</h1>
+            🎉🎉🎉 Новый релиз: 🎉🎉🎉
             <h2>${{ github.event.release.name }}</h2>
             ${{ github.event.release.short_description_html }}
             <p><a href="https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/releases/latest">Подробнее</a></p>
