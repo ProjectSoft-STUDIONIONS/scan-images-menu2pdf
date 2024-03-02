@@ -108,8 +108,21 @@
 Согласно JSON данных можно добавить ещё типы меню не правя код самого модуля, а правя только код файла `menu.json`. Внимательно следите за форматом JSON файла!!!
 
 ### Дополнительные установки
+Установить **.NET 8.0 SDK** для компилирования `programm.exe`
+```
+https://dotnetwebsite.azurewebsites.net/en-us/download/dotnet/8.0
+```
+<ins>**Добавить запись к PATH**<ins>
+```
+C:\Windows\Microsoft.NET\Framework\v3.5
+```
+В данной папке наодится компилятор `csc.exe`
 
-Подключена обработка отсканированных изображений (ресайз) с помощью [**ImageMagick**](https://imagemagick.org/script/download.php) (скачать и установить от имени Администратора, проверить запуск magick)
+Установить **RAD Studio 11** для компилирования `dialogs.exe`
+```
+https://altd.embarcadero.com/download/radstudio/11.0/RADStudio_11_3_esd_61_3236.exe
+```
+Подключена обработка отсканированных изображений (ресайз) с помощью [**ImageMagick**](https://imagemagick.org/script/download.php) (скачать и установить от имени Администратора, проверить запуск `magick`, `convert`)
 
 Обязательные опции при установке **ImageMagick**: 
 
