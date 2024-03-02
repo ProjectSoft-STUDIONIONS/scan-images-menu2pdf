@@ -1,4 +1,5 @@
 (async function(){
+	
 	const argv = (() => {
 			const args = {};
 			process.argv.slice(2).map( (element) => {
