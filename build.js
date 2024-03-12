@@ -23,8 +23,8 @@ const fs = require('fs'),
 [assembly: AssemblyTrademark("® ${author}")]
 [assembly: AssemblyVersion("${config.version}.0")] 
 [assembly: AssemblyFileVersion("${config.version}.0")]
-[assembly: AssemblyTitle("${config.description}")]
-[assembly: AssemblyDescription("${config.description}")]`,
+[assembly: AssemblyTitle("${config.description} v${config.version}")]
+[assembly: AssemblyDescription("${config.description} v${config.version}")]`,
 	normalize = function(args) {
 		return path.normalize(path.join.apply(null, args));
 	},
@@ -48,6 +48,7 @@ const fs = require('fs'),
 				if(code == 0){
 					resolve(`Compiled ${config.product}.exe`);
 				}else{
+					//reject(args.join(' '));
 					reject(code);
 				}
 			});

@@ -1,5 +1,6 @@
 (async function(){
-	const argv = (() => {
+	const ttl = process.title,
+		argv = (() => {
 			const args = {};
 			process.argv.slice(2).map( (element) => {
 				const matches = element.match( '--([a-zA-Z0-9-]+)(?:=(.*))?');
@@ -21,8 +22,10 @@
 		strLength = 40,
 		fMenu = 'menu.json';
 
+	colors.enable();
 	config.description = config.description.trim();
-	process.title = (process.title != config.description) ? config.description : process.title;
+	config.soundEnable = (String(config.soundEnable).toLowerCase() === 'true') || false;
+	process.title = ((process.title != config.description) ? config.description : process.title) + ` v${config.version}`;
 
 	require('events').EventEmitter.defaultMaxListeners = 15;
 
@@ -58,9 +61,11 @@
 
 		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
 		indexStr = '',
-		indexArr = [];
+		indexArr = [],
+		typeConvert = 'convert';
 
 	const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
+		runing = argv["runing"] ? !!argv["runing"].toLowerCase() : false,
 		log = function(...args) {
 			console.log.apply(null, args);
 		},
@@ -72,7 +77,7 @@
 			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: `  {bar}  ` + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow, // Шаблон прогресс бара
+			format: (`  {bar}  `).bold.green + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow, // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -111,7 +116,7 @@
 					barsize: strLength - 2,
 					autopadding: true,
 					autopaddingChar: '000',
-					format: `  {bar}  ` + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow,
+					format: (`  {bar}  `).bold.green + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow,
 					barCompleteChar: '\u2588',
 					barIncompleteChar: '\u2591',
 					hideCursor: true,
@@ -131,6 +136,20 @@
 				return new Promise(resolve => setTimeout(resolve, ms + 1050));
 			}
 			return new Promise(resolve => setTimeout(resolve, ms));
+		},
+		isDir = function(dir_read){
+			return new Promise(function(resolve, reject){
+				try {
+					let stats = fs.lstatSync(dir_read);
+					if (stats.isDirectory()) {
+						resolve(true);
+					}else{
+						resolve(false);
+					}
+				}catch (e) {
+					resolve(false);
+				}
+			});
 		},
 		emptyDir = function(dirPath) {
 			let dirContents = fs.readdirSync(dirPath);
@@ -191,7 +210,6 @@
 					log(lang.error_reading_json.bold.red);
 					log(" ");
 					log(lang.error_close);
-					appClose();
 					return;
 				}
 				
@@ -218,21 +236,6 @@
 						callback(p);
 					},
 
-					isDir = function(dir_read){
-						return new Promise(function(resolve, reject){
-							try {
-								let stats = fs.lstatSync(dir_read);
-								if (stats.isDirectory()) {
-									resolve(true);
-								}else{
-									resolve(false);
-								}
-							}catch (e) {
-								resolve(false);
-							}
-						});
-					},
-
 					readDirectory = function(dir_read){
 						return new Promise(function(resolve, reject) {
 							let files = fs.readdirSync(dir_read).filter(function(fn) {
@@ -247,7 +250,7 @@
 
 					resize = function(input, output, width, height) {
 						return new Promise(function(resolve, reject){
-							let app = `convert`,
+							let app = typeConvert,
 								args = [
 									input,
 									"-quality",
@@ -260,17 +263,19 @@
 								],
 								ls = spawn(app, args);
 							ls.stdout.on('data', (data) => {
-								//log(`stdout: ${data}`);
+								// log(`stdout: ${data}`);
 							});
 
 							ls.stderr.on('data', (data) => {
-								//log(`stderr: ${data}`);
+								// log(`stderr: ${data}`);
 							});
 
 							ls.on('close', (code) => {
 								if(code == 0){
-									resolve(output);
+									//log("resolve", code);
+									resolve(code);
 								}else{
+									//log("reject", code);
 									reject(code);
 								}
 							});
@@ -509,7 +514,7 @@
 									barPdf.stop();
 									resolve();
 								}else{
-									reject(String(`${lang.directory_is_empty}:`).bold.red + " " + imgs);
+									reject(String(`${lang.directory_is_empty}: ${imgs}`).bold.red);
 								}
 							}catch(e){
 								reject(e);
@@ -532,12 +537,14 @@
 					} catch(err_json){
 						log(`${lang.error_reading_json}!`.bold.red);
 						log(err_json);
-						log(" ");
-						log(`${lang.closing_the_program}...`.bold.yellow);
-						log(" ");
+						closePrg();
 						st_resolve(" ");
 						return;
 					}
+					/**
+					 * Тип конвертора
+					 */
+					typeConvert = data["convert"] || `convert`;
 					if(parseInt(data.typemenu) > -1 && data.directory != "None" && data.data.length) {
 						typeMenu = parseInt(data.typemenu);
 						dir = data.directory;
@@ -560,9 +567,9 @@
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
-						log(`${lang.selected_menu_type}: `.bold.yellow + jsonPars[typeMenu]["name"].bold.red);
-						log(`${lang.selected_directory}: `.bold.yellow + dir.bold.red);
-						log(`${lang.selected_date}: `.bold.yellow + date.toLocaleDateString().bold.red);
+						log(`${lang.selected_menu_type}: `.bold.yellow + jsonPars[typeMenu]["name"].bold.green);
+						log(`${lang.selected_directory}: `.bold.yellow + dir.bold.green);
+						log(`${lang.selected_date}: `.bold.yellow + date.toLocaleDateString().bold.green);
 						log(" ");
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
@@ -631,8 +638,8 @@
 								barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
 								barPdf.start(progressImgTotal, progressImgIndex);
 								barPdf.update(progressImgIndex, {
-									timeRun: timeRun,
-									eta: 0
+									timeRun: "0.00s",
+									eta: "0.00"
 								});
 								for(let image of images){
 									++progressImgIndex;
@@ -656,71 +663,77 @@
 								 * Генерация PDF файлов
 								 */
 								pdfGenerator(pdf_dir, resize_dir).then(async function(str){
-									// clear
-									if(await isDir(resize_dir)){
-										log(" ");
-										log(`${lang.deleting_img_files}`.bold.yellow);
-										fs.rmSync(resize_dir, { recursive: true, force: true });
-									}
 									endTime = new Date().getTime();
 									let time = endTime - startTime;
 									time = parseFloat(time / 1000).toFixed(2);
 									lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
 									lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
 									log(" ");
-									log((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.red);
-									log(" ");
-									log(`${lang.closing_the_program}...`.bold.yellow);
-									log(" ");
+									log((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.green);
+									closePrg(resize_dir);
 									st_resolve(" ");
 								}).catch(async function(err){
 									log(" ");
 									log(`${lang.error_generating_pdf}!`.bold.red);
-									log(err);
-									// clear
-									if(await isDir(resize_dir)){
-										log(`${lang.deleting_img_files}`.bold.yellow);
-										fs.rmSync(resize_dir, { recursive: true, force: true });
-									}
-									log(" ");
-									log(`${lang.closing_the_program}...`.bold.yellow);
-									log(" ");
+									closePrg(resize_dir);
 									st_resolve(" ");
 								});
 							}).catch(async function(err){
-								log(" ");
-								log(`${lang.error}!: ${dir}`.bold.red);
-								log(err);
-								// clear
-								if(await isDir(resize_dir)){
-									log(" ");
-									log(`${lang.deleting_img_files}`.bold.yellow);
-									fs.rmSync(resize_dir, { recursive: true, force: true });
+								if(barPdf) {
+									barPdf.terminal.cursor(true);
+									barPdf.stop();
 								}
-								log(" ");
-								log(`${lang.closing_the_program}...`.bold.yellow);
-								log(" ");
+								console.clear();
+								log(`${lang.error}!: ${dir}`.bold.red);
+								closePrg(resize_dir);
 								st_resolve(" ");
 							})
 						}
 					} else {
 						log(" ");
 						log(`${lang.completed_by_user}`.bold.yellow);
-						log(" ");
-						log(`${lang.closing_the_program}...`.bold.yellow);
-						log(" ");
+						closePrg();
 						st_resolve(" ");
 					}
 				}).catch(async function(error) {
-					log(" ");
+					if(barPdf) {
+						barPdf.terminal.cursor(true);
+						barPdf.stop();
+					}
 					log(`${lang.error}!`.bold.red);
 					log(error);
-					log(" ");
-					log(`${lang.closing_the_program}...`.bold.yellow);
-					log(" ");
+					closePrg();
 					st_resolve(" ");
 				});
 			});
+		},
+		closePrg = async function(imgdir = false){
+			if(typeof imgdir == 'string'){
+				if(await isDir(imgdir)){
+					log(" ");
+					log(`${lang.deleting_img_files}`.bold.yellow);
+					fs.rmSync(imgdir, { recursive: true, force: true });
+				}
+			}
+			if(runing){
+				log(" ");
+				log(`${lang.closing_the_program}...`.bold.yellow);
+				log(" ");
+			}
+		},
+		playBeep = async function(...args) {
+			args = [].slice.call(args);
+			if(config.soundEnable){
+				let JZZ = require('jzz'),
+					midi = await JZZ(),
+					port = await midi.openMidiOut();
+				for(let a of args){
+					await port.noteOn(0, a[0], 127);
+					await port.wait(a[1]);
+					await port.noteOff(0, a[0]);
+				}
+				await port.close();
+			}
 		};
 	/**
 	 * Перезапишем файл языка
@@ -729,15 +742,34 @@
 	/**
 	 * Очищаем консоль
 	 */
-	// process.stdin.resume();
-	// console.clear();
+	process.stdin.resume();
+	console.clear();
+	/**
+	 * Играем музыку
+	 * Чисто прикалываюсь )))
+	 * Можно сделать что-то особое
+	 */
+	playBeep(
+		['A4', 300], ['C5', 300], ['E5', 300],
+		['A4', 300], ['C5', 300], ['E5', 300],
+		['A4', 300], ['C5', 300], ['E5', 300],
+		['A4', 300], ['C5', 300], ['E5', 300],
+		['A4', 300], ['C#5', 300], ['E5', 300],
+		['A4', 300], ['C#5', 300], ['E5', 300],
+		['A4', 300], ['D5', 300], ['F5', 300],
+		['A4', 300], ['D5', 300], ['F5', 300]
+	);
+	/**
+	 * ID процесса. Очень нужно для отладки
+	 */
+	// console.log(`Process ID: ${process.pid}`);
 	/**
 	 * Запускаем диалоги
 	 */
 	// Имя, версия
 	log(" ");
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log(config.description.bold.cyan + (' v' + config.version).bold.yellow);
+	log(config.description.bold.green + (' v' + config.version).bold.yellow);
 	// Старт
 	log(" ");
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
@@ -745,28 +777,53 @@
 	log(" ");
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
-	let ddr;
 	start().then(async function(data) {
-		log(data);
-		process.stdin.setRawMode(false);
-		process.stdin.pause();
-		ddr = spawn( 'taskkill', [
-			'/F',
-			'/IM',
-			'cmd.exe'
-		]);
-		await closeDelay(pauseDelay - pauseError);
+		/**
+		 * Закрытие консоли
+		 * Честно говоря это черевато и не стоит так делать. Поэтому отключаем, но пример кода оставлю пока
+		 */
+		if(runing) {
+			/**
+			 * Играем музыку
+			 */
+			playBeep(['E5', 1000], ['C5', 1000], ['A4', 1000], ['A3', 1000]);
+			await closeDelay(pauseDelay - pauseError);
+			process.stdin.setRawMode(false);
+			process.stdin.pause();
+			//let ddr;
+			//ddr = spawn( 'taskkill', [
+			//	'/F',
+			//	'/IM',
+			//	'cmd.exe'
+			//]);
+		}else{
+			await playBeep(['E5', 300], ['C5', 300], ['A4', 300], ['A3', 1000]);
+			process.stdin.setRawMode(false);
+			process.stdin.resume();
+			process.stdin.pause();
+			console.clear();
+			//process.title = ttl;
+		}
 		log(" ");
 	}).catch(async function(error) {
-		log(error);
-		process.stdin.setRawMode(false);
-		process.stdin.pause();
-		ddr = spawn( 'taskkill', [
-			'/F',
-			'/IM',
-			'cmd.exe' 
-		]);
-		await closeDelay(pauseDelay - pauseError);
+		if(runing) {
+			playBeep(['E5', 1000], ['C5', 1000], ['A4', 1000], ['A3', 1000]);
+			await closeDelay(pauseDelay - pauseError);
+			process.stdin.setRawMode(false);
+			process.stdin.resume();
+			process.stdin.pause();
+			//let ddr;
+			//ddr = spawn( 'taskkill', [
+			//	'/F',
+			//	'/IM',
+			//	'cmd.exe'
+			//]);
+		}else{
+			await playBeep(['E5', 300], ['C5', 300], ['A4', 300], ['A3', 1000]);
+			process.stdin.setRawMode(false);
+			process.stdin.resume();
+			process.stdin.pause();
+		}
 		log(" ");
 	});
 })();

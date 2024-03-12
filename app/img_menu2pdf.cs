@@ -21,6 +21,12 @@ namespace Runner
 		[DllImport("user32.dll")]
 		static extern IntPtr RemoveMenu(IntPtr hMenu, uint nPosition, uint wFlags);
 
+		[DllImport("User32.dll")]
+		static extern Boolean MessageBeep(UInt32 beepType);
+
+		[DllImport("Kernel32.dll", SetLastError=true)]
+		static extern Boolean Beep( UInt32 frequency, UInt32 duration);
+
 		internal const int GWL_STYLE = -16;
 		internal const uint WS_THICKFRAME = 0x00040000;
 
@@ -38,7 +44,7 @@ namespace Runner
 			// System.Diagnostics.
 			// Если программа запущена
 			// Имя окна приложения
-			string App = "Конвертирование отсканированных изображений меню в PDF файлы";
+			string App = "Конвертирование отсканированных изображений меню в PDF файлы v2.8.3";
 			String dir = Environment.CurrentDirectory;
 			// Удаляем возможность закрытия приложения из интнрфейса
 			IntPtr hMenu = Process.GetCurrentProcess().MainWindowHandle;
@@ -55,14 +61,18 @@ namespace Runner
 
 			EnableMenuItem(hSystemMenu, SC_RESTORE, MF_GRAYED);
 			RemoveMenu(hSystemMenu, SC_RESTORE, MF_BYCOMMAND);
-			
+
+			//MessageBeep(0);
+			//Beep(1760, 500);
+			Console.BackgroundColor = System.ConsoleColor.Black;
+			Console.Clear();
 			// Читаем настройки из файла
 			String ini = dir + "\\" + "programm.ini";
 			IniFile iniFile = new IniFile(ini);
 			String pad = iniFile.Read("pad", "Programm", "4");
 			// Применяем аргументы
 			// Аргумент pause ОБЯЗАТЕЛЕН!
-			String arguments = "index.js" + " --pad=" + pad + " && pause";
+			String arguments = "index.js" + " --pad=" + pad + " --runing=True && pause";
 			// Готовим к запуску NodeJS
 			Process p = new Process();
 			p.StartInfo = new ProcessStartInfo("node.exe");

@@ -26,8 +26,9 @@ end;
   directory       Полный путь до директории с изображениями
   data            Значения даты и времени в формате UNIX
   error           Тип ошибки
+  convert         Тип используемого конвертора
   Формат
-  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "error": "0"}
+  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "error": "0", "convert": "magick"}
 
   Индекс ошибок "error"
   0 - Ошибок нет
@@ -40,11 +41,11 @@ var
   fileName, jsn: string;
   i: Integer;
   jo: TJsonObject;
-  Handle: THandle;
+  // Handle: THandle;
 begin
   SetConsoleOutputCP(CP_UTF8);
-  Handle := GetForegroundWindow;
-  SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NoMove or SWP_NoSize);
+  // Handle := GetForegroundWindow;
+  // SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NoMove or SWP_NoSize);
   if ParamCount > 0 then
   begin
     for i := 1 to ParamCount do
@@ -56,7 +57,7 @@ begin
         begin
           Form1 := TForm1.Create(nil);
           Form1.HandleNeeded;
-          SetWindowLongPtr(Form1.Handle, GWLP_HWNDPARENT, Handle);
+          // SetWindowLongPtr(Form1.Handle, GWLP_HWNDPARENT, Handle);
           Form1.fileName := fileName;
           Form1.SendJSON(fileName);
           if Form1.ShowModal = mrOk then
@@ -67,6 +68,7 @@ begin
             jo.AddPair(TJSONPair.Create('directory', Form1.directory));
             jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
             jo.AddPair(TJSONPair.Create('index', Form1.index));
+            jo.AddPair(TJSONPair.Create('convert', Form1.convert));
             jo.AddPair(TJSONPair.Create('error', '0'));
             jsn := jo.ToJSON();
             writeLn(jsn);

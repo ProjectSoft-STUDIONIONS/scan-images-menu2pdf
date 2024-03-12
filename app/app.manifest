@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-	<assemblyIdentity version="2.8.1.0" name="programm.app"/>
+	<assemblyIdentity version="2.8.3.0" name="programm.app"/>
 	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
 		<security>
  			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
