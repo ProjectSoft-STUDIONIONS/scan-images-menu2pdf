@@ -50,7 +50,7 @@ type
         procedure CheckBox1Click(Sender: TObject);
         procedure Panel4MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
         procedure Panel4MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-    procedure ComboTypeConvertChange(Sender: TObject);
+        procedure ComboTypeConvertChange(Sender: TObject);
     private
         { Private declarations }
         // Lang
@@ -71,9 +71,6 @@ type
         MenuGenerate: string;
         TypeConvert: string;
         FileJSON: string;
-
-        procedure WMGetMinMaxInfo(var Message: TWMGetMinMaxInfo);
-          message WM_GETMINMAXINFO;
         procedure LoadProject;
     public
         { Public declarations }
@@ -101,20 +98,20 @@ var
     pIDL   :  pItemIDList;
 begin
   case  MessageID    of
-    BFFM_INITIALIZED:SendMessage(hwnd, BFFM_SETSELECTION, 1, lpData);
-    BFFM_SELCHANGED :begin
-                        pIDL := Pointer(lParam);
-                        if  Assigned(PIDL) then
-                        begin
-                          SHGetPathFromIDList(pIDL, DirName);
-                          if System.SysUtils.DirectoryExists(DirName) then
+    BFFM_INITIALIZED: SendMessage(hwnd, BFFM_SETSELECTION, 1, lpData);
+    BFFM_SELCHANGED : begin
+                         pIDL := Pointer(lParam);
+                         if  Assigned(PIDL) then
+                         begin
+                           SHGetPathFromIDList(pIDL, DirName);
+                           if System.SysUtils.DirectoryExists(DirName) then
                               SendMessage(hwnd, BFFM_ENABLEOK, 0, 1) //enable the ok button
-                          else
+                           else
                               SendMessage(hwnd, BFFM_ENABLEOK, 0, 0);
-                        end
-                        else
-                          SendMessage(hwnd, BFFM_ENABLEOK, 0, 0);
-                     end;
+                         end
+                         else
+                           SendMessage(hwnd, BFFM_ENABLEOK, 0, 0);
+                      end;
   end;
 
   Result := 0;
@@ -326,19 +323,6 @@ begin
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
 end;
 
-// Устанавливаем наименьший размер окна.
-procedure TForm1.WMGetMinMaxInfo(var Message: TWMGetMinMaxInfo);
-var
-    MinMaxInfo: PMinMaxInfo;
-begin
-    inherited;
-    MinMaxInfo := Message.MinMaxInfo;
-    MinMaxInfo^.ptMaxTrackSize.X := 700; // Maximum Width
-    //MinMaxInfo^.ptMaxTrackSize.Y := 600; // Maximum Height
-    MinMaxInfo^.ptMinTrackSize.X := 700; // Minimum Width
-    //MinMaxInfo^.ptMinTrackSize.Y := 600; // Minimum Height
-end;
-
 // Событие на комбобоксе месяцев
 procedure TForm1.MonthBoxChange(Sender: TObject);
 begin
@@ -370,7 +354,7 @@ begin
     intData := DateTimeToUnix(dt);
 end;
 
-// Событие на кнопке выбора директории
+// Событие выбора итоговых меню
 procedure TForm1.CheckBox1Click(Sender: TObject);
 var
     i: integer;
@@ -417,11 +401,6 @@ begin
     ini := TIniFile.Create(iniFile);
     if SelectFolderDialogExt(Handle, StrSelectDir, directory) then
     begin
-        ini.WriteString('Directory', 'SelectDir', directory);
-    end
-    else
-    begin
-        directory := '';
         ini.WriteString('Directory', 'SelectDir', directory);
     end;
     ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
@@ -583,11 +562,17 @@ begin
         c.Parent := Panel4;
         c.Name := 'Ch' + IntToStr(k);
         c.Caption := JsonVal.Value;
+        c.Hint := c.Caption;
         c.Top := (k - 1) * (c.Height);
         c.Left := 10;
         c.Width := Panel4.Width - 20;
         c.Checked := True;
+        c.Cursor := crHandPoint;
         c.OnClick := CheckBox1Click;
+        c.Align := alTop;
+        c.ShowHint := True;
+        c.Margins.Left :=10;
+        c.Margins.Right := 10;
         strList.Add(IntToStr(k - 1));
       end;
     end;

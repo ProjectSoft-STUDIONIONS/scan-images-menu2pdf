@@ -766,36 +766,33 @@
 			//	'cmd.exe'
 			//]);
 		if(runing) {
-			await Beep(1760, 500);
+			await Beep(1760, 1000);
 			await closeDelay(pauseDelay - pauseError);
-			process.stdin.setRawMode(false);
-			process.stdin.pause();
 			console.clear();
 			process.stdin.setRawMode(false);
+			process.stdin.resume();
 			process.stdin.pause();
 		}else{
-			await Beep(1760, 500);
+			await Beep(1760, 1000);
 			console.clear();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
 		}
-		log(" ");
 	}).catch(async function(error) {
 		if(runing) {
+			log(" ");
 			await Beep();
 			await closeDelay(pauseDelay - pauseError);
-			process.stdin.setRawMode(false);
-			process.stdin.pause();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
 		}else{
+			log(" ");
 			await Beep();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
 		}
-		log(" ");
 	});
 })();
