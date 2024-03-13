@@ -6,7 +6,7 @@ object Form1: TForm1
   Caption = 
     #1044#1080#1072#1083#1086#1075' '#1085#1072#1089#1090#1088#1086#1077#1082' '#1076#1083#1103' '#1050#1086#1085#1074#1077#1088#1090#1080#1088#1086#1074#1072#1085#1080#1103' '#1086#1090#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1085#1099#1093' '#1080#1079#1086#1073#1088#1072#1078#1077#1085#1080#1081' ' +
     #1084#1077#1085#1102' '#1074' PDF '#1092#1072#1081#1083#1099' v2.8.3'
-  ClientHeight = 553
+  ClientHeight = 557
   ClientWidth = 648
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
@@ -22,14 +22,13 @@ object Form1: TForm1
   object LabelTypeConvert: TLabel
     AlignWithMargins = True
     Left = 5
-    Top = 445
+    Top = 449
     Width = 638
     Height = 15
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
-    ExplicitLeft = 3
-    ExplicitTop = 444
+    ExplicitTop = 445
     ExplicitWidth = 7
   end
   object Calendar1: TCalendar
@@ -37,7 +36,7 @@ object Form1: TForm1
     Left = 5
     Top = 102
     Width = 638
-    Height = 173
+    Height = 177
     Margins.Left = 5
     Margins.Top = 0
     Margins.Right = 5
@@ -45,8 +44,8 @@ object Form1: TForm1
     StartOfWeek = 1
     TabOrder = 1
     OnChange = Calendar1Change
-    ExplicitWidth = 622
-    ExplicitHeight = 146
+    ExplicitWidth = 632
+    ExplicitHeight = 164
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
@@ -66,7 +65,7 @@ object Form1: TForm1
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 632
+    ExplicitWidth = 642
     object MonthBox: TComboBox
       AlignWithMargins = True
       Left = 5
@@ -104,13 +103,13 @@ object Form1: TForm1
       ParentFont = False
       TabOrder = 1
       OnChange = MonthBoxChange
-      ExplicitLeft = 528
+      ExplicitLeft = 538
     end
   end
   object TypeMenuBox: TComboBox
     AlignWithMargins = True
     Left = 5
-    Top = 281
+    Top = 285
     Width = 638
     Height = 22
     Margins.Left = 5
@@ -119,13 +118,13 @@ object Form1: TForm1
     Style = csOwnerDrawFixed
     TabOrder = 2
     OnChange = TypeMenuBoxChange
-    ExplicitTop = 254
-    ExplicitWidth = 622
+    ExplicitTop = 272
+    ExplicitWidth = 632
   end
   object DialogButton: TButton
     AlignWithMargins = True
     Left = 5
-    Top = 494
+    Top = 498
     Width = 638
     Height = 25
     Margins.Left = 5
@@ -133,13 +132,13 @@ object Form1: TForm1
     Align = alBottom
     TabOrder = 3
     OnClick = DialogButtonClick
-    ExplicitTop = 418
-    ExplicitWidth = 622
+    ExplicitTop = 485
+    ExplicitWidth = 632
   end
   object StartButton: TButton
     AlignWithMargins = True
     Left = 5
-    Top = 525
+    Top = 529
     Width = 638
     Height = 25
     Margins.Left = 5
@@ -147,8 +146,8 @@ object Form1: TForm1
     Align = alBottom
     ModalResult = 1
     TabOrder = 4
-    ExplicitTop = 449
-    ExplicitWidth = 622
+    ExplicitTop = 516
+    ExplicitWidth = 632
   end
   object Panel1: TPanel
     AlignWithMargins = True
@@ -161,7 +160,7 @@ object Form1: TForm1
     BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 5
-    ExplicitWidth = 626
+    ExplicitWidth = 636
     object Panel2: TPanel
       AlignWithMargins = True
       Left = 3
@@ -211,7 +210,7 @@ object Form1: TForm1
       Caption = 'Panel3'
       ShowCaption = False
       TabOrder = 1
-      ExplicitWidth = 432
+      ExplicitWidth = 442
       object DateLabel: TLabel
         AlignWithMargins = True
         Left = 5
@@ -288,13 +287,13 @@ object Form1: TForm1
   end
   object GroupBox2: TGroupBox
     Left = 0
-    Top = 306
+    Top = 310
     Width = 648
     Height = 136
     Align = alBottom
     TabOrder = 6
-    ExplicitTop = 279
-    ExplicitWidth = 632
+    ExplicitTop = 297
+    ExplicitWidth = 642
     object Panel4: TScrollBox
       Left = 2
       Top = 17
@@ -305,13 +304,13 @@ object Form1: TForm1
       TabOrder = 0
       OnMouseMove = Panel4MouseMove
       OnMouseWheel = Panel4MouseWheel
-      ExplicitWidth = 632
+      ExplicitWidth = 638
     end
   end
   object ComboTypeConvert: TComboBox
     AlignWithMargins = True
     Left = 5
-    Top = 466
+    Top = 470
     Width = 638
     Height = 22
     Margins.Left = 5
@@ -325,9 +324,8 @@ object Form1: TForm1
     Items.Strings = (
       'convert'
       'magick')
-    ExplicitLeft = 3
-    ExplicitTop = 465
-    ExplicitWidth = 630
+    ExplicitTop = 457
+    ExplicitWidth = 632
   end
   object ImageList1: TImageList
     Left = 584

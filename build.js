@@ -28,7 +28,7 @@ const fs = require('fs'),
 	normalize = function(args) {
 		return path.normalize(path.join.apply(null, args));
 	},
-	compile = function(input, output, width, height) {
+	compile = function() {
 		return new Promise(function(resolve, reject){
 			let app = `csc.exe`,
 				args = [
@@ -49,7 +49,32 @@ const fs = require('fs'),
 					resolve(`Compiled ${config.product}.exe`);
 				}else{
 					//reject(args.join(' '));
-					reject(code);
+					reject(`Error ${config.product}.exe: ${code}`);
+				}
+			});
+		});
+	},
+	compileBeep = function(input, output){
+		return new Promise(function(resolve, reject){
+			let app = `csc.exe`,
+				args = [
+					`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
+					`/resource:${normalize([__dirname, "modules", "playbeep", "programm.resource"])}`,
+					`/out:modules/playbeep/playbeep.exe`,
+					`/win32manifest:${normalize([__dirname, "modules", "playbeep", "app.manifest"])}`,
+					`/target:exe`,
+					`${normalize([__dirname, "modules", "playbeep", "playbeep.cs"])}`,
+					`${normalize([__dirname, "modules", "playbeep", "AssemblyInfo.cs"])}`
+				],
+				ls = spawn( app, args );
+			ls.stdout.on('data', (data) => {});
+			ls.stderr.on('data', (data) => { reject(data); });
+			ls.on('close', (code) => {
+				if(code == 0){
+					resolve(`Compiled playbeep.exe`);
+				}else{
+					//reject(args.join(' '));
+					reject(`csc.exe ${args.join(" ")}`);
 				}
 			});
 		});
@@ -64,6 +89,11 @@ const fs = require('fs'),
 	try { await unlink(`${prg}`); } catch (error) { }
 	compile().then((data) => {
 		console.log(data);
+		compileBeep().then((data) => {
+			console.log(data);
+		}).catch((error) => {
+			console.log(error);
+		});
 	}).catch((error) => {
 		console.log(error);
 	});

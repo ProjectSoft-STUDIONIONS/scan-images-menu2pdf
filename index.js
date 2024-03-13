@@ -18,6 +18,7 @@
 		{ spawn, exec } = require('child_process'),
 		{ PDFDocument } =  require('pdf-lib'),
 		dialogs =  require('./modules/dialogs/dialogs.js'),
+		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
 		strLength = 40,
 		fMenu = 'menu.json';
@@ -389,7 +390,7 @@
 											 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
 											 * Приблизительно выставил 0.7
 											 */
-											let pdfDims = pdfImage.scale(0.7),
+											let pdfDims = pdfImage.scale(1),
 												/**
 												 * Добавляем страницу по рамерам полученного изображения
 												 */
@@ -601,8 +602,8 @@
 								fs.mkdirSync(resize_dir);
 								/**
 								 * Ресайз изображений
-								 * portrait     - книжная    (1130 x 1600)
-								 * landscape    - альбомная  (1600 x 1130)
+								 * portrait     - книжная    (993 x 1403)
+								 * landscape    - альбомная  (1403 x 993)
 								 * по умолчанию - книжная    (1130 x 1600)
 								 *
 								 * Если надо добавить, то добавляем новые условия.
@@ -616,16 +617,16 @@
 								let sizeW, sizeH;
 								switch(jsonPars[typeMenu]["size"]){
 									case 'portrait':
-										sizeW = 1130;
-										sizeH = 1600;
+										sizeW = 794;
+										sizeH = 1122;
 										break;
 									case 'landscape':
-										sizeW = 1600;
-										sizeH = 1130;
+										sizeW = 1122;
+										sizeH = 794;
 										break;
 									default:
-										sizeW = 1130;
-										sizeH = 1600;
+										sizeW = 794;
+										sizeH = 1122;
 								}
 
 								log(`${lang.image_optimization}...`.bold.yellow);
@@ -720,45 +721,21 @@
 				log(`${lang.closing_the_program}...`.bold.yellow);
 				log(" ");
 			}
-		},
-		playBeep = async function(...args) {
-			args = [].slice.call(args);
-			if(config.soundEnable){
-				let JZZ = require('jzz'),
-					midi = await JZZ(),
-					port = await midi.openMidiOut();
-				for(let a of args){
-					await port.noteOn(0, a[0], 127);
-					await port.wait(a[1]);
-					await port.noteOff(0, a[0]);
-				}
-				await port.close();
-			}
 		};
 	/**
 	 * Перезапишем файл языка
 	 */
 	fs.writeFileSync(`./language.${locale}.json`, JSON.stringify(lang, null, "\t"), {encoding: "utf8"});
 	/**
+	 * Сигнал запуска
+	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок
+	 */
+	Beep(1760, 500);
+	/**
 	 * Очищаем консоль
 	 */
 	process.stdin.resume();
 	console.clear();
-	/**
-	 * Играем музыку
-	 * Чисто прикалываюсь )))
-	 * Можно сделать что-то особое
-	 */
-	playBeep(
-		['A4', 300], ['C5', 300], ['E5', 300],
-		['A4', 300], ['C5', 300], ['E5', 300],
-		['A4', 300], ['C5', 300], ['E5', 300],
-		['A4', 300], ['C5', 300], ['E5', 300],
-		['A4', 300], ['C#5', 300], ['E5', 300],
-		['A4', 300], ['C#5', 300], ['E5', 300],
-		['A4', 300], ['D5', 300], ['F5', 300],
-		['A4', 300], ['D5', 300], ['F5', 300]
-	);
 	/**
 	 * ID процесса. Очень нужно для отладки
 	 */
@@ -782,44 +759,39 @@
 		 * Закрытие консоли
 		 * Честно говоря это черевато и не стоит так делать. Поэтому отключаем, но пример кода оставлю пока
 		 */
-		if(runing) {
-			/**
-			 * Играем музыку
-			 */
-			playBeep(['E5', 1000], ['C5', 1000], ['A4', 1000], ['A3', 1000]);
-			await closeDelay(pauseDelay - pauseError);
-			process.stdin.setRawMode(false);
-			process.stdin.pause();
 			//let ddr;
 			//ddr = spawn( 'taskkill', [
 			//	'/F',
 			//	'/IM',
 			//	'cmd.exe'
 			//]);
+		if(runing) {
+			await Beep(1760, 500);
+			await closeDelay(pauseDelay - pauseError);
+			process.stdin.setRawMode(false);
+			process.stdin.pause();
+			console.clear();
+			process.stdin.setRawMode(false);
+			process.stdin.pause();
 		}else{
-			await playBeep(['E5', 300], ['C5', 300], ['A4', 300], ['A3', 1000]);
+			await Beep(1760, 500);
+			console.clear();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
-			console.clear();
-			//process.title = ttl;
 		}
 		log(" ");
 	}).catch(async function(error) {
 		if(runing) {
-			playBeep(['E5', 1000], ['C5', 1000], ['A4', 1000], ['A3', 1000]);
+			await Beep();
 			await closeDelay(pauseDelay - pauseError);
+			process.stdin.setRawMode(false);
+			process.stdin.pause();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
-			//let ddr;
-			//ddr = spawn( 'taskkill', [
-			//	'/F',
-			//	'/IM',
-			//	'cmd.exe'
-			//]);
 		}else{
-			await playBeep(['E5', 300], ['C5', 300], ['A4', 300], ['A3', 1000]);
+			await Beep();
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();

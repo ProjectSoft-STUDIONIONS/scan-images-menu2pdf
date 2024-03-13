@@ -21,12 +21,6 @@ namespace Runner
 		[DllImport("user32.dll")]
 		static extern IntPtr RemoveMenu(IntPtr hMenu, uint nPosition, uint wFlags);
 
-		[DllImport("User32.dll")]
-		static extern Boolean MessageBeep(UInt32 beepType);
-
-		[DllImport("Kernel32.dll", SetLastError=true)]
-		static extern Boolean Beep( UInt32 frequency, UInt32 duration);
-
 		internal const int GWL_STYLE = -16;
 		internal const uint WS_THICKFRAME = 0x00040000;
 
@@ -61,9 +55,7 @@ namespace Runner
 
 			EnableMenuItem(hSystemMenu, SC_RESTORE, MF_GRAYED);
 			RemoveMenu(hSystemMenu, SC_RESTORE, MF_BYCOMMAND);
-
-			//MessageBeep(0);
-			//Beep(1760, 500);
+			// Устанавливаем цвет окна консоли в Чёрный цвет
 			Console.BackgroundColor = System.ConsoleColor.Black;
 			Console.Clear();
 			// Читаем настройки из файла
@@ -86,6 +78,7 @@ namespace Runner
 			p.StartInfo.UseShellExecute = false;
 			// Запускаем NodeJS
 			p.Start();
+			// Меняем title
 			Console.Title = App;
 			// Если ini файл не существует
 			if (File.Exists(ini) == false){

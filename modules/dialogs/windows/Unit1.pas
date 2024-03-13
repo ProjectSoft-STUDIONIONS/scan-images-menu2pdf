@@ -334,9 +334,9 @@ begin
     inherited;
     MinMaxInfo := Message.MinMaxInfo;
     MinMaxInfo^.ptMaxTrackSize.X := 700; // Maximum Width
-    MinMaxInfo^.ptMaxTrackSize.Y := 600; // Maximum Height
+    //MinMaxInfo^.ptMaxTrackSize.Y := 600; // Maximum Height
     MinMaxInfo^.ptMinTrackSize.X := 700; // Minimum Width
-    MinMaxInfo^.ptMinTrackSize.Y := 600; // Minimum Height
+    //MinMaxInfo^.ptMinTrackSize.Y := 600; // Minimum Height
 end;
 
 // Событие на комбобоксе месяцев
