@@ -21,6 +21,9 @@
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
 		strLength = 40,
+		beepTone = 1760,
+		beepDuration = 500,
+		beepDurationError = 1000,
 		fMenu = 'menu.json';
 
 	colors.enable();
@@ -72,13 +75,12 @@
 		},
 		timeRun = "0.00s",
 		lang = Object.fromEntries(Object.entries(Object.assign(langOld, langLoad)).sort()),
-		fsPromises = fs.promises,
 		// Опции для создания прогресс бара
 		optionsBar = {
 			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: (`  {bar}  `).bold.green + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow, // Шаблон прогресс бара
+			format: ((`  {bar}  `).bold.green + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow).bgBlack, // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -117,7 +119,7 @@
 					barsize: strLength - 2,
 					autopadding: true,
 					autopaddingChar: '000',
-					format: (`  {bar}  `).bold.green + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow,
+					format: ((`  {bar}  `).bold.green + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow).bgBlack,
 					barCompleteChar: '\u2588',
 					barIncompleteChar: '\u2591',
 					hideCursor: true,
@@ -192,11 +194,7 @@
 						arr[0] = arr[0].bold.yellow;
 						arr[1] = menuFile.bold.red;
 						arr[2] = arr[2].bold.yellow;
-						log(" ");
-						log(arr.join(""));
-						log(" ");
-						log(lang.error_close);
-						st_reject(" ");
+						st_reject(`\n\n${arr.join("")}\n\n`.bgBlack);
 						return;
 					}
 					// Ошибка парсинга
@@ -207,37 +205,13 @@
 						}
 					}
 				}catch(EX) {
-					log(" ");
-					log(lang.error_reading_json.bold.red);
-					log(" ");
-					log(lang.error_close);
+					st_reject(`\n\n${lang.error_reading_json}!\n\n`.bold.red.bgBlack);
 					return;
 				}
 				
 				const sp = separator();
 				
-				const openExplorerin = function(paths, callback) {
-					var cmd = ``;
-					switch (require(`os`).platform().toLowerCase().replace(/[0-9]/g, ``).replace(`darwin`, `macos`)) {
-						case `win`:
-							paths = paths || '=';
-							paths = paths.replace(/\//g, `\\`).replace(/\\$/, ``);
-							cmd = `explorer`;
-								break;
-							case `linux`:
-								paths = paths || '/';
-								cmd = `xdg-open`;
-								break;
-							case `macos`:
-								paths = paths || '/';
-								cmd = `open`;
-								break;
-						}
-						let p = require(`child_process`).spawn(cmd, ['/e,','/root,', paths]);
-						callback(p);
-					},
-
-					readDirectory = function(dir_read){
+				const readDirectory = function(dir_read){
 						return new Promise(function(resolve, reject) {
 							let files = fs.readdirSync(dir_read).filter(function(fn) {
 									if(fn.endsWith('.jpg') || fn.endsWith('.jpeg') || fn.endsWith('.png') || fn.endsWith('.JPG') || fn.endsWith('.JPEG') || fn.endsWith('.PNG')){
@@ -320,7 +294,7 @@
 									/**
 									 * Прогресс PDF
 									 */
-									log(`${lang.generating_pdf_files}...`.bold.yellow);
+									log(`${lang.generating_pdf_files}...`.bold.yellow.bgBlack);
 									let progressPDfIndex = 0;
 									let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
 									barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
@@ -515,10 +489,10 @@
 									barPdf.stop();
 									resolve();
 								}else{
-									reject(String(`${lang.directory_is_empty}: ${imgs}`).bold.red);
+									reject(String(`${lang.directory_is_empty}: ${imgs}`).bold.red.bgBlack);
 								}
 							}catch(e){
-								reject(e);
+								reject('');
 							}
 						});
 					};
@@ -536,10 +510,7 @@
 					try {
 						data = JSON.parse(data);
 					} catch(err_json){
-						log(`${lang.error_reading_json}!`.bold.red);
-						log(err_json);
-						closePrg();
-						st_resolve(" ");
+						st_reject(`${lang.error_reading_json}!`.bold.red.bgBlack);
 						return;
 					}
 					/**
@@ -568,10 +539,10 @@
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
-						log(`${lang.selected_menu_type}: `.bold.yellow + jsonPars[typeMenu]["name"].bold.green);
-						log(`${lang.selected_directory}: `.bold.yellow + dir.bold.green);
-						log(`${lang.selected_date}: `.bold.yellow + date.toLocaleDateString().bold.green);
-						log(" ");
+						log((`${lang.selected_menu_type}: `.bold.yellow + jsonPars[typeMenu]["name"].bold.green).bgBlack);
+						log((`${lang.selected_directory}: `.bold.yellow + dir.bold.green).bgBlack);
+						log((`${lang.selected_date}: `.bold.yellow + date.toLocaleDateString().bold.green).bgBlack);
+						log("".bgBlack);
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
 						date.setDate(date.getDate() + day);
@@ -587,17 +558,15 @@
 							 */
 							readDirectory(dir).then(async function(images){
 								if(await isDir(pdf_dir)){
-									log(`${lang.deleting_pdf_files}`.bold.yellow);
+									log(`${lang.deleting_pdf_files}\n`.bold.yellow.bgBlack);
 									emptyDir(pdf_dir);
-									log(" ");
 								}
 								/**
 								 * Директория изображений
 								 */
 								if(await isDir(resize_dir)){
-									log(`${lang.deleting_img_files}`.bold.yellow);
+									log(`${lang.deleting_img_files}\n`.bold.yellow.bgBlack);
 									fs.rmSync(resize_dir, { recursive: true, force: true });
-									log(" ");
 								}
 								fs.mkdirSync(resize_dir);
 								/**
@@ -629,7 +598,7 @@
 										sizeH = 1122;
 								}
 
-								log(`${lang.image_optimization}...`.bold.yellow);
+								log(`${lang.image_optimization}...`.bold.yellow.bgBlack);
 								/**
 								 * Прогресс по изображениям
 								 */
@@ -659,7 +628,7 @@
 								}
 								barPdf.terminal.cursor(true);
 								barPdf.stop();
-								log(" ");
+								log("".bgBlack);
 								/**
 								 * Генерация PDF файлов
 								 */
@@ -669,58 +638,44 @@
 									time = parseFloat(time / 1000).toFixed(2);
 									lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
 									lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
-									log(" ");
-									log((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.green);
 									closePrg(resize_dir);
-									st_resolve(" ");
+									st_resolve(((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.green + `\n`).bgBlack);
 								}).catch(async function(err){
-									log(" ");
-									log(`${lang.error_generating_pdf}!`.bold.red);
 									closePrg(resize_dir);
-									st_resolve(" ");
+									st_reject(`\n\n${lang.error_generating_pdf.bold.red}!`.bgBlack);
 								});
 							}).catch(async function(err){
-								if(barPdf) {
-									barPdf.terminal.cursor(true);
-									barPdf.stop();
-								}
+								barPdf && (
+									barPdf.terminal.cursor(true),
+									barPdf.stop()
+								);
 								console.clear();
-								log(`${lang.error}!: ${dir}`.bold.red);
 								closePrg(resize_dir);
-								st_resolve(" ");
+								st_reject(`\n\n${lang.error}!: ${dir}`.bold.red.bgBlack);
 							})
 						}
 					} else {
-						log(" ");
-						log(`${lang.completed_by_user}`.bold.yellow);
 						closePrg();
-						st_resolve(" ");
+						st_resolve(`${lang.completed_by_user}\n`.bold.yellow.bgBlack);
 					}
 				}).catch(async function(error) {
-					if(barPdf) {
-						barPdf.terminal.cursor(true);
-						barPdf.stop();
-					}
-					log(`${lang.error}!`.bold.red);
-					log(error);
+					barPdf && (
+						barPdf.terminal.cursor(true),
+						barPdf.stop()
+					);
 					closePrg();
-					st_resolve(" ");
+					st_reject(`${lang.error.bold.red}\n\n${error}`.bgBlack);
 				});
 			});
 		},
 		closePrg = async function(imgdir = false){
 			if(typeof imgdir == 'string'){
 				if(await isDir(imgdir)){
-					log(" ");
-					log(`${lang.deleting_img_files}`.bold.yellow);
+					log(`\n${lang.deleting_img_files}`.bold.yellow.bgBlack);
 					fs.rmSync(imgdir, { recursive: true, force: true });
 				}
 			}
-			if(runing){
-				log(" ");
-				log(`${lang.closing_the_program}...`.bold.yellow);
-				log(" ");
-			}
+			runing && log(`\n${lang.closing_the_program}...\n`.bold.yellow.bgBlack);
 		};
 	/**
 	 * Перезапишем файл языка
@@ -730,7 +685,7 @@
 	 * Сигнал запуска
 	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок
 	 */
-	Beep(1760, 500);
+	Beep(beepTone, beepDuration);
 	/**
 	 * Очищаем консоль
 	 */
@@ -744,14 +699,11 @@
 	 * Запускаем диалоги
 	 */
 	// Имя, версия
-	log(" ");
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log(config.description.bold.green + (' v' + config.version).bold.yellow);
+	log(('\n' + config.description.bold.green + (' v' + config.version).bold.yellow + '\n').bgBlack);
 	// Старт
-	log(" ");
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
-	log(`${lang.start}...`.bold.yellow);
-	log(" ");
+	log(`${lang.start}...\n`.bold.yellow.bgBlack);
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
 	start().then(async function(data) {
@@ -759,40 +711,19 @@
 		 * Закрытие консоли
 		 * Честно говоря это черевато и не стоит так делать. Поэтому отключаем, но пример кода оставлю пока
 		 */
-			//let ddr;
-			//ddr = spawn( 'taskkill', [
-			//	'/F',
-			//	'/IM',
-			//	'cmd.exe'
-			//]);
-		if(runing) {
-			await Beep(1760, 1000);
-			await closeDelay(pauseDelay - pauseError);
-			console.clear();
-			process.stdin.setRawMode(false);
-			process.stdin.resume();
-			process.stdin.pause();
-		}else{
-			await Beep(1760, 1000);
-			console.clear();
-			process.stdin.setRawMode(false);
-			process.stdin.resume();
-			process.stdin.pause();
-		}
+		log(`${data}`.bgBlack);
+		await Beep(beepTone, beepDuration);
+		runing && await closeDelay(pauseDelay - pauseError);
+		console.clear();
+		process.stdin.setRawMode(false);
+		process.stdin.resume();
+		process.stdin.pause();
 	}).catch(async function(error) {
-		if(runing) {
-			log(" ");
-			await Beep();
-			await closeDelay(pauseDelay - pauseError);
-			process.stdin.setRawMode(false);
-			process.stdin.resume();
-			process.stdin.pause();
-		}else{
-			log(" ");
-			await Beep();
-			process.stdin.setRawMode(false);
-			process.stdin.resume();
-			process.stdin.pause();
-		}
+		log(`${error}`.bgBlack);
+		await Beep(beepTone, beepDuration);
+		runing && await closeDelay(pauseDelay - pauseError);
+		process.stdin.setRawMode(false);
+		process.stdin.resume();
+		process.stdin.pause();
 	});
 })();

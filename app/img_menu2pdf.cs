@@ -57,6 +57,7 @@ namespace Runner
 			RemoveMenu(hSystemMenu, SC_RESTORE, MF_BYCOMMAND);
 			// Устанавливаем цвет окна консоли в Чёрный цвет
 			Console.BackgroundColor = System.ConsoleColor.Black;
+			Console.ForegroundColor = System.ConsoleColor.White;
 			Console.Clear();
 			// Читаем настройки из файла
 			String ini = dir + "\\" + "programm.ini";
