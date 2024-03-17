@@ -20,11 +20,20 @@
 		dialogs =  require('./modules/dialogs/dialogs.js'),
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
+		fMenu = path.normalize(path.join(__dirname, 'menu.json')),
 		strLength = 40,
+		/**
+		 * Размер страниц
+		 */
+		wPortrait = 1130,
+		wLandscape = 1600,
+		scale = .7,
+		/**
+		 * Тон, продолжительность звука
+		 */
 		beepTone = 1760,
 		beepDuration = 500,
-		beepDurationError = 1000,
-		fMenu = 'menu.json';
+		beepDurationError = 1000;
 
 	colors.enable();
 	config.description = config.description.trim();
@@ -34,6 +43,8 @@
 	require('events').EventEmitter.defaultMaxListeners = 15;
 
 	let barPdf,
+		sizeW = wPortrait,
+		sizeH = wLandscape,
 		locale = (Intl.DateTimeFormat().resolvedOptions().locale.match(/^(\w+)/) || ['ru'])[0],
 		/**
 		 * Дефолтный язык
@@ -175,7 +186,6 @@
 		},
 		start = function(){
 			return new Promise(function(st_resolve, st_reject){
-				let menuFile = path.normalize(path.join(__dirname, fMenu));
 				var date,
 					jsonPars,
 					json,
@@ -188,11 +198,11 @@
 				try{
 					try {
 						// Ошибка чтения
-						json = fs.readFileSync(menuFile);
+						json = fs.readFileSync(fMenu);
 					}catch(ee){
 						let arr = lang.file_menu_error.split('|');
 						arr[0] = arr[0].bold.yellow;
-						arr[1] = menuFile.bold.red;
+						arr[1] = fMenu.bold.red;
 						arr[2] = arr[2].bold.yellow;
 						st_reject(`\n\n${arr.join("")}\n\n`.bgBlack);
 						return;
@@ -223,7 +233,7 @@
 						})
 					},
 
-					resize = function(input, output, width, height) {
+					resize = function(input, output, width) {
 						return new Promise(function(resolve, reject){
 							let app = typeConvert,
 								args = [
@@ -247,10 +257,8 @@
 
 							ls.on('close', (code) => {
 								if(code == 0){
-									//log("resolve", code);
 									resolve(code);
 								}else{
-									//log("reject", code);
 									reject(code);
 								}
 							});
@@ -364,19 +372,19 @@
 											 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
 											 * Приблизительно выставил 0.7
 											 */
-											let pdfDims = pdfImage.scale(1),
-												/**
-												 * Добавляем страницу по рамерам полученного изображения
-												 */
-												page = pdfDoc.addPage([pdfDims.width, pdfDims.height]);
+											pdfImage.scale(scale);
+											/**
+											 * Добавляем страницу
+											 */
+											let page = pdfDoc.addPage([sizeW * scale, sizeH * scale]);
 											/**
 											 * Рисуем изображение на странице
 											 */
 											page.drawImage(pdfImage, {
 												x: 0,
 												y: 0,
-												width: pdfDims.width,
-												height: pdfDims.height,
+												width: sizeW * scale,
+												height: sizeH * scale,
 											});
 										}
 										/**
@@ -497,9 +505,7 @@
 						});
 					};
 
-				let fileName = path.join(__dirname, 'menu.json');
-
-				dialogs(fileName).then(async function(data){
+				dialogs(fMenu).then(async function(data){
 					/**
 					 * Запуск
 					 */
@@ -571,8 +577,8 @@
 								fs.mkdirSync(resize_dir);
 								/**
 								 * Ресайз изображений
-								 * portrait     - книжная    (993 x 1403)
-								 * landscape    - альбомная  (1403 x 993)
+								 * portrait     - книжная
+								 * landscape    - альбомная
 								 * по умолчанию - книжная    (1130 x 1600)
 								 *
 								 * Если надо добавить, то добавляем новые условия.
@@ -583,19 +589,19 @@
 								 * мы можем ресайзить под конкретные размеры.
 								 * Может где-то пригодится...
 								 */
-								let sizeW, sizeH;
 								switch(jsonPars[typeMenu]["size"]){
 									case 'portrait':
-										sizeW = 794;
-										sizeH = 1122;
+										sizeW = wPortrait;
+										sizeH = wLandscape;
 										break;
 									case 'landscape':
-										sizeW = 1122;
-										sizeH = 794;
+										sizeW = wLandscape;
+										sizeH = wPortrait;
 										break;
 									default:
-										sizeW = 794;
-										sizeH = 1122;
+										sizeW = wPortrait;
+										sizeH = wLandscape;
+										break;
 								}
 
 								log(`${lang.image_optimization}...`.bold.yellow.bgBlack);
@@ -617,7 +623,7 @@
 										ext = path.extname(image).toLowerCase(),
 										outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
 										outputFile = path.join(resize_dir, outF);
-									await resize(inputFile, outputFile, sizeW, sizeH);
+									await resize(inputFile, outputFile, sizeW);
 									/**
 									 * Прогресс Изображений
 									 */
@@ -680,20 +686,22 @@
 	/**
 	 * Перезапишем файл языка
 	 */
-	fs.writeFileSync(`./language.${locale}.json`, JSON.stringify(lang, null, "\t"), {encoding: "utf8"});
+	fs.writeFileSync(
+		path.normalize(path.join(__dirname, `language.${locale}.json`)),
+		JSON.stringify(lang, null, "\t"),
+		{
+			encoding: "utf8"
+		}
+	);
 	/**
 	 * Сигнал запуска
-	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок
+	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок (необязательно)
 	 */
 	Beep(beepTone, beepDuration);
-	/**
-	 * Очищаем консоль
-	 */
+
 	process.stdin.resume();
-	console.clear();
-	/**
-	 * ID процесса. Очень нужно для отладки
-	 */
+	// console.clear();
+	
 	// console.log(`Process ID: ${process.pid}`);
 	/**
 	 * Запускаем диалоги
@@ -714,7 +722,7 @@
 		log(`${data}`.bgBlack);
 		await Beep(beepTone, beepDuration);
 		runing && await closeDelay(pauseDelay - pauseError);
-		console.clear();
+		// console.clear();
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();

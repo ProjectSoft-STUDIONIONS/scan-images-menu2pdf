@@ -34,7 +34,7 @@ const fs = require('fs'),
 				args = [
 					`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
 					`/resource:${normalize([__dirname, "app", "programm.resource"])}`,
-					`/out:${config.product}.exe`,
+					`/out:bin\\${config.product}.exe`,
 					`/win32manifest:${normalize([__dirname, "app", "app.manifest"])}`,
 					`/target:exe`,
 					`${normalize([__dirname, "app", "img_menu2pdf.cs"])}`,
@@ -48,7 +48,7 @@ const fs = require('fs'),
 				if(code == 0){
 					resolve(`Compiled ${config.product}.exe`);
 				}else{
-					//reject(args.join(' '));
+					reject('csc.exe ' + args.join(' '));
 					reject(`Error ${config.product}.exe: ${code}`);
 				}
 			});

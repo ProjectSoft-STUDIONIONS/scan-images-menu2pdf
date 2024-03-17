@@ -39,7 +39,7 @@ namespace Runner
 			// Если программа запущена
 			// Имя окна приложения
 			string App = "Конвертирование отсканированных изображений меню в PDF файлы v2.8.3";
-			String dir = Environment.CurrentDirectory;
+			String dir = Path.GetDirectoryName(Environment.CurrentDirectory);
 			// Удаляем возможность закрытия приложения из интнрфейса
 			IntPtr hMenu = Process.GetCurrentProcess().MainWindowHandle;
 			IntPtr hSystemMenu = GetSystemMenu(hMenu, false);
@@ -58,14 +58,14 @@ namespace Runner
 			// Устанавливаем цвет окна консоли в Чёрный цвет
 			Console.BackgroundColor = System.ConsoleColor.Black;
 			Console.ForegroundColor = System.ConsoleColor.White;
-			Console.Clear();
+			// Console.Clear();
 			// Читаем настройки из файла
-			String ini = dir + "\\" + "programm.ini";
+			String ini = Environment.CurrentDirectory + "\\" + "programm.ini";
 			IniFile iniFile = new IniFile(ini);
 			String pad = iniFile.Read("pad", "Programm", "4");
 			// Применяем аргументы
 			// Аргумент pause ОБЯЗАТЕЛЕН!
-			String arguments = "index.js" + " --pad=" + pad + " --runing=True && pause";
+			String arguments = dir + "\\index.js" + " --pad=" + pad + " --runing=True && pause";
 			// Готовим к запуску NodeJS
 			Process p = new Process();
 			p.StartInfo = new ProcessStartInfo("node.exe");

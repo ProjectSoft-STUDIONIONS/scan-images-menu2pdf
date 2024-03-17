@@ -41,11 +41,11 @@ var
   fileName, jsn: string;
   i: Integer;
   jo: TJsonObject;
-  // Handle: THandle;
+  Handle: THandle;
 begin
   SetConsoleOutputCP(CP_UTF8);
-  // Handle := GetForegroundWindow;
-  // SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NoMove or SWP_NoSize);
+  Handle := GetForegroundWindow;
+  EnableWindow(Handle, False);
   if ParamCount > 0 then
   begin
     for i := 1 to ParamCount do
@@ -57,7 +57,6 @@ begin
         begin
           Form1 := TForm1.Create(nil);
           Form1.HandleNeeded;
-          // SetWindowLongPtr(Form1.Handle, GWLP_HWNDPARENT, Handle);
           Form1.fileName := fileName;
           Form1.SendJSON(fileName);
           if Form1.ShowModal = mrOk then
@@ -76,14 +75,14 @@ begin
           end
           else
           begin
-            writeLn('{"error": 3}');
+            writeLn('{"message": "Aborted by user", "error": "3"}');
           end;
           Form1.Free;
           break;
         end
         else
         begin
-          writeLn('{"error": 2}');
+          writeLn('{"message": "File '+fileName+' does not exist", "error": "2"}');
           Form1.Free;
           break;
         end;
@@ -92,7 +91,8 @@ begin
   end
   else
   begin
-    writeLn('{"error": 1}');
+    writeLn('{"message": "Launched without parameters", "error": "1"}');
   end;
-
+  EnableWindow(Handle, True);
+  SetForegroundWindow(Handle);
 end.

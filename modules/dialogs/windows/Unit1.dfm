@@ -8,10 +8,10 @@ object Form1: TForm1
     ' '#1092#1072#1081#1083#1099' v2.8.3'
   ClientHeight = 516
   ClientWidth = 488
-  Color = clBtnFace
+  Color = clWhite
   Constraints.MinWidth = 500
   Font.Charset = RUSSIAN_CHARSET
-  Font.Color = clWindowText
+  Font.Color = clBlack
   Font.Height = -13
   Font.Name = 'Consolas'
   Font.Style = []
@@ -29,7 +29,14 @@ object Form1: TForm1
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
-    ExplicitTop = 449
+    Color = clCream
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
     ExplicitWidth = 7
   end
   object Panel1: TPanel
@@ -41,9 +48,17 @@ object Form1: TForm1
     Align = alTop
     Alignment = taLeftJustify
     BevelOuter = bvNone
+    Color = clCream
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentBackground = False
+    ParentFont = False
     ShowCaption = False
     TabOrder = 5
-    ExplicitWidth = 638
+    ExplicitWidth = 478
     object Panel2: TPanel
       AlignWithMargins = True
       Left = 3
@@ -54,6 +69,14 @@ object Form1: TForm1
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = 'Panel2'
+      Color = clCream
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Consolas'
+      Font.Style = []
+      ParentBackground = False
+      ParentFont = False
       ShowCaption = False
       TabOrder = 0
       object Label1: TLabel
@@ -63,6 +86,15 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
+        Color = clCream
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Consolas'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        ExplicitLeft = 175
         ExplicitWidth = 7
       end
       object Label2: TLabel
@@ -72,6 +104,15 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
+        Color = clCream
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Consolas'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        ExplicitLeft = 175
         ExplicitWidth = 7
       end
       object Label3: TLabel
@@ -81,6 +122,15 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
+        Color = clCream
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Consolas'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        ExplicitLeft = 175
         ExplicitWidth = 7
       end
     end
@@ -94,9 +144,17 @@ object Form1: TForm1
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = 'Panel3'
+      Color = clCream
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Consolas'
+      Font.Style = []
+      ParentBackground = False
+      ParentFont = False
       ShowCaption = False
       TabOrder = 1
-      ExplicitWidth = 444
+      ExplicitWidth = 284
       object DateLabel: TLabel
         AlignWithMargins = True
         Left = 5
@@ -109,12 +167,14 @@ object Form1: TForm1
         Margins.Bottom = 0
         Align = alTop
         AutoSize = False
+        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
+        ParentColor = False
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
@@ -133,12 +193,14 @@ object Form1: TForm1
         Margins.Bottom = 0
         Align = alTop
         AutoSize = False
+        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
+        ParentColor = False
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
@@ -157,12 +219,14 @@ object Form1: TForm1
         Margins.Right = 5
         Align = alTop
         AutoSize = False
+        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
+        ParentColor = False
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
@@ -182,8 +246,17 @@ object Form1: TForm1
     Margins.Right = 0
     Margins.Bottom = 0
     Align = alTop
+    Color = clCream
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentBackground = False
+    ParentColor = False
+    ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 644
+    ExplicitWidth = 484
     object MonthBox: TComboBox
       AlignWithMargins = True
       Left = 5
@@ -194,8 +267,9 @@ object Form1: TForm1
       Margins.Bottom = 0
       Align = alLeft
       Style = csOwnerDrawFixed
+      Color = clCream
       Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clWindowText
+      Font.Color = clBlack
       Font.Height = -13
       Font.Name = 'Consolas'
       Font.Style = []
@@ -213,15 +287,16 @@ object Form1: TForm1
       Margins.Bottom = 0
       Align = alRight
       Style = csOwnerDrawFixed
+      Color = clCream
       Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clWindowText
+      Font.Color = clBlack
       Font.Height = -13
       Font.Name = 'Consolas'
       Font.Style = []
       ParentFont = False
       TabOrder = 1
       OnChange = MonthBoxChange
-      ExplicitLeft = 540
+      ExplicitLeft = 380
     end
   end
   object Calendar1: TCalendar
@@ -234,11 +309,20 @@ object Form1: TForm1
     Margins.Top = 0
     Margins.Right = 5
     Align = alClient
-    Constraints.MinHeight = 150
+    Color = clCream
+    Constraints.MinHeight = 149
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     GridLineWidth = 2
+    ParentFont = False
     StartOfWeek = 1
     TabOrder = 1
     OnChange = Calendar1Change
+    ExplicitWidth = 474
+    ExplicitHeight = 149
   end
   object TypeMenuBox: TComboBox
     AlignWithMargins = True
@@ -250,11 +334,11 @@ object Form1: TForm1
     Margins.Right = 5
     Align = alBottom
     Style = csOwnerDrawFixed
+    Color = clCream
     TabOrder = 2
     OnChange = TypeMenuBoxChange
-    ExplicitLeft = 0
-    ExplicitTop = 328
-    ExplicitWidth = 446
+    ExplicitTop = 257
+    ExplicitWidth = 474
   end
   object GroupBox2: TGroupBox
     Left = 0
@@ -262,11 +346,21 @@ object Form1: TForm1
     Width = 488
     Height = 122
     Align = alBottom
+    Color = clCream
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     Padding.Left = 5
     Padding.Right = 5
+    ParentBackground = False
+    ParentColor = False
+    ParentFont = False
     ShowFrame = False
-    TabOrder = 6
-    ExplicitTop = 286
+    TabOrder = 7
+    ExplicitTop = 282
+    ExplicitWidth = 484
     object Panel4: TScrollBox
       Left = 7
       Top = 17
@@ -277,7 +371,7 @@ object Form1: TForm1
       TabOrder = 0
       OnMouseMove = Panel4MouseMove
       OnMouseWheel = Panel4MouseWheel
-      ExplicitHeight = 88
+      ExplicitWidth = 470
     end
   end
   object ComboTypeConvert: TComboBox
@@ -290,15 +384,22 @@ object Form1: TForm1
     Margins.Right = 5
     Align = alBottom
     Style = csOwnerDrawFixed
+    Color = clCream
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     ItemIndex = 0
-    TabOrder = 7
+    ParentFont = False
+    TabOrder = 6
     Text = 'convert'
     OnChange = ComboTypeConvertChange
     Items.Strings = (
       'convert'
       'magick')
-    ExplicitTop = 469
-    ExplicitWidth = 634
+    ExplicitTop = 428
+    ExplicitWidth = 474
   end
   object DialogButton: TButton
     AlignWithMargins = True
@@ -309,10 +410,16 @@ object Form1: TForm1
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 3
     OnClick = DialogButtonClick
-    ExplicitTop = 497
-    ExplicitWidth = 634
+    ExplicitTop = 456
+    ExplicitWidth = 474
   end
   object StartButton: TButton
     AlignWithMargins = True
@@ -323,13 +430,19 @@ object Form1: TForm1
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     ModalResult = 1
+    ParentFont = False
     TabOrder = 4
-    ExplicitTop = 528
-    ExplicitWidth = 634
+    ExplicitTop = 487
+    ExplicitWidth = 474
   end
   object ImageList1: TImageList
-    Left = 584
+    Left = 16
     Top = 8
     Bitmap = {
       494C010101000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600

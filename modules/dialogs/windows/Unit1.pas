@@ -573,8 +573,12 @@ begin
         c.ShowHint := True;
         c.Margins.Left :=10;
         c.Margins.Right := 10;
+        c.TabOrder := k + 5;
         strList.Add(IntToStr(k - 1));
       end;
+      ComboTypeConvert.TabOrder := k + 6;
+      DialogButton.TabOrder := k + 7;
+      StartButton.TabOrder := k + 8;
     end;
     index := ArrayToStr2(strList, ',');
     strList.Destroy;
