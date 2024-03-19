@@ -273,8 +273,6 @@ object Form1: TForm1
     Align = alBottom
     Padding.Left = 5
     Padding.Right = 5
-    ParentBackground = False
-    ShowFrame = False
     TabOrder = 7
     ExplicitTop = 282
     ExplicitWidth = 484

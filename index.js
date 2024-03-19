@@ -697,8 +697,6 @@
 	 * Сигнал запуска
 	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок (необязательно)
 	 */
-	//await Beep(659, 250);
-	await Beep(1760, 500);
 	process.stdin.resume();
 	// console.clear();
 
@@ -722,7 +720,7 @@
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
-		await Beep(1760, 500);
+		await Beep(1760, 200);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();
@@ -732,7 +730,7 @@
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
-		await Beep(1760, 500);
+		await Beep(1760, 200);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();

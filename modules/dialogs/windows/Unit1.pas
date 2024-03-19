@@ -324,6 +324,7 @@ begin
     var dt := Calendar1.CalendarDate;
     intData := DateTimeToUnix(dt);
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
+    Winapi.Windows.Beep(1760, 500);
 end;
 
 // Событие на комбобоксе месяцев
