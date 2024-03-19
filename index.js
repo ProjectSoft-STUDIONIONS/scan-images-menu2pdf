@@ -720,6 +720,9 @@
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
+		/**
+		 * Завершение
+		 */
 		await Beep(1760, 200);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
@@ -730,6 +733,9 @@
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
+		/**
+		 * Завершение
+		 */
 		await Beep(1760, 200);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
