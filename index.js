@@ -697,7 +697,7 @@
 	 * Сигнал запуска
 	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок (необязательно)
 	 */
-	await Beep(659, 250);
+	//await Beep(659, 250);
 	await Beep(1760, 500);
 	process.stdin.resume();
 	// console.clear();
@@ -718,21 +718,21 @@
 	process.stdin.setEncoding('utf8');
 	start().then(async function(data) {
 		log(`${data}`.bgBlack);
-		await Beep(1760, 500);
 		/**
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
+		await Beep(1760, 500);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();
 	}).catch(async function(error) {
 		log(`${error}`.bgBlack);
-		await Beep(1760, 500);
 		/**
 		 * Закрытие консоли
 		 */
 		runing && await closeDelay(pauseDelay - pauseError);
+		await Beep(1760, 500);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();
