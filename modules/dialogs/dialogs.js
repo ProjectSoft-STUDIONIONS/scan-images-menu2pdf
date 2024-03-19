@@ -8,7 +8,7 @@ function dialogs(fileJsonMenu) {
 		 * Под Linux будут другие пути и команды
 		 */
 		// Windows exe
-		const bat = exec(path.join(root, 'dist/dialogs.exe --typemenu ' + fileJsonMenu), (error, stdout, stderr) => {
+		const bat = exec(path.normalize(path.join(root, 'dist/dialogs.exe')) + ' --typemenu ' + fileJsonMenu), (error, stdout, stderr) => {
 			if (stdout) {
 				if (!stdout.trim())
 					reject(`None`);
