@@ -65,7 +65,7 @@ namespace Runner
 			String pad = iniFile.Read("pad", "Programm", "4");
 			// Применяем аргументы
 			// Аргумент pause ОБЯЗАТЕЛЕН!
-			String arguments = dir + "\\index.js" + " --pad=" + pad + " --runing=True && pause";
+			String arguments = dir + "\\index.js" + " --pad=" + pad + " --runing=True";
 			// Готовим к запуску NodeJS
 			Process p = new Process();
 			p.StartInfo = new ProcessStartInfo("node.exe");

@@ -62,6 +62,7 @@ type
         StrErrorSelectDir: string;
         StrUserAbort: string;
         StrErrorReadFile: string;
+        StrErrorIndex: string;
         GroupBox1Str: string;
         Label1Str: string;
         Label2Str: string;
@@ -215,6 +216,7 @@ begin
     CalendarStr           := ini.ReadString('Lang', 'CalendarStr', 'Запуск программы');
     MenuGenerate          := ini.ReadString('Lang', 'MenuGenerate', 'Меню для генерации');
     TypeConvert           := ini.ReadString('Lang', 'TypeConvert', 'Тип конвертора');
+    StrErrorIndex         := ini.ReadString('Lang', 'StrErrorIndex',  'Ошибка выбора Меню для генерации');
 	  // Пишем назад прочтённые данные
     ini.WriteString('Lang', 'StrSelectDir', StrSelectDir);
     ini.WriteString('Lang', 'StrError', StrError);
@@ -224,6 +226,7 @@ begin
     ini.WriteString('Lang', 'StrErrorSelectDir', StrErrorSelectDir);
     ini.WriteString('Lang', 'StrUserAbort', StrUserAbort);
     ini.WriteString('Lang', 'StrErrorReadFile', StrErrorReadFile);
+    ini.WriteString('Lang', 'StrErrorIndex', StrErrorIndex);
     ini.WriteString('Lang', 'GroupBox1Str', GroupBox1Str);
     ini.WriteString('Lang', 'Label1Str', Label1Str);
     ini.WriteString('Lang', 'Label2Str', Label2Str);
@@ -417,7 +420,19 @@ procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
     i: integer;
     strList: TStringList;
+    msgParams: TMsgBoxParams;
+    dwTemp: Cardinal;
 begin
+    dwTemp := MB_USERICON + MB_TOPMOST;
+    msgParams.cbSize:= SizeOf(msgParams);
+    msgParams.hwndOwner:= Handle;
+    msgParams.hInstance:= HInstance;
+    msgParams.lpszIcon:= PCHAR('MAINICON');
+    msgParams.dwContextHelpId:= 0;
+    msgParams.lpfnMsgBoxCallback:= nil;
+    msgParams.dwLanguageId:= LANG_NEUTRAL;
+    msgParams.dwStyle:= dwTemp + MB_OKCANCEL;
+
     strList := TStringList.Create;
     for i := 0 to Panel4.ComponentCount-1 do
     begin
@@ -432,41 +447,63 @@ begin
     end;
     index := ArrayToStr2(strList, ',');
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
+    if(strList.Count < 1)then
+    begin
+        Winapi.Windows.Beep(1760, 500);
+        msgParams.lpszText:= PChar(StrErrorIndex.PadRight(100, ' '));
+        msgParams.lpszCaption:= PChar(StrWarning);
+        MessageBoxIndirect(msgParams);
+        strList.Destroy;
+        CanClose := False;
+        SetForegroundWindow(Handle);
+        Exit;
+    end;
     strList.Destroy;
-    // ShowMessage(index);
     if not(Form1.ModalResult = mrCancel) then
     begin
         if (MenuLabel.Caption = '') then
         begin
-            MessageBox(Handle,
-              PChar(StrErrorTypeMenu.PadRight(100, ' ')),
-              PChar(StrError), MB_ICONSTOP);
+            Winapi.Windows.Beep(1760, 500);
+            msgParams.lpszText:= PChar(StrErrorTypeMenu.PadRight(100, ' '));
+            msgParams.lpszCaption:= PChar(StrError);
+            msgParams.dwStyle:= dwTemp + MB_OK;
+            MessageBoxIndirect(msgParams);
             CanClose := False;
+            SetForegroundWindow(Handle);
             Exit;
         end;
         if (DateLabel.Caption = '') then
         begin
-            MessageBox(Handle,
-              PChar(StrErrorDate.PadRight(100, ' ')),
-              PChar(StrError), MB_ICONSTOP);
+            Winapi.Windows.Beep(1760, 500);
+            msgParams.lpszText:= PChar(StrErrorDate.PadRight(100, ' '));
+            msgParams.lpszCaption:= PChar(StrError);
+            msgParams.dwStyle:= dwTemp + MB_OK;
+            MessageBoxIndirect(msgParams);
             CanClose := False;
+            SetForegroundWindow(Handle);
             Exit;
         end;
         if (DirectoryLabel.Caption = '') then
         begin
-            MessageBox(Handle,
-              PChar(StrErrorSelectDir.PadRight(100, ' ')),
-              PChar(StrError), MB_ICONSTOP);
+            Winapi.Windows.Beep(1760, 500);
+            Winapi.Windows.Beep(1760, 500);
+            msgParams.lpszText:= PChar(StrErrorSelectDir.PadRight(100, ' '));
+            msgParams.lpszCaption:= PChar(StrError);
+            msgParams.dwStyle:= dwTemp + MB_OK;
+            MessageBoxIndirect(msgParams);
             CanClose := False;
+            SetForegroundWindow(Handle);
             Exit;
         end;
     end;
     if (Form1.ModalResult = mrCancel) then
     begin
         Form1.Visible := False;
-        if (MessageBox(Handle,
-          PChar(StrUserAbort.PadRight(100, ' ')),
-          PChar(StrWarning), MB_ICONASTERISK + MB_OKCANCEL) = mrOk) then
+        Winapi.Windows.Beep(1760, 500);
+        msgParams.lpszText:= PChar(StrUserAbort.PadRight(100, ' '));
+        msgParams.lpszCaption:= PChar(StrWarning);
+        msgParams.dwStyle:= dwTemp + MB_OKCANCEL;
+        if (MessageBoxIndirect(msgParams) = mrOk) then
         begin
             CanClose := True;
         end
@@ -474,6 +511,7 @@ begin
         begin
             Form1.Visible := True;
             CanClose := False;
+            SetForegroundWindow(Handle);
         end;
     end;
 end;
@@ -582,7 +620,7 @@ begin
     end;
     index := ArrayToStr2(strList, ',');
     strList.Destroy;
-    // ShowMessage(index);
+    SetForegroundWindow(Handle);
 end;
 
 // Появление формы.

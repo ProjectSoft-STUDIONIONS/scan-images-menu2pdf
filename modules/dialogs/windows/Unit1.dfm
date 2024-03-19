@@ -8,7 +8,7 @@ object Form1: TForm1
     ' '#1092#1072#1081#1083#1099' v2.8.3'
   ClientHeight = 516
   ClientWidth = 488
-  Color = clWhite
+  Color = clWindow
   Constraints.MinWidth = 500
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clBlack
@@ -29,14 +29,6 @@ object Form1: TForm1
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
-    Color = clCream
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
-    ParentColor = False
-    ParentFont = False
     ExplicitWidth = 7
   end
   object Panel1: TPanel
@@ -48,14 +40,7 @@ object Form1: TForm1
     Align = alTop
     Alignment = taLeftJustify
     BevelOuter = bvNone
-    Color = clCream
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
-    ParentBackground = False
-    ParentFont = False
+    Color = clWhite
     ShowCaption = False
     TabOrder = 5
     ExplicitWidth = 478
@@ -69,14 +54,7 @@ object Form1: TForm1
       Alignment = taLeftJustify
       BevelOuter = bvNone
       Caption = 'Panel2'
-      Color = clCream
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clBlack
-      Font.Height = -13
-      Font.Name = 'Consolas'
-      Font.Style = []
-      ParentBackground = False
-      ParentFont = False
+      Color = clWhite
       ShowCaption = False
       TabOrder = 0
       object Label1: TLabel
@@ -86,13 +64,11 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
-        Color = clCream
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
         ExplicitLeft = 175
         ExplicitWidth = 7
@@ -104,13 +80,11 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
-        Color = clCream
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
         ExplicitLeft = 175
         ExplicitWidth = 7
@@ -122,13 +96,11 @@ object Form1: TForm1
         Height = 15
         Align = alTop
         Alignment = taRightJustify
-        Color = clCream
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
         ExplicitLeft = 175
         ExplicitWidth = 7
@@ -145,13 +117,6 @@ object Form1: TForm1
       BevelOuter = bvNone
       Caption = 'Panel3'
       Color = clCream
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clBlack
-      Font.Height = -13
-      Font.Name = 'Consolas'
-      Font.Style = []
-      ParentBackground = False
-      ParentFont = False
       ShowCaption = False
       TabOrder = 1
       ExplicitWidth = 284
@@ -167,17 +132,13 @@ object Form1: TForm1
         Margins.Bottom = 0
         Align = alTop
         AutoSize = False
-        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
         ExplicitLeft = 2
         ExplicitWidth = 464
       end
@@ -193,17 +154,13 @@ object Form1: TForm1
         Margins.Bottom = 0
         Align = alTop
         AutoSize = False
-        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
         ExplicitLeft = 2
         ExplicitTop = 32
         ExplicitWidth = 133
@@ -219,17 +176,13 @@ object Form1: TForm1
         Margins.Right = 5
         Align = alTop
         AutoSize = False
-        Color = clCream
         EllipsisPosition = epPathEllipsis
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -13
         Font.Name = 'Consolas'
         Font.Style = []
-        ParentColor = False
         ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
         ExplicitTop = 47
         ExplicitWidth = 157
       end
@@ -246,15 +199,6 @@ object Form1: TForm1
     Margins.Right = 0
     Margins.Bottom = 0
     Align = alTop
-    Color = clCream
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
-    ParentBackground = False
-    ParentColor = False
-    ParentFont = False
     TabOrder = 0
     ExplicitWidth = 484
     object MonthBox: TComboBox
@@ -267,13 +211,7 @@ object Form1: TForm1
       Margins.Bottom = 0
       Align = alLeft
       Style = csOwnerDrawFixed
-      Color = clCream
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clBlack
-      Font.Height = -13
-      Font.Name = 'Consolas'
-      Font.Style = []
-      ParentFont = False
+      Color = clWhite
       TabOrder = 0
       OnChange = MonthBoxChange
     end
@@ -288,12 +226,6 @@ object Form1: TForm1
       Align = alRight
       Style = csOwnerDrawFixed
       Color = clCream
-      Font.Charset = RUSSIAN_CHARSET
-      Font.Color = clBlack
-      Font.Height = -13
-      Font.Name = 'Consolas'
-      Font.Style = []
-      ParentFont = False
       TabOrder = 1
       OnChange = MonthBoxChange
       ExplicitLeft = 380
@@ -309,15 +241,8 @@ object Form1: TForm1
     Margins.Top = 0
     Margins.Right = 5
     Align = alClient
-    Color = clCream
     Constraints.MinHeight = 149
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
     GridLineWidth = 2
-    ParentFont = False
     StartOfWeek = 1
     TabOrder = 1
     OnChange = Calendar1Change
@@ -346,17 +271,9 @@ object Form1: TForm1
     Width = 488
     Height = 122
     Align = alBottom
-    Color = clCream
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
     Padding.Left = 5
     Padding.Right = 5
     ParentBackground = False
-    ParentColor = False
-    ParentFont = False
     ShowFrame = False
     TabOrder = 7
     ExplicitTop = 282
@@ -384,7 +301,6 @@ object Form1: TForm1
     Margins.Right = 5
     Align = alBottom
     Style = csOwnerDrawFixed
-    Color = clCream
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clBlack
     Font.Height = -13
@@ -410,12 +326,6 @@ object Form1: TForm1
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Consolas'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 3
     OnClick = DialogButtonClick
     ExplicitTop = 456
@@ -442,7 +352,7 @@ object Form1: TForm1
     ExplicitWidth = 474
   end
   object ImageList1: TImageList
-    Left = 16
+    Left = 24
     Top = 8
     Bitmap = {
       494C010101000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600

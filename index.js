@@ -27,13 +27,7 @@
 		 */
 		wPortrait = 1130,
 		wLandscape = 1600,
-		scale = .7,
-		/**
-		 * Тон, продолжительность звука
-		 */
-		beepTone = 1760,
-		beepDuration = 500,
-		beepDurationError = 1000;
+		scale = .5;
 
 	colors.enable();
 	config.description = config.description.trim();
@@ -370,7 +364,8 @@
 											 * Масштабируем страницу
 											 * При сканировании страниц в формате 300dpi
 											 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
-											 * Приблизительно выставил 0.7
+											 * Приблизительно выставил 0.7 
+											 * Точное решение - 0.5
 											 */
 											pdfImage.scale(scale);
 											/**
@@ -617,6 +612,10 @@
 									timeRun: "0.00s",
 									eta: "0.00"
 								});
+								/**
+								 * Старт ресайза
+								 */
+								await Beep(659, 250);
 								for(let image of images){
 									++progressImgIndex;
 									let inputFile = path.join(dir, image),
@@ -638,6 +637,7 @@
 								/**
 								 * Генерация PDF файлов
 								 */
+								await Beep(659, 250);
 								pdfGenerator(pdf_dir, resize_dir).then(async function(str){
 									endTime = new Date().getTime();
 									let time = endTime - startTime;
@@ -697,10 +697,12 @@
 	 * Сигнал запуска
 	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок (необязательно)
 	 */
-	Beep(beepTone, beepDuration);
-
+	await Beep(659, 250);
+	await Beep(1760, 500);
 	process.stdin.resume();
 	// console.clear();
+
+	// console.log(process);
 	
 	// console.log(`Process ID: ${process.pid}`);
 	/**
@@ -715,20 +717,21 @@
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
 	start().then(async function(data) {
+		log(`${data}`.bgBlack);
+		await Beep(1760, 500);
 		/**
 		 * Закрытие консоли
-		 * Честно говоря это черевато и не стоит так делать. Поэтому отключаем, но пример кода оставлю пока
 		 */
-		log(`${data}`.bgBlack);
-		await Beep(beepTone, beepDuration);
 		runing && await closeDelay(pauseDelay - pauseError);
-		// console.clear();
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();
 	}).catch(async function(error) {
 		log(`${error}`.bgBlack);
-		await Beep(beepTone, beepDuration);
+		await Beep(1760, 500);
+		/**
+		 * Закрытие консоли
+		 */
 		runing && await closeDelay(pauseDelay - pauseError);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
