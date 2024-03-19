@@ -20,7 +20,7 @@
 		dialogs =  require('./modules/dialogs/dialogs.js'),
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
-		fMenu = path.normalize(path.join(__dirname, 'menu.json')),
+		fMenu = 'menu.json',
 		strLength = 40,
 		/**
 		 * Размер страниц
@@ -687,7 +687,7 @@
 	 * Перезапишем файл языка
 	 */
 	fs.writeFileSync(
-		path.normalize(path.join(__dirname, `language.${locale}.json`)),
+		`language.${locale}.json`,
 		JSON.stringify(lang, null, "\t"),
 		{
 			encoding: "utf8"

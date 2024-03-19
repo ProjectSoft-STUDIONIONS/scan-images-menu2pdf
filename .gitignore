@@ -32,4 +32,4 @@ settings.ini
 programm.ini
 desktop.ini
 Desktop.ini
-
+inno_setup/*.exe
