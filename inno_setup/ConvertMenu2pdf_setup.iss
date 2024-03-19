@@ -2,15 +2,13 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CnvertMenu2pdf"
-#define MyAppVersion "2.8.4"
+#define MyAppVersion "2.8.3"
 #define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
 #define MyAppExeName "programm.exe"      
 #define MyAppTitle "Конвертирование отсканированных изображений меню в PDF файлы"
 
 [Setup]
-; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
-; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{6366BCA4-F02D-4CFF-A3DA-F50CE9EF1162}
 AppName={#MyAppTitle}
 AppVersion={#MyAppVersion}
@@ -63,8 +61,8 @@ Source: "..\node_modules\*"; DestDir: "{app}\node_modules\"; Flags: ignoreversio
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\bin\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppTitle, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
