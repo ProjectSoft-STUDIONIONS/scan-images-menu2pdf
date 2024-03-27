@@ -7,37 +7,35 @@ uses
     System.Classes, System.Generics.Collections,
     System.JSON, System.IOUtils, Vcl.Graphics, FileCtrl, IniFiles,
     Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DateUtils, Vcl.WinXCalendars,
-    Vcl.ComCtrls,
-    Vcl.StdCtrls, Vcl.Grids, Vcl.Samples.Calendar, Vcl.Buttons,
-    System.ImageList,  ShlObj,
-    Vcl.ImgList, Vcl.ExtCtrls;
+    Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Grids, Vcl.Samples.Calendar, Vcl.Buttons,
+    System.ImageList,  ShlObj, Vcl.ImgList, Vcl.ExtCtrls;
 
 // Продумать локализацию
 // Основные переменные здесь
 
 type
     TForm1 = class(TForm)
-        Calendar1: TCalendar;
-        MonthBox: TComboBox;
-        YearBox: TComboBox;
-        ImageList1: TImageList;
-        DateLabel: TLabel;
-        DirectoryLabel: TLabel;
-        MenuLabel: TLabel;
-        GroupBox1: TGroupBox;
-        TypeMenuBox: TComboBox;
-        DialogButton: TButton;
-        StartButton: TButton;
-        Panel1: TPanel;
-        Panel2: TPanel;
-        Panel3: TPanel;
-        Label1: TLabel;
-        Label2: TLabel;
-        Label3: TLabel;
-        GroupBox2: TGroupBox;
-        Panel4: TScrollBox;
-        ComboTypeConvert: TComboBox;
-        LabelTypeConvert: TLabel;
+        Calendar1        : TCalendar;
+        MonthBox         : TComboBox;
+        YearBox          : TComboBox;
+        ImageList1       : TImageList;
+        DateLabel        : TLabel;
+        DirectoryLabel   : TLabel;
+        MenuLabel        : TLabel;
+        GroupBox1        : TGroupBox;
+        TypeMenuBox      : TComboBox;
+        DialogButton     : TButton;
+        StartButton      : TButton;
+        Panel1           : TPanel;
+        Panel2           : TPanel;
+        Panel3           : TPanel;
+        Label1           : TLabel;
+        Label2           : TLabel;
+        Label3           : TLabel;
+        GroupBox2        : TGroupBox;
+        Panel4           : TScrollBox;
+        ComboTypeConvert : TComboBox;
+        LabelTypeConvert : TLabel;
         procedure FormCreate(Sender: TObject);
         procedure MonthBoxChange(Sender: TObject);
         procedure Calendar1Change(Sender: TObject);
@@ -51,38 +49,43 @@ type
         procedure Panel4MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
         procedure Panel4MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
         procedure ComboTypeConvertChange(Sender: TObject);
+        procedure LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     private
         { Private declarations }
         // Lang
-        StrSelectDir: string;
-        StrError: string;
-        StrWarning: string;
-        StrErrorTypeMenu: string;
-        StrErrorDate: string;
+        StrSelectDir     : string;
+        StrError         : string;
+        StrWarning       : string;
+        StrErrorTypeMenu : string;
+        StrErrorDate     : string;
         StrErrorSelectDir: string;
-        StrUserAbort: string;
-        StrErrorReadFile: string;
-        StrErrorIndex: string;
-        GroupBox1Str: string;
-        Label1Str: string;
-        Label2Str: string;
-        Label3Str: string;
-        StartButtonStr: string;
-        CalendarStr: string;
-        MenuGenerate: string;
-        TypeConvert: string;
-        FileJSON: string;
+        StrUserAbort     : string;
+        StrErrorReadFile : string;
+        StrErrorIndex    : string;
+        StrSelectMonth   : string;
+        StrSelectYear    : string;
+        StrSelectDay     : string;
+        GroupBox1Str     : string;
+        Label1Str        : string;
+        Label2Str        : string;
+        Label3Str        : string;
+        StartButtonStr   : string;
+        CalendarStr      : string;
+        MenuGenerate     : string;
+        TypeConvert      : string;
+        FileJSON         : string;
         procedure LoadProject;
     public
         { Public declarations }
-        fileName: string;
-        directory: string;
-        typemenu: integer;
-        data: string;
-        intData: integer;
-        appPath: string;
-        index: string;
-        convert: string;
+        fileName         : string;
+        directory        : string;
+        typemenu         : integer;
+        data             : string;
+        intData          : integer;
+        appPath          : string;
+        index            : string;
+        convert          : string;
     end;
 
 var
@@ -95,8 +98,8 @@ implementation
 
 function BrowseCallbackProc(hwnd: HWND; MessageID: UINT; lParam: LPARAM; lpData: LPARAM): Integer; stdcall;
 var
-    DirName:  array[0..MAX_PATH] of Char;
-    pIDL   :  pItemIDList;
+    DirName : array[0..MAX_PATH] of Char;
+    pIDL    : pItemIDList;
 begin
   case  MessageID    of
     BFFM_INITIALIZED: SendMessage(hwnd, BFFM_SETSELECTION, 1, lpData);
@@ -120,10 +123,10 @@ end;
 
 function SelectFolderDialogExt(Handle: Integer; Title: string; var SelectedFolder: string): Boolean;
 var
-  ItemIDList: PItemIDList;
-  JtemIDList: PItemIDList;
-  DialogInfo: TBrowseInfo;
-  Path: PWideChar;
+  ItemIDList  : PItemIDList;
+  JtemIDList  : PItemIDList;
+  DialogInfo  : TBrowseInfo;
+  Path        : PWideChar;
 begin
   Result := False;
   Path   := StrAlloc(MAX_PATH);
@@ -154,7 +157,7 @@ function ReadFromFile(fileName: string; Encoding: TEncoding): WideString;
 Var
     List: TStrings;
 begin
-    Result := '';
+    Result   := '';
     fileName := trim(fileName);
     if FileExists(fileName) then
     begin
@@ -180,24 +183,24 @@ end;
 function ArrayToStr2(str: TStrings; R: Char): string;
 begin
     str.Delimiter := R;
-    result := str.DelimitedText;
+    result        := str.DelimitedText;
 end;
 
 procedure TForm1.LoadProject;
 var
-    lang: string;
-    ini: TIniFile;
-    iniFile: string;
-    i: integer;
+    lang      : string;
+    ini       : TIniFile;
+    iniFile   : string;
+    i         : integer;
 begin
-    appPath := ExtractFilePath(Application.ExeName);
+    appPath      := ExtractFilePath(Application.ExeName);
     // Обычный ini файл локализации.
     // В GroupBox указано название КАЛЕНДАРЬ + локализация в скобках
     // Это имя файла, которое нужно использовать в своей локализации.
-    lang := GetLocaleInformation(LOCALE_SENGLANGUAGE);
+    lang         := GetLocaleInformation(LOCALE_SENGLANGUAGE);
 	  // Локализация по дефолту русская
-    iniFile := TPath.Combine(appPath, lang + '.ini');
-    ini := TIniFile.Create(iniFile);
+    iniFile      := TPath.Combine(appPath, lang + '.ini');
+    ini          := TIniFile.Create(iniFile);
 	  // Если определённой секции с ключём нет, то устанавливаем дефолтное значение
 	  // Читаем файл локализации.
     GroupBox1Str          := ini.ReadString('Lang', 'GroupBox1Str', 'КАЛЕНДАРЬ');
@@ -209,6 +212,9 @@ begin
     StrErrorSelectDir     := ini.ReadString('Lang', 'StrErrorSelectDir', 'Не выбрана директория');
     StrUserAbort          := ini.ReadString('Lang', 'StrUserAbort', 'Прервано пользователем');
     StrErrorReadFile      := ini.ReadString('Lang', 'StrErrorReadFile', 'Ошибка чтения файла');
+    StrSelectMonth        := ini.ReadString('Lang', 'StrSelectMonth', 'Выбрать Месяц');
+    StrSelectYear         := ini.ReadString('Lang', 'StrSelectYear', 'Выбрать Год');
+    StrSelectDay          := ini.ReadString('Lang', 'StrSelectDay', 'Выбрать Дату');
     Label1Str             := ini.ReadString('Lang', 'Label1Str', 'Выбранная дата');
     Label2Str             := ini.ReadString('Lang', 'Label2Str', 'Выбранная директория');
     Label3Str             := ini.ReadString('Lang', 'Label3Str', 'Тип меню');
@@ -228,6 +234,9 @@ begin
     ini.WriteString('Lang', 'StrErrorReadFile', StrErrorReadFile);
     ini.WriteString('Lang', 'StrErrorIndex', StrErrorIndex);
     ini.WriteString('Lang', 'GroupBox1Str', GroupBox1Str);
+    ini.WriteString('Lang', 'StrSelectMonth', StrSelectMonth);
+    ini.WriteString('Lang', 'StrSelectYear', StrSelectYear);
+    ini.WriteString('Lang', 'StrSelectDay', StrSelectYear);
     ini.WriteString('Lang', 'Label1Str', Label1Str);
     ini.WriteString('Lang', 'Label2Str', Label2Str);
     ini.WriteString('Lang', 'Label3Str', Label3Str);
@@ -237,15 +246,15 @@ begin
     ini.WriteString('Lang', 'TypeConvert', TypeConvert);
     ini.Free;
 
-    typemenu := -1;
-    data := '';
-    directory := '';
+    typemenu   := -1;
+    data       := '';
+    directory  := '';
 	  // Мелкие настройки программы.
 	  // Они только для удобства использования программы
-    iniFile := TPath.Combine(appPath, 'settings.ini');
-    ini := TIniFile.Create(iniFile);
-    directory := ini.ReadString('Directory', 'SelectDir', '');
-    i := ini.ReadInteger('TypeConvert', 'Type', 0);
+    iniFile    := TPath.Combine(appPath, 'settings.ini');
+    ini        := TIniFile.Create(iniFile);
+    directory  := ini.ReadString('Directory', 'SelectDir', '');
+    i          := ini.ReadInteger('TypeConvert', 'Type', 0);
     if not System.SysUtils.DirectoryExists(directory) then
     begin
         directory := '';
@@ -257,7 +266,7 @@ begin
     end;
     if i < 0 then
     begin
-      i := 0;
+        i := 0;
     end;
     ComboTypeConvert.ItemIndex := i;
     ini.WriteInteger('TypeConvert', 'Type', i);
@@ -269,20 +278,30 @@ begin
     Label1.Caption              := Label1Str;
     Label2.Caption              := Label2Str;
     Label3.Caption              := Label3Str;
+    Label1.Hint                 := Label1Str;
+    Label2.Hint                 := Label2Str;
+    Label3.Hint                 := Label3Str;
     DialogButton.Caption        := StrSelectDir;
     StartButton.Caption         := StartButtonStr;
+    DialogButton.Hint           := StrSelectDir;
+    StartButton.Hint            := StartButtonStr;
     GroupBox2.Caption           := MenuGenerate;
     LabelTypeConvert.Caption    := TypeConvert;
+    ComboTypeConvert.Hint       := TypeConvert;
+    TypeMenuBox.Hint            := Label3Str;
+    MonthBox.Hint               := StrSelectMonth;
+    YearBox.Hint                := StrSelectYear;
+    Calendar1.Hint              := StrSelectDay;
     // End Локаль
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
-    years: String;
-    Year: integer;
-    yearmin: integer;
-    yearmax: integer;
-    Month: integer;
+    years     : String;
+    Year      : integer;
+    yearmin   : integer;
+    yearmax   : integer;
+    Month     : integer;
 begin
 	  // Загружаем локаль
     LoadProject;
@@ -309,19 +328,19 @@ begin
     end;
     MonthBox.ItemIndex := Month - 1;
 	  // Устанавливаем текущую дату календарю
-    Calendar1.Day := DayOf(now);
-    Calendar1.Month := MonthOf(now);
-    Calendar1.Year := YearOF(now);
-    data := IntToStr(Calendar1.Day).PadLeft(2, '0') + '.' +
+    Calendar1.Day      := DayOf(now);
+    Calendar1.Month    := MonthOf(now);
+    Calendar1.Year     := YearOF(now);
+    data               := IntToStr(Calendar1.Day).PadLeft(2, '0') + '.' +
       IntToStr(Calendar1.Month).PadLeft(2, '0') + '.' + IntToStr(Calendar1.Year)
       .PadLeft(4, '0');
 	  // Выводим дату в контроллах
-    DateLabel.Caption := data;
-    DateLabel.Hint := data;
+    DateLabel.Caption  := data;
+    DateLabel.Hint     := data;
 	  // Выводим директорию в контроллах
     DirectoryLabel.Caption := directory;
-    DirectoryLabel.Hint := directory;
-    var dt := Calendar1.CalendarDate;
+    DirectoryLabel.Hint    := directory;
+    var dt  := Calendar1.CalendarDate;
     intData := DateTimeToUnix(dt);
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     Winapi.Windows.Beep(1760, 500);
@@ -332,15 +351,15 @@ procedure TForm1.MonthBoxChange(Sender: TObject);
 begin
     Refresh;
     Calendar1.Month := MonthBox.ItemIndex + 1;
-    Calendar1.Year := StrToInt(YearBox.Items[YearBox.ItemIndex]);
+    Calendar1.Year  := StrToInt(YearBox.Items[YearBox.ItemIndex]);
 end;
 
 // Событие на типе меню
 procedure TForm1.TypeMenuBoxChange(Sender: TObject);
 begin
     MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
-    MenuLabel.Hint := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
-    typemenu := TypeMenuBox.ItemIndex;
+    MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
+    typemenu          := TypeMenuBox.ItemIndex;
     SendJSON_type(FileJSON, typemenu);
 end;
 
@@ -353,16 +372,16 @@ begin
       IntToStr(Calendar1.Month).PadLeft(2, '0') + '.' + IntToStr(Calendar1.Year)
       .PadLeft(4, '0');
     DateLabel.Caption := data;
-    DateLabel.Hint := data;
-    dt := Calendar1.CalendarDate;
-    intData := DateTimeToUnix(dt);
+    DateLabel.Hint    := data;
+    dt                := Calendar1.CalendarDate;
+    intData           := DateTimeToUnix(dt);
 end;
 
 // Событие выбора итоговых меню
 procedure TForm1.CheckBox1Click(Sender: TObject);
 var
-    i: integer;
-    strList: TStringList;
+    i       : integer;
+    strList : TStringList;
 begin
     {******
       Здесь код
@@ -385,24 +404,30 @@ end;
 
 procedure TForm1.ComboTypeConvertChange(Sender: TObject);
 var
-    ini: TIniFile;
-    iniFile: string;
+    ini     : TIniFile;
+    iniFile : string;
 begin
     appPath := ExtractFilePath(Application.ExeName);
     iniFile := TPath.Combine(appPath, 'settings.ini');
-    ini := TIniFile.Create(iniFile);
+    ini     := TIniFile.Create(iniFile);
     ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
     ini.Free;
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
 end;
 
+procedure TForm1.LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  (Sender as Tlabel).Hint := (Sender as TLabel).Caption;
+end;
+
 procedure TForm1.DialogButtonClick(Sender: TObject);
 var
-    ini: TIniFile;
-    iniFile: string;
+    ini     : TIniFile;
+    iniFile : string;
 begin
     iniFile := TPath.Combine(appPath, 'settings.ini');
-    ini := TIniFile.Create(iniFile);
+    ini     := TIniFile.Create(iniFile);
     if SelectFolderDialogExt(Handle, StrSelectDir, directory) then
     begin
         ini.WriteString('Directory', 'SelectDir', directory);
@@ -410,8 +435,8 @@ begin
     ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
     ini.Free;
     DirectoryLabel.Caption := directory;
-    DirectoryLabel.Hint := directory;
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
+    DirectoryLabel.Hint    := directory;
+    convert                := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     // Выносим форму на передний план
     SetForegroundWindow(Handle);
 end;
@@ -419,20 +444,20 @@ end;
 // Событие закрытия окна
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
-    i: integer;
-    strList: TStringList;
-    msgParams: TMsgBoxParams;
-    dwTemp: Cardinal;
+    i          : integer;
+    strList    : TStringList;
+    msgParams  : TMsgBoxParams;
+    dwTemp     : Cardinal;
 begin
-    dwTemp := MB_USERICON + MB_TOPMOST;
-    msgParams.cbSize:= SizeOf(msgParams);
-    msgParams.hwndOwner:= Handle;
-    msgParams.hInstance:= HInstance;
-    msgParams.lpszIcon:= PCHAR('MAINICON');
-    msgParams.dwContextHelpId:= 0;
-    msgParams.lpfnMsgBoxCallback:= nil;
-    msgParams.dwLanguageId:= LANG_NEUTRAL;
-    msgParams.dwStyle:= dwTemp + MB_OKCANCEL;
+    dwTemp                        := MB_USERICON + MB_TOPMOST;
+    msgParams.cbSize              := SizeOf(msgParams);
+    msgParams.hwndOwner           := Handle;
+    msgParams.hInstance           := HInstance;
+    msgParams.lpszIcon            := PCHAR('MAINICON');
+    msgParams.dwContextHelpId     := 0;
+    msgParams.lpfnMsgBoxCallback  := nil;
+    msgParams.dwLanguageId        := LANG_NEUTRAL;
+    msgParams.dwStyle             := dwTemp + MB_OKCANCEL;
 
     strList := TStringList.Create;
     for i := 0 to Panel4.ComponentCount-1 do
@@ -446,13 +471,13 @@ begin
          end;
        end;
     end;
-    index := ArrayToStr2(strList, ',');
+    index   := ArrayToStr2(strList, ',');
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     if(strList.Count < 1)then
     begin
         Winapi.Windows.Beep(1760, 500);
-        msgParams.lpszText:= PChar(StrErrorIndex.PadRight(100, ' '));
-        msgParams.lpszCaption:= PChar(StrWarning);
+        msgParams.lpszText      := PChar(StrErrorIndex.PadRight(100, ' '));
+        msgParams.lpszCaption   := PChar(StrWarning);
         MessageBoxIndirect(msgParams);
         strList.Destroy;
         CanClose := False;
@@ -465,9 +490,9 @@ begin
         if (MenuLabel.Caption = '') then
         begin
             Winapi.Windows.Beep(1760, 500);
-            msgParams.lpszText:= PChar(StrErrorTypeMenu.PadRight(100, ' '));
-            msgParams.lpszCaption:= PChar(StrError);
-            msgParams.dwStyle:= dwTemp + MB_OK;
+            msgParams.lpszText     := PChar(StrErrorTypeMenu.PadRight(100, ' '));
+            msgParams.lpszCaption  := PChar(StrError);
+            msgParams.dwStyle      := dwTemp + MB_OK;
             MessageBoxIndirect(msgParams);
             CanClose := False;
             SetForegroundWindow(Handle);
@@ -476,9 +501,9 @@ begin
         if (DateLabel.Caption = '') then
         begin
             Winapi.Windows.Beep(1760, 500);
-            msgParams.lpszText:= PChar(StrErrorDate.PadRight(100, ' '));
-            msgParams.lpszCaption:= PChar(StrError);
-            msgParams.dwStyle:= dwTemp + MB_OK;
+            msgParams.lpszText     := PChar(StrErrorDate.PadRight(100, ' '));
+            msgParams.lpszCaption  := PChar(StrError);
+            msgParams.dwStyle      := dwTemp + MB_OK;
             MessageBoxIndirect(msgParams);
             CanClose := False;
             SetForegroundWindow(Handle);
@@ -488,9 +513,9 @@ begin
         begin
             Winapi.Windows.Beep(1760, 500);
             Winapi.Windows.Beep(1760, 500);
-            msgParams.lpszText:= PChar(StrErrorSelectDir.PadRight(100, ' '));
-            msgParams.lpszCaption:= PChar(StrError);
-            msgParams.dwStyle:= dwTemp + MB_OK;
+            msgParams.lpszText     := PChar(StrErrorSelectDir.PadRight(100, ' '));
+            msgParams.lpszCaption  := PChar(StrError);
+            msgParams.dwStyle      := dwTemp + MB_OK;
             MessageBoxIndirect(msgParams);
             CanClose := False;
             SetForegroundWindow(Handle);
@@ -501,16 +526,16 @@ begin
     begin
         Form1.Visible := False;
         Winapi.Windows.Beep(1760, 500);
-        msgParams.lpszText:= PChar(StrUserAbort.PadRight(100, ' '));
-        msgParams.lpszCaption:= PChar(StrWarning);
-        msgParams.dwStyle:= dwTemp + MB_OKCANCEL;
+        msgParams.lpszText        := PChar(StrUserAbort.PadRight(100, ' '));
+        msgParams.lpszCaption     := PChar(StrWarning);
+        msgParams.dwStyle         := dwTemp + MB_OKCANCEL;
         if (MessageBoxIndirect(msgParams) = mrOk) then
         begin
             CanClose := True;
         end
         else
         begin
-            Form1.Visible := True;
+            Form1.Visible         := True;
             CanClose := False;
             SetForegroundWindow(Handle);
         end;
@@ -541,10 +566,9 @@ begin
                 if (TypeMenuBox.Items.Count > 0) then
                 begin
                     TypeMenuBox.ItemIndex := 0;
-                    MenuLabel.Caption := TypeMenuBox.Items
-                      [TypeMenuBox.ItemIndex];
-                    MenuLabel.Hint := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
-                    typemenu := TypeMenuBox.ItemIndex;
+                    MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
+                    MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
+                    typemenu          := TypeMenuBox.ItemIndex;
                     SendJSON_type(FileJSON, typemenu);
                 end;
             except
@@ -562,11 +586,11 @@ end;
 // Чтение типов меню из JSON файла. Построение чекбоксов
 procedure TForm1.SendJSON_type(FName: string; indx: integer);
 var
-    JsonArray, tmpArr: TJSONArray;
-    RowValue, JsonVal: TJSonValue;
-    tmpObj: TJSONObject;
-    i, k: integer;
-    strList: TStringList;
+    JsonArray, tmpArr  : TJSONArray;
+    RowValue, JsonVal  : TJSonValue;
+    tmpObj             : TJSONObject;
+    i, k               : integer;
+    strList            : TStringList;
 begin
     strList := TStringList.Create;
     // Очищаем всю панель
@@ -589,37 +613,37 @@ begin
       {********
       Код здесь
       ********}
-      JsonArray := TJSonObject.ParseJSONValue(ReadFromFile(fileName, TEncoding.UTF8)) as TJSONArray;
-      tmpObj := JsonArray.Items[indx] as TJSONObject;
-      tmpArr := tmpObj.Get('items').JsonValue as TJSONArray;
+      JsonArray     := TJSonObject.ParseJSONValue(ReadFromFile(fileName, TEncoding.UTF8)) as TJSONArray;
+      tmpObj        := JsonArray.Items[indx] as TJSONObject;
+      tmpArr        := tmpObj.Get('items').JsonValue as TJSONArray;
       for RowValue in tmpArr do
       begin
         k := k + 1;
         JsonVal := (RowValue as TJSONObject).GetValue('title');
         var c: TCheckBox;
-        c := TCheckBox.Create(Panel4);
-        c.Parent := Panel4;
-        c.Name := 'Ch' + IntToStr(k);
-        c.Caption := JsonVal.Value;
-        c.Hint := c.Caption;
-        c.Top := (k - 1) * (c.Height);
-        c.Left := 10;
-        c.Width := Panel4.Width - 20;
-        c.Checked := True;
-        c.Cursor := crHandPoint;
-        c.OnClick := CheckBox1Click;
-        c.Align := alTop;
-        c.ShowHint := True;
-        c.Margins.Left :=10;
-        c.Margins.Right := 10;
-        c.TabOrder := k + 5;
+        c                   := TCheckBox.Create(Panel4);
+        c.Parent            := Panel4;
+        c.Name              := 'Ch' + IntToStr(k);
+        c.Caption           := JsonVal.Value;
+        c.Hint              := c.Caption;
+        c.Top               := (k - 1) * (c.Height);
+        c.Left              := 10;
+        c.Width             := Panel4.Width - 20;
+        c.Checked           := True;
+        c.Cursor            := crHandPoint;
+        c.OnClick           := CheckBox1Click;
+        c.Align             := alTop;
+        c.ShowHint          := True;
+        c.Margins.Left      :=10;
+        c.Margins.Right     := 10;
+        c.TabOrder          := k + 5;
         strList.Add(IntToStr(k - 1));
       end;
       ComboTypeConvert.TabOrder := k + 6;
       DialogButton.TabOrder := k + 7;
-      StartButton.TabOrder := k + 8;
+      StartButton.TabOrder  := k + 8;
     end;
-    index := ArrayToStr2(strList, ',');
+    index                   := ArrayToStr2(strList, ',');
     strList.Destroy;
     SetForegroundWindow(Handle);
 end;
@@ -640,8 +664,7 @@ procedure TForm1.Panel4MouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
 begin
     Panel4.SetFocus;
-    Panel4.VertScrollBar.Position:=
-    Panel4.VertScrollBar.Position-WheelDelta div 10;
+    Panel4.VertScrollBar.Position := Panel4.VertScrollBar.Position-WheelDelta div 10;
 end;
 
 end.

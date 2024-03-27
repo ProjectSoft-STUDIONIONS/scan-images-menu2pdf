@@ -38,61 +38,64 @@ end;
 
 ***************************)
 var
-  fileName, jsn: string;
-  i: Integer;
-  jo: TJsonObject;
-  Handle: THandle;
+  fileName, jsn  : string;
+  i              : Integer;
+  jo             : TJsonObject;
+  Handle         : THandle;
 begin
   SetConsoleOutputCP(CP_UTF8);
-  Handle := GetForegroundWindow;
-  EnableWindow(Handle, False);
-  if ParamCount > 0 then
-  begin
-    for i := 1 to ParamCount do
+  Handle         := GetForegroundWindow;
+  try
+    EnableWindow(Handle, False);
+    if ParamCount > 0 then
     begin
-      if ParamStr(i) = '--typemenu' then
+      for i := 1 to ParamCount do
       begin
-        fileName := ParamStr(i + 1);
-        if (System.SysUtils.FileExists(fileName)) then
+        if ParamStr(i) = '--typemenu' then
         begin
-          Form1 := TForm1.Create(nil);
-          Form1.HandleNeeded;
-          Form1.fileName := fileName;
-          Form1.SendJSON(fileName);
-          if Form1.ShowModal = mrOk then
+          fileName := ParamStr(i + 1);
+          if (System.SysUtils.FileExists(fileName)) then
           begin
-            // Чтение JSON
-            jo := TJsonObject.Create();
-            jo.AddPair(TJSONPair.Create('typemenu', IntToStr(Form1.typemenu)));
-            jo.AddPair(TJSONPair.Create('directory', Form1.directory));
-            jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
-            jo.AddPair(TJSONPair.Create('index', Form1.index));
-            jo.AddPair(TJSONPair.Create('convert', Form1.convert));
-            jo.AddPair(TJSONPair.Create('error', '0'));
-            jsn := jo.ToJSON();
-            writeLn(jsn);
-            jo.Free;
+            Form1                  := TForm1.Create(Application);
+            Form1.HandleNeeded;
+            Form1.fileName         := fileName;
+            Form1.SendJSON(fileName);
+            if Form1.ShowModal = mrOk then
+            begin
+              // Чтение JSON
+              jo  := TJsonObject.Create();
+              jo.AddPair(TJSONPair.Create('typemenu', IntToStr(Form1.typemenu)));
+              jo.AddPair(TJSONPair.Create('directory', Form1.directory));
+              jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
+              jo.AddPair(TJSONPair.Create('index', Form1.index));
+              jo.AddPair(TJSONPair.Create('convert', Form1.convert));
+              jo.AddPair(TJSONPair.Create('error', '0'));
+              jsn := jo.ToJSON();
+              jo.Free;
+              writeLn(jsn);
+            end
+            else
+            begin
+              writeLn('{"message": "Aborted by user", "error": "3"}');
+            end;
+            Form1.Free;
+            break;
           end
           else
           begin
-            writeLn('{"message": "Aborted by user", "error": "3"}');
+            writeLn('{"message": "File '+fileName+' does not exist", "error": "2"}');
+            Form1.Free;
+            break;
           end;
-          Form1.Free;
-          break;
-        end
-        else
-        begin
-          writeLn('{"message": "File '+fileName+' does not exist", "error": "2"}');
-          Form1.Free;
-          break;
         end;
       end;
+    end
+    else
+    begin
+      writeLn('{"message": "Launched without parameters", "error": "1"}');
     end;
-  end
-  else
-  begin
-    writeLn('{"message": "Launched without parameters", "error": "1"}');
+  finally
+    EnableWindow(Handle, True);
+    SetForegroundWindow(Handle);
   end;
-  EnableWindow(Handle, True);
-  SetForegroundWindow(Handle);
 end.
