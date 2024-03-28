@@ -85,7 +85,7 @@
 			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: ((`  {bar}  `).bold.green + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.yellow).bgBlack, // Шаблон прогресс бара
+			format: ((`  {bar}  `).bold.cyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.green).bgBlack, // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -124,7 +124,7 @@
 					barsize: strLength - 2,
 					autopadding: true,
 					autopaddingChar: '000',
-					format: ((`  {bar}  `).bold.green + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.yellow).bgBlack,
+					format: ((`  {bar}  `).bold.brightRed + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.green).bgBlack,
 					barCompleteChar: '\u2588',
 					barIncompleteChar: '\u2591',
 					hideCursor: true,
@@ -195,9 +195,9 @@
 						json = fs.readFileSync(fMenu);
 					}catch(ee){
 						let arr = lang.file_menu_error.split('|');
-						arr[0] = arr[0].bold.yellow;
+						arr[0] = arr[0].bold.brightYellow;
 						arr[1] = fMenu.bold.red;
-						arr[2] = arr[2].bold.yellow;
+						arr[2] = arr[2].bold.brightYellow;
 						st_reject(`\n\n${arr.join("")}\n\n`.bgBlack);
 						return;
 					}
@@ -296,7 +296,7 @@
 									/**
 									 * Прогресс PDF
 									 */
-									log(`${lang.generating_pdf_files}...`.bold.yellow.bgBlack);
+									log(`${lang.generating_pdf_files}...`.bold.brightYellow.bgBlack);
 									let progressPDfIndex = 0;
 									let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
 									barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
@@ -540,9 +540,9 @@
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
-						log((`${lang.selected_menu_type}: `.bold.yellow + jsonPars[typeMenu]["name"].bold.green).bgBlack);
-						log((`${lang.selected_directory}: `.bold.yellow + dir.bold.green).bgBlack);
-						log((`${lang.selected_date}: `.bold.yellow + date.toLocaleDateString().bold.green).bgBlack);
+						log((`${lang.selected_menu_type}: `.bold.brightYellow + jsonPars[typeMenu]["name"].bold.green).bgBlack);
+						log((`${lang.selected_directory}: `.bold.brightYellow + dir.bold.green).bgBlack);
+						log((`${lang.selected_date}: `.bold.brightYellow + date.toLocaleDateString().bold.green).bgBlack);
 						log("".bgBlack);
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
@@ -559,14 +559,14 @@
 							 */
 							readDirectory(dir).then(async function(images){
 								if(await isDir(pdf_dir)){
-									log(`${lang.deleting_pdf_files}\n`.bold.yellow.bgBlack);
+									log(`${lang.deleting_pdf_files}\n`.bold.brightYellow.bgBlack);
 									emptyDir(pdf_dir);
 								}
 								/**
 								 * Директория изображений
 								 */
 								if(await isDir(resize_dir)){
-									log(`${lang.deleting_img_files}\n`.bold.yellow.bgBlack);
+									log(`${lang.deleting_img_files}\n`.bold.brightYellow.bgBlack);
 									fs.rmSync(resize_dir, { recursive: true, force: true });
 								}
 								fs.mkdirSync(resize_dir);
@@ -599,7 +599,7 @@
 										break;
 								}
 
-								log(`${lang.image_optimization}...`.bold.yellow.bgBlack);
+								log(`${lang.image_optimization}...`.bold.brightYellow.bgBlack);
 								/**
 								 * Прогресс по изображениям
 								 */
@@ -645,7 +645,7 @@
 									lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
 									lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
 									closePrg(resize_dir);
-									st_resolve(((`${lang.time_spent_in_seconds}:`).bold.yellow + ' ' + (time + "s").bold.green + `\n`).bgBlack);
+									st_resolve(((`${lang.time_spent_in_seconds}:`).bold.brightYellow + ' ' + (time + "s").bold.green + `\n`).bgBlack);
 								}).catch(async function(err){
 									closePrg(resize_dir);
 									st_reject(`\n\n${lang.error_generating_pdf.bold.red}!`.bgBlack);
@@ -662,7 +662,7 @@
 						}
 					} else {
 						closePrg();
-						st_resolve(`${lang.completed_by_user}\n`.bold.yellow.bgBlack);
+						st_resolve(`${lang.completed_by_user}\n`.bold.brightYellow.bgBlack);
 					}
 				}).catch(async function(error) {
 					barPdf && (
@@ -677,11 +677,11 @@
 		closePrg = async function(imgdir = false){
 			if(typeof imgdir == 'string'){
 				if(await isDir(imgdir)){
-					log(`\n${lang.deleting_img_files}`.bold.yellow.bgBlack);
+					log(`\n${lang.deleting_img_files}`.bold.brightYellow.bgBlack);
 					fs.rmSync(imgdir, { recursive: true, force: true });
 				}
 			}
-			runing && log(`\n${lang.closing_the_program}...\n`.bold.yellow.bgBlack);
+			runing && log(`\n${lang.closing_the_program}...\n`.bold.brightYellow.bgBlack);
 		};
 	/**
 	 * Перезапишем файл языка
@@ -693,25 +693,17 @@
 			encoding: "utf8"
 		}
 	);
-	/**
-	 * Сигнал запуска
-	 * Поиграться с тональностью, чтобы сделать разные сигналы для ошибок (необязательно)
-	 */
-	process.stdin.resume();
-	// console.clear();
 
-	// console.log(process);
-	
-	// console.log(`Process ID: ${process.pid}`);
+	process.stdin.resume();
 	/**
 	 * Запускаем диалоги
 	 */
 	// Имя, версия
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log(('\n' + config.description.bold.green + (' v' + config.version).bold.yellow + '\n').bgBlack);
+	log(('\n' + config.description.bold.green + (' v' + config.version).bold.brightYellow + '\n').bgBlack);
 	// Старт
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
-	log(`${lang.start}...\n`.bold.yellow.bgBlack);
+	log(`${lang.start}...\n`.bold.brightYellow.bgBlack);
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
 	start().then(async function(data) {
