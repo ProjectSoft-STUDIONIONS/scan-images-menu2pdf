@@ -1,13 +1,13 @@
 ﻿program dialogs;
 
 {$APPTYPE CONSOLE}
+{$R *.res}
 
 uses
   Vcl.Forms, Vcl.dialogs, System.SysUtils, Vcl.Controls,
   System.JSON, Windows, System.UITypes,
   Unit1 in 'Unit1.pas' {Form1};
 
-{$R *.res}
 
 function JsonToString(aJson: TJsonObject): string;
 begin

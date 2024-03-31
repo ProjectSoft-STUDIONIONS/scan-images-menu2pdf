@@ -15298,7 +15298,7 @@ object Form1: TForm1
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      OnChange = MonthBoxChange
+      OnChange = CalendarChange
     end
     object YearBox: TComboBox
       AlignWithMargins = True
@@ -15320,7 +15320,7 @@ object Form1: TForm1
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      OnChange = MonthBoxChange
+      OnChange = CalendarChange
       ExplicitLeft = 380
     end
   end
@@ -15341,7 +15341,7 @@ object Form1: TForm1
     ShowHint = True
     StartOfWeek = 1
     TabOrder = 1
-    OnChange = Calendar1Change
+    OnChange = CalendarChange
     ExplicitWidth = 474
     ExplicitHeight = 148
   end
@@ -15359,7 +15359,7 @@ object Form1: TForm1
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
-    OnChange = TypeMenuBoxChange
+    OnChange = CalendarChange
     ExplicitTop = 256
     ExplicitWidth = 474
   end
@@ -15395,8 +15395,8 @@ object Form1: TForm1
       ParentBackground = True
       ParentFont = False
       TabOrder = 0
-      OnMouseMove = Panel4MouseMove
-      OnMouseWheel = Panel4MouseWheel
+      OnMouseMove = PanelMouseMove
+      OnMouseWheel = PanelMouseWheel
       ExplicitWidth = 470
     end
   end
@@ -15416,7 +15416,6 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 6
     Text = 'convert'
-    OnChange = ComboTypeConvertChange
     Items.Strings = (
       'convert'
       'magick')

@@ -37,18 +37,15 @@ type
         ComboTypeConvert : TComboBox;
         LabelTypeConvert : TLabel;
         procedure FormCreate(Sender: TObject);
-        procedure MonthBoxChange(Sender: TObject);
-        procedure Calendar1Change(Sender: TObject);
+        procedure CalendarChange(Sender: TObject);
         procedure DialogButtonClick(Sender: TObject);
-        procedure TypeMenuBoxChange(Sender: TObject);
         procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
         procedure FormShow(Sender: TObject);
         procedure SendJSON(FName: string);
         procedure SendJSON_type(FName: string; indx: integer);
-        procedure CheckBox1Click(Sender: TObject);
-        procedure Panel4MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-        procedure Panel4MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-        procedure ComboTypeConvertChange(Sender: TObject);
+        procedure CheckBoxClick(Sender: TObject);
+        procedure PanelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+        procedure PanelMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
         procedure LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     private
@@ -346,36 +343,35 @@ begin
     Winapi.Windows.Beep(1760, 500);
 end;
 
-// Событие на комбобоксе месяцев
-procedure TForm1.MonthBoxChange(Sender: TObject);
+// Событие на комбобоксе месяцев, года и календаре
+procedure TForm1.CalendarChange(Sender: TObject);
+var
+    ini     : TIniFile;
+    iniFile : string;
 begin
-    Refresh;
+    //Refresh;
     Calendar1.Month := MonthBox.ItemIndex + 1;
     Calendar1.Year  := StrToInt(YearBox.Items[YearBox.ItemIndex]);
-end;
-
-// Событие на типе меню
-procedure TForm1.TypeMenuBoxChange(Sender: TObject);
-begin
-    MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
-    MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
-    typemenu          := TypeMenuBox.ItemIndex;
-    SendJSON_type(FileJSON, typemenu);
-end;
-
-// Событие на календаре
-procedure TForm1.Calendar1Change(Sender: TObject);
-begin
     data := IntToStr(Calendar1.Day).PadLeft(2, '0') + '.' +
       IntToStr(Calendar1.Month).PadLeft(2, '0') + '.' + IntToStr(Calendar1.Year)
       .PadLeft(4, '0');
     DateLabel.Caption := data;
     DateLabel.Hint    := data;
     intData           := DateTimeToUnix(Calendar1.CalendarDate);
+    MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
+    MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
+    typemenu          := TypeMenuBox.ItemIndex;
+    SendJSON_type(FileJSON, typemenu);
+    appPath := ExtractFilePath(Application.ExeName);
+    iniFile := TPath.Combine(appPath, 'settings.ini');
+    ini     := TIniFile.Create(iniFile);
+    ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
+    ini.Free;
+    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
 end;
 
 // Событие выбора итоговых меню
-procedure TForm1.CheckBox1Click(Sender: TObject);
+procedure TForm1.CheckBoxClick(Sender: TObject);
 var
     i       : integer;
     strList : TStringList;
@@ -397,19 +393,6 @@ begin
     end;
     index := ArrayToStr(strList, ',');
     strList.Destroy;
-end;
-
-procedure TForm1.ComboTypeConvertChange(Sender: TObject);
-var
-    ini     : TIniFile;
-    iniFile : string;
-begin
-    appPath := ExtractFilePath(Application.ExeName);
-    iniFile := TPath.Combine(appPath, 'settings.ini');
-    ini     := TIniFile.Create(iniFile);
-    ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
-    ini.Free;
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
 end;
 
 procedure TForm1.LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -635,7 +618,7 @@ begin
         c.Width             := Panel4.Width - 20;
         c.Checked           := True;
         c.Cursor            := crHandPoint;
-        c.OnClick           := CheckBox1Click;
+        c.OnClick           := CheckBoxClick;
         c.Align             := alTop;
         c.ShowHint          := True;
         c.Margins.Left      :=10;
@@ -652,12 +635,12 @@ begin
     SetForegroundWindow(Handle);
 end;
 
-procedure TForm1.Panel4MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+procedure TForm1.PanelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 begin
     Panel4.SetFocus;
 end;
 
-procedure TForm1.Panel4MouseWheel(Sender: TObject; Shift: TShiftState;
+procedure TForm1.PanelMouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
 begin
     Panel4.SetFocus;
