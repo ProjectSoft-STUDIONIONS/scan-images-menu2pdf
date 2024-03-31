@@ -48,6 +48,7 @@ type
         procedure PanelMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
         procedure LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+        procedure TypeMenuChange(Sender: TObject);
     private
         { Private declarations }
         // Lang
@@ -345,9 +346,6 @@ end;
 
 // Событие на комбобоксе месяцев, года и календаре
 procedure TForm1.CalendarChange(Sender: TObject);
-var
-    ini     : TIniFile;
-    iniFile : string;
 begin
     //Refresh;
     Calendar1.Month := MonthBox.ItemIndex + 1;
@@ -358,6 +356,13 @@ begin
     DateLabel.Caption := data;
     DateLabel.Hint    := data;
     intData           := DateTimeToUnix(Calendar1.CalendarDate);
+end;
+
+procedure TForm1.TypeMenuChange(Sender: TObject);
+var
+    ini     : TIniFile;
+    iniFile : string;
+begin
     MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
     MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
     typemenu          := TypeMenuBox.ItemIndex;
@@ -511,7 +516,7 @@ begin
     end;
     if (Form1.ModalResult = mrCancel) then
     begin
-        Form1.Visible := False;
+        //Form1.Visible := False;
         Winapi.Windows.Beep(1760, 500);
         msgParams.lpszText        := PChar(StrUserAbort.PadRight(100, ' '));
         msgParams.lpszCaption     := PChar(StrWarning);
@@ -522,7 +527,7 @@ begin
         end
         else
         begin
-            Form1.Visible         := True;
+            //Form1.Visible         := True;
             CanClose := False;
             SetForegroundWindow(Handle);
         end;

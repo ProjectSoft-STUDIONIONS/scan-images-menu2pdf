@@ -46,7 +46,6 @@ begin
   SetConsoleOutputCP(CP_UTF8);
   Handle         := GetForegroundWindow;
   try
-    //EnableWindow(Handle, False);
     if ParamCount > 0 then
     begin
       for i := 1 to ParamCount do
@@ -56,13 +55,13 @@ begin
           fileName := ParamStr(i + 1);
           if (System.SysUtils.FileExists(fileName)) then
           begin
-            //MessageBox(Handle, PWideChar('Top'), PWideChar('Text'), MB_YESNOCANCEL or MB_ICONASTERISK);
             try
               Application.Handle     := Handle;
               Form1                  := TForm1.Create(nil);
               Form1.fileName         := fileName;
-              Form1.HandleNeeded;
               Form1.SendJSON(fileName);
+              Form1.HandleNeeded;
+              EnableWindow(Handle, False);
               if IsPositiveResult(Form1.ShowModal) then
               begin
                 // Чтение JSON
@@ -99,7 +98,7 @@ begin
       writeLn('{"message": "Launched without parameters", "error": "1"}');
     end;
   finally
-    //EnableWindow(Handle, True);
+    EnableWindow(Handle, True);
     SetForegroundWindow(Handle);
   end;
 end.
