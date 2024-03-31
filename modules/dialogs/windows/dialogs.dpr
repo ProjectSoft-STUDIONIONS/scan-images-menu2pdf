@@ -4,7 +4,7 @@
 
 uses
   Vcl.Forms, Vcl.dialogs, System.SysUtils, Vcl.Controls,
-  System.JSON, Windows,
+  System.JSON, Windows, System.UITypes,
   Unit1 in 'Unit1.pas' {Form1};
 
 {$R *.res}
@@ -46,7 +46,7 @@ begin
   SetConsoleOutputCP(CP_UTF8);
   Handle         := GetForegroundWindow;
   try
-    EnableWindow(Handle, False);
+    //EnableWindow(Handle, False);
     if ParamCount > 0 then
     begin
       for i := 1 to ParamCount do
@@ -56,35 +56,39 @@ begin
           fileName := ParamStr(i + 1);
           if (System.SysUtils.FileExists(fileName)) then
           begin
-            Form1                  := TForm1.Create(Application);
-            Form1.HandleNeeded;
-            Form1.fileName         := fileName;
-            Form1.SendJSON(fileName);
-            if Form1.ShowModal = mrOk then
-            begin
-              // Чтение JSON
-              jo  := TJsonObject.Create();
-              jo.AddPair(TJSONPair.Create('typemenu', IntToStr(Form1.typemenu)));
-              jo.AddPair(TJSONPair.Create('directory', Form1.directory));
-              jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
-              jo.AddPair(TJSONPair.Create('index', Form1.index));
-              jo.AddPair(TJSONPair.Create('convert', Form1.convert));
-              jo.AddPair(TJSONPair.Create('error', '0'));
-              jsn := jo.ToJSON();
-              jo.Free;
-              writeLn(jsn);
-            end
-            else
-            begin
-              writeLn('{"message": "Aborted by user", "error": "3"}');
+            //MessageBox(Handle, PWideChar('Top'), PWideChar('Text'), MB_YESNOCANCEL or MB_ICONASTERISK);
+            try
+              Application.Handle     := Handle;
+              Form1                  := TForm1.Create(nil);
+              Form1.fileName         := fileName;
+              Form1.HandleNeeded;
+              Form1.SendJSON(fileName);
+              if IsPositiveResult(Form1.ShowModal) then
+              begin
+                // Чтение JSON
+                jo  := TJsonObject.Create();
+                jo.AddPair(TJSONPair.Create('typemenu', IntToStr(Form1.typemenu)));
+                jo.AddPair(TJSONPair.Create('directory', Form1.directory));
+                jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
+                jo.AddPair(TJSONPair.Create('index', Form1.index));
+                jo.AddPair(TJSONPair.Create('convert', Form1.convert));
+                jo.AddPair(TJSONPair.Create('error', '0'));
+                jsn := jo.ToJSON();
+                jo.Free;
+                writeLn(jsn);
+              end
+              else
+              begin
+                writeLn('{"message": "Aborted by user", "error": "3"}');
+              end;
+            finally
+              Form1.Free;
             end;
-            Form1.Free;
             break;
           end
           else
           begin
             writeLn('{"message": "File '+fileName+' does not exist", "error": "2"}');
-            Form1.Free;
             break;
           end;
         end;
@@ -95,7 +99,7 @@ begin
       writeLn('{"message": "Launched without parameters", "error": "1"}');
     end;
   finally
-    EnableWindow(Handle, True);
+    //EnableWindow(Handle, True);
     SetForegroundWindow(Handle);
   end;
 end.

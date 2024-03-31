@@ -180,7 +180,7 @@ begin
     Result := LowerCase(pcLCA);
 end;
 
-function ArrayToStr2(str: TStrings; R: Char): string;
+function ArrayToStr(str: TStrings; R: Char): string;
 begin
     str.Delimiter := R;
     result        := str.DelimitedText;
@@ -203,7 +203,7 @@ begin
     ini          := TIniFile.Create(iniFile);
 	  // Если определённой секции с ключём нет, то устанавливаем дефолтное значение
 	  // Читаем файл локализации.
-    GroupBox1Str          := ini.ReadString('Lang', 'GroupBox1Str', 'КАЛЕНДАРЬ');
+    GroupBox1Str          := ini.ReadString('Lang', 'GroupBox1Str', 'Календарь');
     StrWarning            := ini.ReadString('Lang', 'StrWarning', 'Внимание');
     StrError              := ini.ReadString('Lang', 'StrError', 'Ошибка');
     StrSelectDir          := ini.ReadString('Lang', 'StrSelectDir', 'Выбор директории с изображениями');
@@ -236,7 +236,7 @@ begin
     ini.WriteString('Lang', 'GroupBox1Str', GroupBox1Str);
     ini.WriteString('Lang', 'StrSelectMonth', StrSelectMonth);
     ini.WriteString('Lang', 'StrSelectYear', StrSelectYear);
-    ini.WriteString('Lang', 'StrSelectDay', StrSelectYear);
+    ini.WriteString('Lang', 'StrSelectDay', StrSelectDay);
     ini.WriteString('Lang', 'Label1Str', Label1Str);
     ini.WriteString('Lang', 'Label2Str', Label2Str);
     ini.WriteString('Lang', 'Label3Str', Label3Str);
@@ -310,8 +310,8 @@ begin
     Month   := MonthOf(now);
     years   := IntToStr(Year);
     // Построение списка лет
-    yearmin := Year - 3;
-    yearmax := Year + 4;
+    yearmin := Year - 2;
+    yearmax := Year + 3;
     while yearmin <> yearmax do
     begin
         YearBox.Items.Add(IntToStr(yearmin));
@@ -365,16 +365,13 @@ end;
 
 // Событие на календаре
 procedure TForm1.Calendar1Change(Sender: TObject);
-var
-    dt: TDateTime;
 begin
     data := IntToStr(Calendar1.Day).PadLeft(2, '0') + '.' +
       IntToStr(Calendar1.Month).PadLeft(2, '0') + '.' + IntToStr(Calendar1.Year)
       .PadLeft(4, '0');
     DateLabel.Caption := data;
     DateLabel.Hint    := data;
-    dt                := Calendar1.CalendarDate;
-    intData           := DateTimeToUnix(dt);
+    intData           := DateTimeToUnix(Calendar1.CalendarDate);
 end;
 
 // Событие выбора итоговых меню
@@ -398,7 +395,7 @@ begin
          end;
        end;
     end;
-    index := ArrayToStr2(strList, ',');
+    index := ArrayToStr(strList, ',');
     strList.Destroy;
 end;
 
@@ -441,6 +438,13 @@ begin
     SetForegroundWindow(Handle);
 end;
 
+// Появление формы.
+procedure TForm1.FormShow(Sender: TObject);
+begin
+    // выносим форму на передний план
+    SetForegroundWindow(Handle);
+end;
+
 // Событие закрытия окна
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
@@ -471,7 +475,7 @@ begin
          end;
        end;
     end;
-    index   := ArrayToStr2(strList, ',');
+    index   := ArrayToStr(strList, ',');
     convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     if(strList.Count < 1)then
     begin
@@ -643,15 +647,8 @@ begin
       DialogButton.TabOrder := k + 7;
       StartButton.TabOrder  := k + 8;
     end;
-    index                   := ArrayToStr2(strList, ',');
+    index                   := ArrayToStr(strList, ',');
     strList.Destroy;
-    SetForegroundWindow(Handle);
-end;
-
-// Появление формы.
-procedure TForm1.FormShow(Sender: TObject);
-begin
-    // выносим форму на передний план
     SetForegroundWindow(Handle);
 end;
 
