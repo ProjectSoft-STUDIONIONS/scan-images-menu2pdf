@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CnvertMenu2pdf"
-#define MyAppVersion "2.8.3"
+#define MyAppVersion "2.8.4"
 #define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
 #define MyAppExeName "programm.exe"      

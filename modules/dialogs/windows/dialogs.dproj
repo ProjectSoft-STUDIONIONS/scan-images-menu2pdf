@@ -69,6 +69,11 @@
         <UWP_DelphiLogo150>ps_150.png</UWP_DelphiLogo150>
         <DCC_DcuOutput>..\windows</DCC_DcuOutput>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <VerInfo_MinorVer>8</VerInfo_MinorVer>
+        <VerInfo_Release>4</VerInfo_Release>
+        <VerInfo_Keys>CompanyName=ProjectSoft;FileDescription=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;FileVersion=2.8.4.0;InternalName=dialogs.exe;LegalCopyright=ProjectSoft;LegalTrademarks=ProjectSoft;OriginalFilename=dialogs.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;ProductVersion=2.8.4.0;Comments=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы</VerInfo_Keys>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <Debugger_RunParams>--typemenu &quot;..\..\..\menu.json&quot; /version &quot;2.0.0&quot;</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;bindcompvclsmp;tethering;bindcompvclwinx;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;TeeDB;FireDAC;vcltouch;vcldb;bindcompfmx;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;inetdb;FMXTee;soaprtl;DbxCommonDriver;FmxTeeUI;ibxpress;fmx;FireDACIBDriver;fmxdae;xmlrtl;soapmidas;vcledge;fmxobj;vclwinx;ibxbindings;rtl;vclib;DbxClientDriver;Tee;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;FireDACCommon;IndyIPClient;bindcompvcl;RESTBackendComponents;TeeUI;VCLRESTComponents;soapserver;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -93,8 +98,10 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <Icon_MainIcon>favicon.ico</Icon_MainIcon>
-        <Debugger_RunParams>--typemenu &quot;..\..\..\menu.json&quot;</Debugger_RunParams>
         <DCC_DcuOutput>..\windows</DCC_DcuOutput>
+        <VerInfo_MinorVer>8</VerInfo_MinorVer>
+        <VerInfo_Release>4</VerInfo_Release>
+        <VerInfo_Keys>CompanyName=ProjectSoft;FileDescription=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;FileVersion=2.8.4.0;InternalName=dialogs.exe;LegalCopyright=ProjectSoft;LegalTrademarks=ProjectSoft;OriginalFilename=dialogs.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;ProductVersion=2.8.4.0;Comments=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>

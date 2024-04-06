@@ -2,13 +2,13 @@ const {spawn, exec} = require('child_process');
 const path = require('path');
 const root = __dirname;
 
-function dialogs(fileJsonMenu) {
+function dialogs(fileJsonMenu, versionApp = '1.0.0') {
 	var promise = new Promise((resolve, reject) => {
 		/**
 		 * Под Linux будут другие пути и команды
 		 */
 		// Windows exe
-		const bat = exec(path.normalize(path.join(root, 'dist/dialogs.exe')) + ' --typemenu "' + fileJsonMenu + '"', (error, stdout, stderr) => {
+		const bat = exec(path.normalize(path.join(root, 'dist/dialogs.exe')) + ' --typemenu "' + fileJsonMenu + '" /version "' + versionApp  + '"', (error, stdout, stderr) => {
 			if (stdout) {
 				if (!stdout.trim())
 					reject(`None`);

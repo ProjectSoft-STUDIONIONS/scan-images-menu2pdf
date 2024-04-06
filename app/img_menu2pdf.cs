@@ -63,9 +63,10 @@ namespace Runner
 			String ini = Environment.CurrentDirectory + "\\" + "programm.ini";
 			IniFile iniFile = new IniFile(ini);
 			String pad = iniFile.Read("pad", "Programm", "4");
+			String workDays = iniFile.Read("workDays", "Programm", "5");
 			// Применяем аргументы
 			// Аргумент pause ОБЯЗАТЕЛЕН!
-			String arguments = dir + "\\index.js" + " --pad=" + pad + " --runing=True";
+			String arguments = dir + "\\index.js" + " --pad=" + pad + " --work-days=" + workDays + " --runing=True";
 			// Готовим к запуску NodeJS
 			Process p = new Process();
 			p.StartInfo = new ProcessStartInfo("node.exe");
@@ -85,6 +86,7 @@ namespace Runner
 			if (File.Exists(ini) == false){
 				// Записываем параметры в файл
 				iniFile.Write("pad", pad, "Programm");
+				iniFile.Write("workDays", workDays, "Programm");
 			}
 		}
 	}

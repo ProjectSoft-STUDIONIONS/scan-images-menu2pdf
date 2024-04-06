@@ -3,7 +3,7 @@
 		argv = (() => {
 			const args = {};
 			process.argv.slice(2).map( (element) => {
-				const matches = element.match( '--([a-zA-Z0-9-]+)(?:=(.*))?');
+				const matches = element.match( '(?:[-]{1,2})([a-zA-Z0-9-]+)(?:=(.*))?');
 				if ( matches ){
 					args[matches[1]] = matches[2]
 						.replace(/^['"]/, '').replace(/['"]$/, '');
@@ -72,9 +72,24 @@
 		indexStr = '',
 		indexArr = [],
 		typeConvert = 'convert';
-
+		/**
+		 * pad - Формирование имени файла изображения длиною в 4 символа
+		 * При запуске из programm.exe задаётся в programm.ini
+		 * По умолчанию = 4
+		 */
 	const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
+		/**
+		 * Кто запустилприложение
+		 * Параметр обязателен только при запуске programm.exe
+		 * Не задаётся
+		 */
 		runing = argv["runing"] ? !!argv["runing"].toLowerCase() : false,
+		/**
+		 * workDays - кол-во рабочих дней в недели
+		 * При запуске из programm.exe задаётся в programm.ini
+		 * По умолчанию = 5
+		 */
+		workDays = argv["work-days"] ? (parseInt(argv["work-days"]) ? parseInt(argv["work-days"]) : 5) : 5,
 		log = function(...args) {
 			console.log.apply(null, args);
 		},
@@ -314,10 +329,9 @@
 										 * Формат: dd-mm-yyyy
 										 */
 										let d = date.getDate(),
-											m = date.getMonth() + 1,
-											y = date.getFullYear(),
-											dd = d < 10 ? `0${d}` : d;
-										m = m < 10 ? `0${m}` : m;
+											m = String(date.getMonth() + 1).padStart(2, "0"),
+											y = String(date.getFullYear()),
+											dd = String(d).padStart(2, "0");
 										/**
 										 * Формируем путь и имя файла
 										 */
@@ -471,9 +485,13 @@
 												/**
 												 * Если пятница - увеличиваем на 3 дня
 												 * или увеличиваем на один (следующий день).
+												 * 4 дня  - увеличиваем на 4
+												 * 5 дней - увеличиваем на 3
+												 * 6 дней - увеличиваем на 2
+												 * 7 дней - увеличиваем на 1
 												 */
-												if(day == 5){
-													day = 3
+												if(day == workDays){
+													day = 8 - workDays;
 												}else{
 													day = 1;
 												}
@@ -500,10 +518,11 @@
 						});
 					};
 
-				dialogs(fMenu).then(async function(data){
+				dialogs(fMenu, config.version).then(async function(data){
 					/**
 					 * Запуск
 					 */
+					log(workDays);
 					startTime = new Date().getTime();
 					/**
 					 * Проверить полученные данные

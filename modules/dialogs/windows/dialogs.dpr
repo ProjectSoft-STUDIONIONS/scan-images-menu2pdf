@@ -39,6 +39,7 @@ end;
 ***************************)
 var
   fileName, jsn  : string;
+  versionApp     : string;
   i              : Integer;
   jo             : TJsonObject;
   Handle         : THandle;
@@ -56,8 +57,14 @@ begin
           if (System.SysUtils.FileExists(fileName)) then
           begin
             try
+              FindCmdLineSwitch('version', versionApp, True, [clstValueNextParam, clstValueAppended]);
               Application.Handle     := Handle;
               Form1                  := TForm1.Create(nil);
+              if Length(versionApp) > 0 then
+                versionApp := ' v' + versionApp
+              else
+                versionApp     := '1.0.0';
+              Form1.VersionApp       := versionApp;
               Form1.fileName         := fileName;
               Form1.SendJSON(fileName);
               Form1.HandleNeeded;

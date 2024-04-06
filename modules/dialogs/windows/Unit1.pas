@@ -76,6 +76,7 @@ type
         procedure LoadProject;
     public
         { Public declarations }
+        VersionApp       : string;
         fileName         : string;
         directory        : string;
         typemenu         : integer;
@@ -303,6 +304,7 @@ var
 begin
 	  // Загружаем локаль
     LoadProject;
+    VersionApp := 'v1.0.0';
 	  // Получаем значение даты
     Year    := YearOF(now);
     Month   := MonthOf(now);
@@ -430,6 +432,7 @@ end;
 procedure TForm1.FormShow(Sender: TObject);
 begin
     // выносим форму на передний план
+    Caption := Caption + VersionApp;
     SetForegroundWindow(Handle);
 end;
 
