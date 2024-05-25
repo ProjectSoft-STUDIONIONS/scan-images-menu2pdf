@@ -33,3 +33,5 @@ programm.ini
 desktop.ini
 Desktop.ini
 inno_setup/*.exe
+node_modules/.bin
+node_modules/innosetup-compiler

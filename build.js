@@ -2,6 +2,7 @@ const fs = require('fs'),
 		path = require('path'),
 		{ unlink } = require('fs/promises'),
 		{ spawn } = require('child_process'),
+		InnoSetup = require("innosetup-compiler"),
 		config = require('./package.json'),
 		author = config.author.split(" ")[0],
 		app_manifest = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -53,31 +54,6 @@ const fs = require('fs'),
 				}
 			});
 		});
-	},
-	compileBeep = function(input, output){
-		return new Promise(function(resolve, reject){
-			let app = `csc.exe`,
-				args = [
-					`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
-					`/resource:${normalize([__dirname, "modules", "playbeep", "programm.resource"])}`,
-					`/out:modules/playbeep/playbeep.exe`,
-					`/win32manifest:${normalize([__dirname, "modules", "playbeep", "app.manifest"])}`,
-					`/target:exe`,
-					`${normalize([__dirname, "modules", "playbeep", "playbeep.cs"])}`,
-					`${normalize([__dirname, "modules", "playbeep", "AssemblyInfo.cs"])}`
-				],
-				ls = spawn( app, args );
-			ls.stdout.on('data', (data) => {});
-			ls.stderr.on('data', (data) => { reject(data); });
-			ls.on('close', (code) => {
-				if(code == 0){
-					resolve(`Compiled playbeep.exe`);
-				}else{
-					//reject(args.join(' '));
-					reject(`csc.exe ${args.join(" ")}`);
-				}
-			});
-		});
 	};
 
 (async function(){
@@ -87,14 +63,16 @@ const fs = require('fs'),
 	fs.writeFileSync(`${normalize([__dirname, "app", "app.manifest"])}`, app_manifest, {encoding: "utf8"});
 	fs.writeFileSync(`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`, assemblyinfo_cs, {encoding: "utf8"});
 	try { await unlink(`${prg}`); } catch (error) { }
-	compile().then((data) => {
-		console.log(data);
-		compileBeep().then((data) => {
-			console.log(data);
-		}).catch((error) => {
-			console.log(error);
+	compile().then(async function(data_a){
+		console.log(data_a);
+		let iss = normalize([__dirname, "inno_setup", "ConvertMenu2pdf_setup.iss"]);
+		console.log(`Compile -> ${iss}`);
+		await InnoSetup(iss, {
+			gui: false,
+			verbose: true,
 		});
-	}).catch((error) => {
+		console.log(`DONE!`);
+	}).catch(async function(error){
 		console.log(error);
 	});
 })();
