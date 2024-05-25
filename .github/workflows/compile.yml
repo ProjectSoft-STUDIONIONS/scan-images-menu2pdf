@@ -1,0 +1,34 @@
+name: Build and publish
+on:
+  push:
+    tags:
+      - "*"
+  release:
+    types: [ created ]
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir build && mkdir setup
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build
+        run: |
+          npm rum inst
+          npm run compile
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: inno_setup/ConvertMenu2pdf_setup.exe
+          tag: ${{ github.ref_name }}
+          overwrite: true
+          file_glob: true
+
