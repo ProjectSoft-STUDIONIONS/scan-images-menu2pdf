@@ -33,6 +33,4 @@ programm.ini
 desktop.ini
 Desktop.ini
 inno_setup/*.exe
-node_modules/.bin
-node_modules/.package-lock.json
-node_modules/innosetup-compiler
+node_modules
