@@ -7,11 +7,12 @@
 	"scripts": {
 		"inst": "npm install",
 		"test": "node index.js --work-days=5 --pad=4",
-		"build": "node build.js"
+		"build": "node build.js",
+		"compile": "node compile.js"
 	},
 	"files": [
 		"index.js",
-		"main.js",
+		"build.js",
 		"menu.json",
 		"modules/**/*"
 	],

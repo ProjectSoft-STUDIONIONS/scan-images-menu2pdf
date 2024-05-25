@@ -2,7 +2,6 @@ const fs = require('fs'),
 		path = require('path'),
 		{ unlink } = require('fs/promises'),
 		{ spawn } = require('child_process'),
-		InnoSetup = require("innosetup-compiler"),
 		config = require('./package.json'),
 		author = config.author.split(" ")[0],
 		app_manifest = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -65,13 +64,6 @@ const fs = require('fs'),
 	try { await unlink(`${prg}`); } catch (error) { }
 	compile().then(async function(data_a){
 		console.log(data_a);
-		let iss = normalize([__dirname, "inno_setup", "ConvertMenu2pdf_setup.iss"]);
-		console.log(`Compile -> ${iss}`);
-		await InnoSetup(iss, {
-			gui: false,
-			verbose: true,
-		});
-		console.log(`DONE!`);
 	}).catch(async function(error){
 		console.log(error);
 	});
