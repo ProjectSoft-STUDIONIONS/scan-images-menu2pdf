@@ -1,0 +1,191 @@
+@import "muller.less";
+
+* {
+	&,
+	&::before,
+	&::after {
+		box-sizing: border-box;
+	}
+}
+
+.clearfix {
+	&::before,
+	&::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+
+.text {
+	&-center {
+		text-align: center;
+	}
+	&-left {
+		text-align: left;
+	}
+	&-right {
+		text-align: right;
+	}
+	&-justify {
+		text-align: justify;
+	}
+}
+
+a {
+	&,
+	&:focus {
+		color: #d33;
+	}
+	&:hover {
+		color: #a81c1c;
+	}
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: .5em;
+}
+
+img {
+	max-width: 100%;
+}
+
+html,
+body {
+	width: 100%;
+	min-height: 100vh;
+	margin: 0;
+	pading: 0;
+}
+body {
+	display: flex;
+	flex-direction: column;
+	font-family: "Muller", sans-serif;
+	> header,
+	> footer {
+		flex: 0;
+		background-color: black;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		&,
+		* {
+			color: white;
+		}
+		a {
+			&:hover {
+				color: white;
+			}
+		}
+	}
+	> main {
+		flex: 1;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		background-size: cover;
+		background-image: url(../images/reload.jpg);
+		.wrapper {
+			position: relative;
+			background-color: white;
+			z-index: 10;
+			min-height: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			flex: 1;
+			box-shadow: 0 0 20px 10px rgb(0 0 0 / 23%);
+			h1 {
+				margin-bottom: 1em;
+				padding-bottom: 1em;
+				margin-top: 1em;
+				border-bottom: 1px solid #ccc;
+				font-weight: 900;
+				font-size: 2.2em;
+				/*position: sticky;
+				top: 0;
+				background-color: white;*/
+				&::before {
+					display: inline-block;
+					vertical-align: middle;
+					margin-right: 0.5em;
+					width: 2em;
+					height: 2em;
+					content: "";
+					background-repeat: no-repeat;
+					background-position: center center;
+					background-size: contain;
+					background-image: data-uri('../images/favicon.png');
+				}
+				.your-radio {
+					display: inline-block;
+				}
+			}
+		}
+	}
+	> header {
+		background-color: black;
+		img {
+			max-width: 400px;
+		}
+	}
+	> footer {
+		.wrapper {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			font-weight: 200;
+			.copyright {
+				flex: auto;
+				padding-right: 15px;
+				display: block;
+			}
+		}
+	}
+}
+
+
+.wrapper {
+	.clearfix();
+	max-width: 1200px;
+	width: 100%;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.github-icons {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-right: -15px;
+	margin-left: -15px;
+	margin-bottom: -10px;
+	line-height: 1;
+	a {
+		margin-right: 10px;
+		margin-bottom: 8px;
+		display: inline-block;
+	}
+	@media(max-width: 1230px) {
+		margin-right: unset;
+		margin-left: unset;
+	}
+}
+
+.img-16x9 {
+	aspect-ratio: ~"16 / 9";
+	display: inline-block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	max-width: 400px;
+}
+
+// @import "btn.less";

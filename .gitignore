@@ -34,3 +34,11 @@ desktop.ini
 Desktop.ini
 inno_setup/*.exe
 node_modules
+
+/test
+/docs/*
+/docs/**/*.*
+
+*.sublime-workspace
+
+!/docs/.gitkeep
