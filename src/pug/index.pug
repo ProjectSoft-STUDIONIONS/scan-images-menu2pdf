@@ -31,6 +31,7 @@ html(lang="ru" prefix="og: http://ogp.me/ns#")
 		meta(property="og:image:width" content=open_graph.image_1x1_width)
 		meta(property="og:image:height" content=open_graph.image_1x1_width)
 		meta(property="og:image:type" content="image/jpeg")
+		link(type="text/css" rel="stylesheet" href="https://" + repo + "/css/plugins.css?hash=" + hash)
 		link(type="text/css" rel="stylesheet" href="https://" + repo + "/" + page + "/css/main.css?hash=" + hash)
 	body
 		header
@@ -59,6 +60,6 @@ html(lang="ru" prefix="og: http://ogp.me/ns#")
 				span.developer
 					|Developed by:  
 					a(href="https://github.com/" + userName + "/" target="_blank")= nickname
-		//- script(src="https://" + repo + "/js/plugins.js?hash=" + hash type="text/javascript")
 		include inc/yandex.pug
+		script(src="https://" + repo + "/js/plugins.js?hash=" + hash type="text/javascript")
 		script(src="https://" + repo + "/" + page + "/js/main.js?hash=" + hash type="text/javascript")
