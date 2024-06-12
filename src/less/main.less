@@ -51,6 +51,20 @@ img {
 	max-width: 100%;
 }
 
+blockquote {
+	font-style: italic;
+	padding-left: 30px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	margin-bottom: .5em;
+	> p {
+		&:last-child {
+			margin-bottom: unset;
+		}
+	}
+}
+
 html,
 body {
 	width: 100%;
