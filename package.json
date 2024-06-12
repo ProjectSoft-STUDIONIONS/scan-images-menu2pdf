@@ -10,7 +10,7 @@
 		"test": "node index.js --work-days=5 --pad=4",
 		"build": "node build.js",
 		"compile": "node compile.js",
-		"page": "grunt -v"
+		"page": "grunt"
 	},
 	"files": [
 		"index.js",
