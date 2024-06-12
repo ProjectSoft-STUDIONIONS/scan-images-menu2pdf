@@ -125,6 +125,7 @@ module.exports = (grunt) => {
 							"repo": "projectsoft-studionions.github.io",
 							"userName": "ProjectSoft-STUDIONIONS",
 							"page": "scan-images-menu2pdf",
+							"download": "ConvertMenu2pdf_setup.exe",
 							"title": "ProjectSoft | GitHub Pages",
 							"keywords": "ProjectSoft, STUDIONIONS, ProjectSoft-STUDIONIONS, Your Radio, Ваше Радио, FontMassive Pack Windows, Менеджер щрифтов Windows",
 							"description": "Страница разработчика ProjectSoft",
