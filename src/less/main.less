@@ -86,6 +86,16 @@ blockquote {
 	}
 }
 
+details {
+	margin-top: unset;
+	margin-bottom: .5em;
+	summary {
+		&:first-of-type {
+			cursor: pointer;
+		}
+	}
+}
+
 html,
 body {
 	width: 100%;
@@ -218,4 +228,10 @@ body {
 	max-width: 400px;
 }
 
+.code {
+	background-color: #ccc;
+	pre {
+		font-family: Consolas;
+	}
+}
 // @import "btn.less";
