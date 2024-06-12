@@ -49,12 +49,12 @@ module.exports = (grunt) => {
 				]
 			}
 		},
-		ttf2woff2: {
+		/*ttf2woff2: {
 			docs: {
 				src: ["src/font/*"],
 				dest: "docs/fonts",
 			},
-		},
+		},*/
 		less: {
 			docs: {
 				options: {
@@ -126,9 +126,10 @@ module.exports = (grunt) => {
 							"userName": "ProjectSoft-STUDIONIONS",
 							"page": "scan-images-menu2pdf",
 							"download": "ConvertMenu2pdf_setup.exe",
-							"title": "ProjectSoft | GitHub Pages",
-							"keywords": "ProjectSoft, STUDIONIONS, ProjectSoft-STUDIONIONS, Your Radio, Ваше Радио, FontMassive Pack Windows, Менеджер щрифтов Windows",
-							"description": "Страница разработчика ProjectSoft",
+							"title": "Отсканированная коллекция изображений меню в PDF файлы | ProjectSoft GitHub Pages",
+							"h1title": "Отсканированная коллекция изображений меню в PDF файлы",
+							"description": "В работе очень часто приходится конвертировать отсканированные изображения меню в PDF файлы и этот процесс довольно трудоёмкий, а приходится делать это два - три раза в неделю.",
+							"keywords": "ProjectSoft, STUDIONIONS, ProjectSoft-STUDIONIONS, Отсканированная коллекция изображений меню в PDF файлы, меню питания в PDF файлы, мониторинг питания в школах",
 							"nickname": "ProjectSoft",
 							"logotype": "projectsoft.png",
 							"copyright": "2008 - all right reserved",
@@ -155,7 +156,7 @@ module.exports = (grunt) => {
 	grunt.registerTask('default', [
 		"clean",
 		"copy",
-		"ttf2woff2",
+		//"ttf2woff2",
 		"less",
 		"cssmin",
 		//"concat",
