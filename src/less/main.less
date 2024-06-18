@@ -213,12 +213,18 @@ body {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
-	margin-top: 1em;
+	margin-right: -15px;
+	margin-left: -15px;
+	margin-bottom: -10px;
 	line-height: 1;
 	a {
 		margin-right: 10px;
 		margin-bottom: 8px;
 		display: inline-block;
+	}
+	@media(max-width: 1230px) {
+		margin-right: unset;
+		margin-left: unset;
 	}
 }
 
