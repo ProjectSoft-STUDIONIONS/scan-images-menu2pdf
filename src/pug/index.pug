@@ -32,7 +32,7 @@ html(lang="ru" prefix="og: http://ogp.me/ns#")
 		meta(property="og:image:height" content=open_graph.image_1x1_width)
 		meta(property="og:image:type" content="image/jpeg")
 		link(type="text/css" rel="stylesheet" href="https://" + repo + "/css/plugins.css?hash=" + hash)
-		link(type="text/css" rel="stylesheet" href="https://" + repo + "/" + page + "/css/main.css?hash=" + hash)
+		link(type="text/css" rel="stylesheet" href="https://" + repo + "/css/main.css?hash=" + hash)
 	body
 		header
 			.wrapper
@@ -95,7 +95,7 @@ html(lang="ru" prefix="og: http://ogp.me/ns#")
 					|Каждодневное меню одного файла включает в себя два файла изображений. Двухнедельное состоит из одиннадцати файлов изображений. Править можно под себя.
 					br
 					|Файл для правки 
-					a(href="https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/blob/main/menu.json?raw=true" target="_blank") menu.json.
+					a(href="https://github.com/" + userName + "/" + page + "/blob/main/menu.json?raw=true" target="_blank") menu.json.
 				p
 					|Согласно JSON данных можно добавить ещё типы меню не правя код самого модуля, а правя только код файла menu.json. Внимательно следите за форматом JSON файла!!!
 				h3
@@ -143,4 +143,4 @@ html(lang="ru" prefix="og: http://ogp.me/ns#")
 					a(href="https://github.com/" + userName + "/" target="_blank")= nickname
 		include inc/yandex.pug
 		script(src="https://" + repo + "/js/plugins.js?hash=" + hash type="text/javascript")
-		script(src="https://" + repo + "/" + page + "/js/main.js?hash=" + hash type="text/javascript")
+		script(src="https://" + repo + "/js/main.js?hash=" + hash type="text/javascript")
