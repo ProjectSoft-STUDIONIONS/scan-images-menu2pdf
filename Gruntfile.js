@@ -129,7 +129,7 @@ module.exports = (grunt) => {
 							"title": "Отсканированная коллекция изображений меню в PDF файлы | ProjectSoft GitHub Pages",
 							"h1title": "Отсканированная коллекция изображений меню в PDF файлы",
 							"description": "В работе очень часто приходится конвертировать отсканированные изображения меню в PDF файлы и этот процесс довольно трудоёмкий, а приходится делать это два - три раза в неделю.",
-							"keywords": "ProjectSoft, STUDIONIONS, ProjectSoft-STUDIONIONS, Отсканированная коллекция изображений меню в PDF файлы, меню питания в PDF файлы, мониторинг питания в школах",
+							"keywords": "Меню в PDF файл, Меню питания школы в PDF файл, Конвертировать меню питания школы в PDF файл, Отсканированная коллекция изображений меню в PDF файлы, меню питания в PDF файлы, мониторинг питания в школах, ProjectSoft, STUDIONIONS, ProjectSoft-STUDIONIONS",
 							"nickname": "ProjectSoft",
 							"logotype": "projectsoft.png",
 							"copyright": "2008 - all right reserved",
