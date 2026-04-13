@@ -203,3 +203,5 @@ $ npm run build
 Завершение работы программы
 
 ![Завершение работы программы](/assets/screenshots/0004.png?raw=true "Директория с полученными PDF файлами")
+
+<style>.markdown-body table {min-width: 100%; display: table !important;}</style>
