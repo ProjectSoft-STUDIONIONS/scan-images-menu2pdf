@@ -16,7 +16,7 @@
 Файл для правки [menu.json](https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf/blob/main/menu.json).   
 <details>
 	<summary><u><strong>Формат данных в JSON</strong>s</u></summary>
-
+	<style>.markdown-body table {min-width: 100%; display: table !important;}</style>
 ```json
 [
 	{
@@ -203,5 +203,3 @@ $ npm run build
 Завершение работы программы
 
 ![Завершение работы программы](/assets/screenshots/0004.png?raw=true "Директория с полученными PDF файлами")
-
-<style>.markdown-body table {min-width: 100%; display: table !important;}</style>
