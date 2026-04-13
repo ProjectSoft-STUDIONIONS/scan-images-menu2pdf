@@ -26,9 +26,8 @@ end;
   directory       Полный путь до директории с изображениями
   data            Значения даты и времени в формате UNIX
   error           Тип ошибки
-  convert         Тип используемого конвертора
   Формат
-  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "error": "0", "convert": "magick"}
+  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "error": "0"}
 
   Индекс ошибок "error"
   0 - Ошибок нет
@@ -77,7 +76,6 @@ begin
                 jo.AddPair(TJSONPair.Create('directory', Form1.directory));
                 jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
                 jo.AddPair(TJSONPair.Create('index', Form1.index));
-                jo.AddPair(TJSONPair.Create('convert', Form1.convert));
                 jo.AddPair(TJSONPair.Create('error', '0'));
                 jsn := jo.ToJSON();
                 jo.Free;

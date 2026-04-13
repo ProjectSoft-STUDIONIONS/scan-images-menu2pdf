@@ -17,6 +17,8 @@
 		cliProgress = require('cli-progress'),
 		{ spawn, exec } = require('child_process'),
 		{ PDFDocument } =  require('pdf-lib'),
+		resizeOptimizeImages = require('resize-optimize-images'),
+		Jimp = require('jimp'),
 		dialogs =  require('./modules/dialogs/dialogs.js'),
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
@@ -25,8 +27,9 @@
 		/**
 		 * Размер страниц
 		 */
-		wPortrait = 1130,
-		wLandscape = 1600,
+		wPortrait = 1240,
+		wLandscape = 1754,
+		rotate = 90,
 		scale = .5;
 
 	colors.enable();
@@ -70,8 +73,7 @@
 
 		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
 		indexStr = '',
-		indexArr = [],
-		typeConvert = 'convert';
+		indexArr = [];
 		/**
 		 * pad - Формирование имени файла изображения длиною в 4 символа
 		 * При запуске из programm.exe задаётся в programm.ini
@@ -242,35 +244,29 @@
 						})
 					},
 
-					resize = function(input, output, width) {
-						return new Promise(function(resolve, reject){
-							let app = typeConvert,
-								args = [
-									input,
-									"-quality",
-									"80",
-									"-filter",
-									"Lanczos",
-									"-thumbnail",
-									`${width}x`,
-									output
-								],
-								ls = spawn(app, args);
-							ls.stdout.on('data', (data) => {
-								// log(`stdout: ${data}`);
-							});
-
-							ls.stderr.on('data', (data) => {
-								// log(`stderr: ${data}`);
-							});
-
-							ls.on('close', (code) => {
-								if(code == 0){
-									resolve(code);
-								}else{
-									reject(code);
-								}
-							});
+					resize = function(input, output, width, typeImage) {
+						return new Promise(async function(resolve, reject){
+							try {
+								const image = await Jimp.read(input);
+								// Соотношение сторон
+								// 210x297
+								let temp_width = image.bitmap.width;
+								let temp_height = Math.ceil((image.bitmap.width / 210) * 297);
+								// Обрезка
+								await image.crop(0, 0, temp_width, temp_height);
+								// Поворот
+								await image.rotate(typeImage == 'portrait' ? 0 : rotate);
+								// Ресайз
+								await image.resize(width, Jimp.AUTO);
+								// Качество
+								await image.quality(80);
+								// Сохранение
+								await image.writeAsync(output);
+								// Выход
+								resolve();
+							}catch(e){
+								reject(e);
+							}
 						});
 					},
 					pdfGenerator = function (outDir, imgs) {
@@ -425,7 +421,7 @@
 											 * Производителем файла должна быть программа, которая является официальной версией!
 											 * Мы сюда так же добавляем ссылку на библиотеку pdf-lib
 											 */
-											pdfDoc.setCreator("pdf-lib, ProjectSoft®");
+											pdfDoc.setCreator("jimp, pdf-lib, ProjectSoft®");
 											/**
 											 * Заполнение метатегов документа
 											 * Это обязательное действие.
@@ -503,7 +499,7 @@
 											 * Для красоты
 											 * Сделаем маленькую паузу без прогрессбара
 											 */
-											await closeDelay(25, false);
+											// await closeDelay(25, false);
 										}
 									}
 									barPdf.terminal.cursor(true);
@@ -521,8 +517,7 @@
 				dialogs(fMenu, config.version).then(async function(data){
 					/**
 					 * Запуск
-					 */
-					log(workDays);
+					 */;
 					startTime = new Date().getTime();
 					/**
 					 * Проверить полученные данные
@@ -533,10 +528,6 @@
 						st_reject(`${lang.error_reading_json}!`.bold.red.bgBlack);
 						return;
 					}
-					/**
-					 * Тип конвертора
-					 */
-					typeConvert = data["convert"] || `convert`;
 					if(parseInt(data.typemenu) > -1 && data.directory != "None" && data.data.length) {
 						typeMenu = parseInt(data.typemenu);
 						dir = data.directory;
@@ -641,7 +632,7 @@
 										ext = path.extname(image).toLowerCase(),
 										outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
 										outputFile = path.join(resize_dir, outF);
-									await resize(inputFile, outputFile, sizeW);
+									await resize(inputFile, outputFile, sizeW, jsonPars[typeMenu]["size"]);
 									/**
 									 * Прогресс Изображений
 									 */
@@ -657,6 +648,7 @@
 								 * Генерация PDF файлов
 								 */
 								await Beep(659, 250);
+								
 								pdfGenerator(pdf_dir, resize_dir).then(async function(str){
 									endTime = new Date().getTime();
 									let time = endTime - startTime;
@@ -669,6 +661,7 @@
 									closePrg(resize_dir);
 									st_reject(`\n\n${lang.error_generating_pdf.bold.red}!`.bgBlack);
 								});
+
 							}).catch(async function(err){
 								barPdf && (
 									barPdf.terminal.cursor(true),

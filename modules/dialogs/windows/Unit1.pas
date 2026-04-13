@@ -34,8 +34,6 @@ type
         Label3           : TLabel;
         GroupBox2        : TGroupBox;
         Panel4           : TScrollBox;
-        ComboTypeConvert : TComboBox;
-        LabelTypeConvert : TLabel;
         procedure FormCreate(Sender: TObject);
         procedure CalendarChange(Sender: TObject);
         procedure DialogButtonClick(Sender: TObject);
@@ -71,9 +69,9 @@ type
         StartButtonStr   : string;
         CalendarStr      : string;
         MenuGenerate     : string;
-        TypeConvert      : string;
         FileJSON         : string;
         procedure LoadProject;
+        procedure WMGetMinMaxInfo (var Msg:TWMGetMinMaxInfo); message WM_GETMINMAXINFO;
     public
         { Public declarations }
         VersionApp       : string;
@@ -84,7 +82,6 @@ type
         intData          : integer;
         appPath          : string;
         index            : string;
-        convert          : string;
     end;
 
 var
@@ -185,12 +182,21 @@ begin
     result        := str.DelimitedText;
 end;
 
+procedure TForm1.WMGetMinMaxInfo(var Msg: TWMGetMinMaxInfo);
+begin
+  with Msg.MinMaxInfo^ do
+  begin
+    ptMinTrackSize.x := 580;
+    ptMinTrackSize.y := 580;
+  end;
+  inherited;
+end;
+
 procedure TForm1.LoadProject;
 var
     lang      : string;
     ini       : TIniFile;
     iniFile   : string;
-    i         : integer;
 begin
     appPath      := ExtractFilePath(Application.ExeName);
     // Обычный ini файл локализации.
@@ -220,7 +226,6 @@ begin
     StartButtonStr        := ini.ReadString('Lang', 'StartButtonStr', 'Запуск программы');
     CalendarStr           := ini.ReadString('Lang', 'CalendarStr', 'Запуск программы');
     MenuGenerate          := ini.ReadString('Lang', 'MenuGenerate', 'Меню для генерации');
-    TypeConvert           := ini.ReadString('Lang', 'TypeConvert', 'Тип конвертора');
     StrErrorIndex         := ini.ReadString('Lang', 'StrErrorIndex',  'Ошибка выбора Меню для генерации');
 	  // Пишем назад прочтённые данные
     ini.WriteString('Lang', 'StrSelectDir', StrSelectDir);
@@ -242,7 +247,6 @@ begin
     ini.WriteString('Lang', 'StartButtonStr', StartButtonStr);
     ini.WriteString('Lang', 'CalendarStr', CalendarStr);
     ini.WriteString('Lang', 'MenuGenerate', MenuGenerate);
-    ini.WriteString('Lang', 'TypeConvert', TypeConvert);
     ini.Free;
 
     typemenu   := -1;
@@ -253,24 +257,11 @@ begin
     iniFile    := TPath.Combine(appPath, 'settings.ini');
     ini        := TIniFile.Create(iniFile);
     directory  := ini.ReadString('Directory', 'SelectDir', '');
-    i          := ini.ReadInteger('TypeConvert', 'Type', 0);
     if not System.SysUtils.DirectoryExists(directory) then
     begin
         directory := '';
         ini.WriteString('Directory', 'SelectDir', directory);
     end;
-    if i >= ComboTypeConvert.Items.Count then
-    begin
-        i := 0;
-    end;
-    if i < 0 then
-    begin
-        i := 0;
-    end;
-    ComboTypeConvert.ItemIndex := i;
-    ini.WriteInteger('TypeConvert', 'Type', i);
-    ini.Free;
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     // Локаль
 	  // Устанавливаем локальные значения в контроллах программы
     GroupBox1.Caption           := GroupBox1Str + ' (' + lang + ')';
@@ -285,8 +276,6 @@ begin
     DialogButton.Hint           := StrSelectDir;
     StartButton.Hint            := StartButtonStr;
     GroupBox2.Caption           := MenuGenerate;
-    LabelTypeConvert.Caption    := TypeConvert;
-    ComboTypeConvert.Hint       := TypeConvert;
     TypeMenuBox.Hint            := Label3Str;
     MonthBox.Hint               := StrSelectMonth;
     YearBox.Hint                := StrSelectYear;
@@ -342,7 +331,6 @@ begin
     DirectoryLabel.Hint    := directory;
     var dt  := Calendar1.CalendarDate;
     intData := DateTimeToUnix(dt);
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     Winapi.Windows.Beep(1760, 500);
 end;
 
@@ -361,20 +349,12 @@ begin
 end;
 
 procedure TForm1.TypeMenuChange(Sender: TObject);
-var
-    ini     : TIniFile;
-    iniFile : string;
 begin
     MenuLabel.Caption := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
     MenuLabel.Hint    := TypeMenuBox.Items[TypeMenuBox.ItemIndex];
     typemenu          := TypeMenuBox.ItemIndex;
     SendJSON_type(FileJSON, typemenu);
     appPath := ExtractFilePath(Application.ExeName);
-    iniFile := TPath.Combine(appPath, 'settings.ini');
-    ini     := TIniFile.Create(iniFile);
-    ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
-    ini.Free;
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
 end;
 
 // Событие выбора итоговых меню
@@ -419,11 +399,9 @@ begin
     begin
         ini.WriteString('Directory', 'SelectDir', directory);
     end;
-    ini.WriteInteger('TypeConvert', 'Type', ComboTypeConvert.ItemIndex);
     ini.Free;
     DirectoryLabel.Caption := directory;
     DirectoryLabel.Hint    := directory;
-    convert                := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     // Выносим форму на передний план
     SetForegroundWindow(Handle);
 end;
@@ -467,7 +445,6 @@ begin
        end;
     end;
     index   := ArrayToStr(strList, ',');
-    convert := ComboTypeConvert.Items[ComboTypeConvert.ItemIndex];
     if(strList.Count < 1)then
     begin
         Winapi.Windows.Beep(1760, 500);
@@ -634,7 +611,6 @@ begin
         c.TabOrder          := k + 5;
         strList.Add(IntToStr(k - 1));
       end;
-      ComboTypeConvert.TabOrder := k + 6;
       DialogButton.TabOrder := k + 7;
       StartButton.TabOrder  := k + 8;
     end;

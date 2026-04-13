@@ -38,7 +38,7 @@ namespace Runner
 			// System.Diagnostics.
 			// Если программа запущена
 			// Имя окна приложения
-			string App = "Конвертирование отсканированных изображений меню в PDF файлы v2.8.3";
+			string App = "Конвертирование отсканированных изображений меню в PDF файлы";
 			String dir = Path.GetDirectoryName(Environment.CurrentDirectory);
 			// Удаляем возможность закрытия приложения из интнрфейса
 			IntPtr hMenu = Process.GetCurrentProcess().MainWindowHandle;

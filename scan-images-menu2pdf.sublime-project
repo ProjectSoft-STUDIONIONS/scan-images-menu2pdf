@@ -42,6 +42,12 @@
 			"working_dir": "${project_path}",
 			"cmd": ["start", "npm", "run", "build"],
 			"shell": true
+		},
+		{
+			"name": "Сборка инсталлятора",
+			"working_dir": "${project_path}",
+			"cmd": ["start", "npm", "run", "compile"],
+			"shell": true
 		}
 	]
 }
