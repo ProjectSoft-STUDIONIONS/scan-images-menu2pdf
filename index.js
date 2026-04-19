@@ -440,6 +440,10 @@
 											pdfDoc.setCreationDate(new Date());
 											pdfDoc.setModificationDate(new Date());
 											/**
+											 * Включаем отображение title при просмотре в программе просмотра (Adobe PDF Reader, Foxit PDF Reader, etc...)
+											 */
+											pdfDoc.catalog.getOrCreateViewerPreferences().setDisplayDocTitle(true);
+											/**
 											 * Сохраняем
 											 */
 											let pdfBytes = await pdfDoc.save();
