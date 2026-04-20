@@ -1,4 +1,4 @@
-﻿#define MyAppVersion "2.8.4"
+﻿#define MyAppVersion "2.9.1"
 #define MyAppName "ConvertMenu2pdf"
 #define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
