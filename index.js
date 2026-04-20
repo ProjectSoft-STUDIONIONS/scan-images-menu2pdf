@@ -253,6 +253,9 @@
 								let temp_width = image.bitmap.width;
 								let temp_height = Math.ceil((image.bitmap.width / 210) * 297);
 								// Обрезка
+								if(image.bitmap.height > temp_height){
+									await image.crop(0, 0, temp_width, temp_height);
+								}
 								await image.crop(0, 0, temp_width, temp_height);
 								// Поворот
 								await image.rotate(typeImage == 'portrait' ? 0 : rotate);
