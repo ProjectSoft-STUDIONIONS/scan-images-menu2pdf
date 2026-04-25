@@ -17,7 +17,6 @@
 		cliProgress = require('cli-progress'),
 		{ spawn, exec } = require('child_process'),
 		{ PDFDocument } =  require('pdf-lib'),
-		resizeOptimizeImages = require('resize-optimize-images'),
 		Jimp = require('jimp'),
 		dialogs =  require('./modules/dialogs/dialogs.js'),
 		Beep = require('./modules/playbeep/playbeep.js'),
@@ -208,9 +207,9 @@
 					mapsFiles;
 				try{
 					try {
-						// Ошибка чтения
 						json = fs.readFileSync(fMenu);
 					}catch(ee){
+						// Ошибка чтения
 						let arr = lang.file_menu_error.split('|');
 						arr[0] = arr[0].bold.brightYellow;
 						arr[1] = fMenu.bold.red;
@@ -218,7 +217,6 @@
 						st_reject(`\n\n${arr.join("")}\n\n`.bgBlack);
 						return;
 					}
-					// Ошибка парсинга
 					jsonPars = JSON.parse(json);
 					for(let jsn of jsonPars){
 						if(jsn["name"]) {
@@ -226,6 +224,7 @@
 						}
 					}
 				}catch(EX) {
+					// Ошибка парсинга
 					st_reject(`\n\n${lang.error_reading_json}!\n\n`.bold.red.bgBlack);
 					return;
 				}
@@ -250,15 +249,24 @@
 								const image = await Jimp.read(input);
 								// Соотношение сторон
 								// 210x297
+								// Обрезка
 								let temp_width = image.bitmap.width;
 								let temp_height = Math.ceil((image.bitmap.width / 210) * 297);
-								// Обрезка
 								if(image.bitmap.height > temp_height){
-									await image.crop(0, 0, temp_width, temp_height);
+									try {
+										await image.crop(0, 0, temp_width, temp_height);
+									} catch(e) {
+										// Ошибка Crop
+										log("\Crop\n".bold.red, e, "\n");
+									}
 								}
-								await image.crop(0, 0, temp_width, temp_height);
 								// Поворот
-								await image.rotate(typeImage == 'portrait' ? 0 : rotate);
+								try {
+									await image.rotate(typeImage == 'portrait' ? 0 : rotate);
+								} catch(e) {
+									// Ошибка Rotate
+									log("\nRotate\n".bold.red, e, "\n");
+								}
 								// Ресайз
 								await image.resize(width, Jimp.AUTO);
 								// Качество
@@ -268,6 +276,7 @@
 								// Выход
 								resolve();
 							}catch(e){
+								log(e);
 								reject(e);
 							}
 						});
@@ -335,7 +344,7 @@
 										 * Формируем путь и имя файла
 										 */
 										// Имя директории
-										let mask = `${dd}.${m}.${y}`,
+										let mask = `${y}.${m}.${dd}`,
 											// Имя файла
 											frm = format.replace("%d", dd).replace("%m", m).replace("%y", y),
 											pdfFile = `${frm}${mapsFiles[k].sufix}.pdf`,
@@ -357,7 +366,6 @@
 										 */
 										// Сделать сохранении в соответствии с индексами
 										if(i == 0){
-											
 											if(!pdfDir && jsonPars[typeMenu]["multidir"]){
 												fs.mkdirSync(path.join(outDir, mask));
 											}
@@ -416,15 +424,16 @@
 											/**
 											 * Кто создаёт документ
 											 * Проще говоря - это школа и т. п.
+											 * ????
 											 */
 											pdfDoc.setProducer(jsonPars[typeMenu]["produser"]);
 											/**
 											 * Приложение, которое создаёт документ.
 											 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
 											 * Производителем файла должна быть программа, которая является официальной версией!
-											 * Мы сюда так же добавляем ссылку на библиотеку pdf-lib
+											 * Мы сюда так же добавляем имена библиотек jimp, pdf-lib
 											 */
-											pdfDoc.setCreator("jimp, pdf-lib, ProjectSoft®");
+											pdfDoc.setCreator("node, jimp, pdf-lib, ProjectSoft®");
 											/**
 											 * Заполнение метатегов документа
 											 * Это обязательное действие.
@@ -516,7 +525,7 @@
 									reject(String(`${lang.directory_is_empty}: ${imgs}`).bold.red.bgBlack);
 								}
 							}catch(e){
-								reject('');
+								reject(e);
 							}
 						});
 					};
@@ -586,7 +595,7 @@
 									log(`${lang.deleting_img_files}\n`.bold.brightYellow.bgBlack);
 									fs.rmSync(resize_dir, { recursive: true, force: true });
 								}
-								fs.mkdirSync(resize_dir);
+								try { fs.mkdirSync(resize_dir); }catch(e){}
 								/**
 								 * Ресайз изображений
 								 * portrait     - книжная
