@@ -34,6 +34,8 @@ type
         Label3           : TLabel;
         GroupBox2        : TGroupBox;
         Panel4           : TScrollBox;
+    ProduserEdit: TEdit;
+    ProduserLabel: TLabel;
         procedure FormCreate(Sender: TObject);
         procedure CalendarChange(Sender: TObject);
         procedure DialogButtonClick(Sender: TObject);
@@ -47,6 +49,7 @@ type
         procedure LabelMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
         procedure TypeMenuChange(Sender: TObject);
+    procedure ProduserEditChange(Sender: TObject);
     private
         { Private declarations }
         // Lang
@@ -70,6 +73,8 @@ type
         CalendarStr      : string;
         MenuGenerate     : string;
         FileJSON         : string;
+        ProduserStr      : string;
+        ProduserHintStr  : string;
         procedure LoadProject;
         procedure WMGetMinMaxInfo (var Msg:TWMGetMinMaxInfo); message WM_GETMINMAXINFO;
     public
@@ -82,6 +87,7 @@ type
         intData          : integer;
         appPath          : string;
         index            : string;
+        produser         : string;
     end;
 
 var
@@ -208,45 +214,49 @@ begin
     ini          := TIniFile.Create(iniFile);
 	  // Если определённой секции с ключём нет, то устанавливаем дефолтное значение
 	  // Читаем файл локализации.
-    GroupBox1Str          := ini.ReadString('Lang', 'GroupBox1Str', 'Календарь');
-    StrWarning            := ini.ReadString('Lang', 'StrWarning', 'Внимание');
-    StrError              := ini.ReadString('Lang', 'StrError', 'Ошибка');
-    StrSelectDir          := ini.ReadString('Lang', 'StrSelectDir', 'Выбор директории с изображениями');
-    StrErrorTypeMenu      := ini.ReadString('Lang', 'StrErrorTypeMenu', 'Не выбран тип меню');
-    StrErrorDate          := ini.ReadString('Lang', 'StrErrorDate', 'Не выбрана дата');
-    StrErrorSelectDir     := ini.ReadString('Lang', 'StrErrorSelectDir', 'Не выбрана директория');
-    StrUserAbort          := ini.ReadString('Lang', 'StrUserAbort', 'Прервано пользователем');
-    StrErrorReadFile      := ini.ReadString('Lang', 'StrErrorReadFile', 'Ошибка чтения файла');
-    StrSelectMonth        := ini.ReadString('Lang', 'StrSelectMonth', 'Выбрать Месяц');
-    StrSelectYear         := ini.ReadString('Lang', 'StrSelectYear', 'Выбрать Год');
-    StrSelectDay          := ini.ReadString('Lang', 'StrSelectDay', 'Выбрать Дату');
-    Label1Str             := ini.ReadString('Lang', 'Label1Str', 'Выбранная дата');
-    Label2Str             := ini.ReadString('Lang', 'Label2Str', 'Выбранная директория');
-    Label3Str             := ini.ReadString('Lang', 'Label3Str', 'Тип меню');
-    StartButtonStr        := ini.ReadString('Lang', 'StartButtonStr', 'Запуск программы');
-    CalendarStr           := ini.ReadString('Lang', 'CalendarStr', 'Запуск программы');
-    MenuGenerate          := ini.ReadString('Lang', 'MenuGenerate', 'Меню для генерации');
-    StrErrorIndex         := ini.ReadString('Lang', 'StrErrorIndex',  'Ошибка выбора Меню для генерации');
+    GroupBox1Str          := ini.ReadString('Lang', 'GroupBox1Str',           'Календарь');
+    StrWarning            := ini.ReadString('Lang', 'StrWarning',             'Внимание');
+    StrError              := ini.ReadString('Lang', 'StrError',               'Ошибка');
+    StrSelectDir          := ini.ReadString('Lang', 'StrSelectDir',           'Выбор директории с изображениями');
+    StrErrorTypeMenu      := ini.ReadString('Lang', 'StrErrorTypeMenu',       'Не выбран тип меню');
+    StrErrorDate          := ini.ReadString('Lang', 'StrErrorDate',           'Не выбрана дата');
+    StrErrorSelectDir     := ini.ReadString('Lang', 'StrErrorSelectDir',      'Не выбрана директория');
+    StrUserAbort          := ini.ReadString('Lang', 'StrUserAbort',           'Прервано пользователем');
+    StrErrorReadFile      := ini.ReadString('Lang', 'StrErrorReadFile',       'Ошибка чтения файла');
+    StrSelectMonth        := ini.ReadString('Lang', 'StrSelectMonth',         'Выбрать Месяц');
+    StrSelectYear         := ini.ReadString('Lang', 'StrSelectYear',          'Выбрать Год');
+    StrSelectDay          := ini.ReadString('Lang', 'StrSelectDay',           'Выбрать Дату');
+    Label1Str             := ini.ReadString('Lang', 'Label1Str',              'Выбранная дата');
+    Label2Str             := ini.ReadString('Lang', 'Label2Str',              'Выбранная директория');
+    Label3Str             := ini.ReadString('Lang', 'Label3Str',              'Тип меню');
+    StartButtonStr        := ini.ReadString('Lang', 'StartButtonStr',         'Запуск программы');
+    CalendarStr           := ini.ReadString('Lang', 'CalendarStr',            'Запуск программы');
+    MenuGenerate          := ini.ReadString('Lang', 'MenuGenerate',           'Меню для генерации');
+    StrErrorIndex         := ini.ReadString('Lang', 'StrErrorIndex',          'Ошибка выбора Меню для генерации');
+    ProduserStr           := ini.ReadString('Lang', 'ProduserStr',            'Школа');
+    ProduserHintStr       := ini.ReadString('Lang', 'ProduserHintStr',        'Введите название (имя) школы');
 	  // Пишем назад прочтённые данные
-    ini.WriteString('Lang', 'StrSelectDir', StrSelectDir);
-    ini.WriteString('Lang', 'StrError', StrError);
-    ini.WriteString('Lang', 'StrWarning', StrWarning);
-    ini.WriteString('Lang', 'StrErrorTypeMenu', StrErrorTypeMenu);
-    ini.WriteString('Lang', 'StrErrorDate', StrErrorDate);
-    ini.WriteString('Lang', 'StrErrorSelectDir', StrErrorSelectDir);
-    ini.WriteString('Lang', 'StrUserAbort', StrUserAbort);
-    ini.WriteString('Lang', 'StrErrorReadFile', StrErrorReadFile);
-    ini.WriteString('Lang', 'StrErrorIndex', StrErrorIndex);
-    ini.WriteString('Lang', 'GroupBox1Str', GroupBox1Str);
-    ini.WriteString('Lang', 'StrSelectMonth', StrSelectMonth);
-    ini.WriteString('Lang', 'StrSelectYear', StrSelectYear);
-    ini.WriteString('Lang', 'StrSelectDay', StrSelectDay);
-    ini.WriteString('Lang', 'Label1Str', Label1Str);
-    ini.WriteString('Lang', 'Label2Str', Label2Str);
-    ini.WriteString('Lang', 'Label3Str', Label3Str);
-    ini.WriteString('Lang', 'StartButtonStr', StartButtonStr);
-    ini.WriteString('Lang', 'CalendarStr', CalendarStr);
-    ini.WriteString('Lang', 'MenuGenerate', MenuGenerate);
+    ini.WriteString('Lang', 'StrSelectDir',          StrSelectDir);
+    ini.WriteString('Lang', 'StrError',              StrError);
+    ini.WriteString('Lang', 'StrWarning',            StrWarning);
+    ini.WriteString('Lang', 'StrErrorTypeMenu',      StrErrorTypeMenu);
+    ini.WriteString('Lang', 'StrErrorDate',          StrErrorDate);
+    ini.WriteString('Lang', 'StrErrorSelectDir',     StrErrorSelectDir);
+    ini.WriteString('Lang', 'StrUserAbort',          StrUserAbort);
+    ini.WriteString('Lang', 'StrErrorReadFile',      StrErrorReadFile);
+    ini.WriteString('Lang', 'StrErrorIndex',         StrErrorIndex);
+    ini.WriteString('Lang', 'GroupBox1Str',          GroupBox1Str);
+    ini.WriteString('Lang', 'StrSelectMonth',        StrSelectMonth);
+    ini.WriteString('Lang', 'StrSelectYear',         StrSelectYear);
+    ini.WriteString('Lang', 'StrSelectDay',          StrSelectDay);
+    ini.WriteString('Lang', 'Label1Str',             Label1Str);
+    ini.WriteString('Lang', 'Label2Str',             Label2Str);
+    ini.WriteString('Lang', 'Label3Str',             Label3Str);
+    ini.WriteString('Lang', 'StartButtonStr',        StartButtonStr);
+    ini.WriteString('Lang', 'CalendarStr',           CalendarStr);
+    ini.WriteString('Lang', 'MenuGenerate',          MenuGenerate);
+    ini.WriteString('Lang', 'ProduserStr',           ProduserStr);
+    ini.WriteString('Lang', 'ProduserHintStr',       ProduserHintStr);
     ini.Free;
 
     typemenu   := -1;
@@ -257,6 +267,7 @@ begin
     iniFile    := TPath.Combine(appPath, 'settings.ini');
     ini        := TIniFile.Create(iniFile);
     directory  := ini.ReadString('Directory', 'SelectDir', '');
+    produser   := ini.ReadString('Produser', 'ProduserName', 'ГБОУ СОШ пос. Комсомольский');
     if not System.SysUtils.DirectoryExists(directory) then
     begin
         directory := '';
@@ -280,6 +291,9 @@ begin
     MonthBox.Hint               := StrSelectMonth;
     YearBox.Hint                := StrSelectYear;
     Calendar1.Hint              := StrSelectDay;
+    ProduserLabel.Caption       := ProduserStr;
+    ProduserLabel.Hint          := ProduserStr;
+    ProduserEdit.Hint           := ProduserHintStr;
     // End Локаль
 end;
 
@@ -329,6 +343,7 @@ begin
 	  // Выводим директорию в контроллах
     DirectoryLabel.Caption := directory;
     DirectoryLabel.Hint    := directory;
+    ProduserEdit.Text      := produser;
     var dt  := Calendar1.CalendarDate;
     intData := DateTimeToUnix(dt);
     Winapi.Windows.Beep(1760, 500);
@@ -629,6 +644,17 @@ procedure TForm1.PanelMouseWheel(Sender: TObject; Shift: TShiftState;
 begin
     Panel4.SetFocus;
     Panel4.VertScrollBar.Position := Panel4.VertScrollBar.Position-WheelDelta div 10;
+end;
+
+procedure TForm1.ProduserEditChange(Sender: TObject);
+var
+    ini     : TIniFile;
+    iniFile : string;
+begin
+    iniFile := TPath.Combine(appPath, 'settings.ini');
+    ini     := TIniFile.Create(iniFile);
+    produser := ProduserEdit.Text;
+    ini.WriteString('Produser', 'ProduserName', produser);
 end;
 
 end.

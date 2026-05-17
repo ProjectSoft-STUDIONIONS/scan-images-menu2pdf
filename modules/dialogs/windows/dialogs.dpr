@@ -27,7 +27,7 @@ end;
   data            Значения даты и времени в формате UNIX
   error           Тип ошибки
   Формат
-  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "error": "0"}
+  {"typemenu": "0", "directory": "C:\\Temp\\ScanDir", "data": "1702880641", "produser": "ГБОУ СОШ №__ Город, Поселение", "error": "0"}
 
   Индекс ошибок "error"
   0 - Ошибок нет
@@ -75,6 +75,7 @@ begin
                 jo.AddPair(TJSONPair.Create('typemenu', IntToStr(Form1.typemenu)));
                 jo.AddPair(TJSONPair.Create('directory', Form1.directory));
                 jo.AddPair(TJSONPair.Create('data', IntToStr(Form1.intData)));
+                jo.AddPair(TJSONPair.Create('produser', Form1.produser));
                 jo.AddPair(TJSONPair.Create('index', Form1.index));
                 jo.AddPair(TJSONPair.Create('error', '0'));
                 jsn := jo.ToJSON();

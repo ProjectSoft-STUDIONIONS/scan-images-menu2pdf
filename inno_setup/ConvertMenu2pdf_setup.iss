@@ -1,4 +1,4 @@
-﻿#define MyAppVersion "2.9.1"
+﻿#define MyAppVersion "2.9.2"
 #define MyAppName "ConvertMenu2pdf"
 #define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
@@ -14,6 +14,8 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL=https://projectsoft.ru/
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}/releases/latest
+AppCopyright={#MyAppPublisher}
+VersionInfoVersion={#MyAppVersion}
 DefaultDirName=c:\{#MyAppName}\
 DisableDirPage=no
 DisableProgramGroupPage=yes
@@ -36,7 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\bin\{#MyAppExeName}"; DestDir: "{app}\bin\"; Flags: ignoreversion
-Source: "..\build.js"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "..\build.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\index.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\language.de.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\language.en.json"; DestDir: "{app}"; Flags: ignoreversion

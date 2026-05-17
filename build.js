@@ -2,11 +2,12 @@ const fs = require('fs'),
 		path = require('path'),
 		{ unlink } = require('fs/promises'),
 		{ spawn } = require('child_process'),
+		colors = require('colors'),
 		config = require('./package.json'),
 		author = config.author.split(" ")[0],
 		app_manifest = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-	<assemblyIdentity version="${config.version}.0" name="${config.product}.app"/>
+	<assemblyIdentity version="${config.version}" name="${config.product}.app"/>
 	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
 		<security>
  			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
@@ -21,8 +22,8 @@ const fs = require('fs'),
 [assembly: AssemblyCompany("${author}")]
 [assembly: AssemblyCopyright("Copyright © ${author} 2008 - all right reserved")]
 [assembly: AssemblyTrademark("® ${author}")]
-[assembly: AssemblyVersion("${config.version}.0")] 
-[assembly: AssemblyFileVersion("${config.version}.0")]
+[assembly: AssemblyVersion("${config.version}")] 
+[assembly: AssemblyFileVersion("${config.version}")]
 [assembly: AssemblyTitle("${config.description} v${config.version}")]
 [assembly: AssemblyDescription("${config.description} v${config.version}")]`,
 	normalize = function(args) {
@@ -46,14 +47,14 @@ const fs = require('fs'),
 			ls.stderr.on('data', (data) => { reject(data); });
 			ls.on('close', (code) => {
 				if(code == 0){
-					resolve(`Compiled ${config.product}.exe`);
+					resolve(`Compiled:`.bold.brightYellow + ` ${config.product}.exe`.cyan);
 				}else{
-					reject('csc.exe ' + args.join(' '));
-					reject(`Error ${config.product}.exe: ${code}`);
+					reject('Error:'.bold.brightRed + ` csc.exe ${args.join(' ')}`.bold.white);
 				}
 			});
 		});
 	};
+	colors.enable();
 
 (async function(){
 	let prg = normalize([__dirname, `${config.product}.exe`]);

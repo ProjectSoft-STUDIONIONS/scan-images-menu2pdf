@@ -29,12 +29,13 @@
 		wPortrait = 1240,
 		wLandscape = 1754,
 		rotate = 90,
-		scale = .5;
+		scale = .5,
+		version_app = config.version.slice(0, 5); // 1.2.3
 
 	colors.enable();
 	config.description = config.description.trim();
 	config.soundEnable = (String(config.soundEnable).toLowerCase() === 'true') || false;
-	process.title = ((process.title != config.description) ? config.description : process.title) + ` v${config.version}`;
+	process.title = ((process.title != config.description) ? config.description : process.title) + ` v${version_app}`;
 
 	require('events').EventEmitter.defaultMaxListeners = 15;
 
@@ -204,7 +205,8 @@
 					jsonType = [],
 					dir = '',
 					typeMenu = false,
-					mapsFiles;
+					mapsFiles,
+					produser = "";
 				try{
 					try {
 						json = fs.readFileSync(fMenu);
@@ -311,7 +313,8 @@
 									// Кол-во файлов в файле PDF
 									// Зависит от типа меню
 									let c = jsonPars[typeMenu]["files"];
-									const format = jsonPars[typeMenu]["format"];
+									// Формат даты для имени файла
+									const format = "%y.%m.%d";
 									let k = 0;
 									// Количество пунктов меню
 									let f = mapsFiles.length;
@@ -339,14 +342,16 @@
 										let d = date.getDate(),
 											m = String(date.getMonth() + 1).padStart(2, "0"),
 											y = String(date.getFullYear()),
-											dd = String(d).padStart(2, "0");
+											dd = String(d).padStart(2, "0"),
+											// Имя файла (Дата)
+											frm = format.replace("%d", dd).replace("%m", m).replace("%y", y),
+											// Формируем дату для title
+											intlDate = new Intl.DateTimeFormat("ru", {dateStyle: "short"}).format(date.getTime());
 										/**
 										 * Формируем путь и имя файла
 										 */
 										// Имя директории
 										let mask = `${y}.${m}.${dd}`,
-											// Имя файла
-											frm = format.replace("%d", dd).replace("%m", m).replace("%y", y),
 											pdfFile = `${frm}${mapsFiles[k].sufix}.pdf`,
 											/**
 											 * Если директория не существует и multidir включен - создаём директорию
@@ -426,7 +431,7 @@
 											 * Проще говоря - это школа и т. п.
 											 * ????
 											 */
-											pdfDoc.setProducer(jsonPars[typeMenu]["produser"]);
+											pdfDoc.setProducer(produser);
 											/**
 											 * Приложение, которое создаёт документ.
 											 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
@@ -442,9 +447,9 @@
 											 * Ключевые слова
 											 * Тема (Описание)
 											 */
-											pdfDoc.setTitle(mapsFiles[k].title + " на " + mask);
-											pdfDoc.setKeywords([mapsFiles[k].title + " на " + mask]);
-											pdfDoc.setSubject(mapsFiles[k].title + " на " + mask);
+											pdfDoc.setTitle(mapsFiles[k].title + " на " + intlDate);
+											pdfDoc.setKeywords([mapsFiles[k].title + " на " + intlDate]);
+											pdfDoc.setSubject(mapsFiles[k].title + " на " + intlDate);
 											/**
 											 * Время создания файла
 											 * Время модификации файла
@@ -530,7 +535,7 @@
 						});
 					};
 
-				dialogs(fMenu, config.version).then(async function(data){
+				dialogs(fMenu, version_app).then(async function(data){
 					/**
 					 * Запуск
 					 */;
@@ -563,6 +568,7 @@
 						}else{
 							day = 0
 						}
+						produser = data.produser;
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
@@ -728,7 +734,7 @@
 	 */
 	// Имя, версия
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log(('\n' + config.description.bold.green + (' v' + config.version).bold.brightYellow + '\n').bgBlack);
+	log(('\n' + config.description.bold.green + (' v' + version_app).bold.brightYellow + '\n').bgBlack);
 	// Старт
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
 	log(`${lang.start}...\n`.bold.brightYellow.bgBlack);

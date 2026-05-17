@@ -5,7 +5,6 @@
 		"size": "portrait",
 		"author": "ООО «КДП «Здоров и Сыт»",
 		"produser": "ГБОУ СОШ пос. Комсомольский",
-		"format": "%y.%m.%d",
 		"multidir": true,
 		"items": [
 			{
@@ -66,7 +65,6 @@
 		"size": "landscape",
 		"author": "ООО «КДП «Здоров и Сыт»",
 		"produser": "ГБОУ СОШ пос. Комсомольский",
-		"format": "%y.%m.%d",
 		"multidir": false,
 		"items": [
 			{
