@@ -133,6 +133,7 @@
 			}
 			return sep;
 		},
+		sp = separator(),
 		closeDelay = function(ms, rtn = true) {
 			if (rtn) {
 				let value = 0,
@@ -230,8 +231,6 @@
 					st_reject(`\n\n${lang.error_reading_json}!\n\n`.bold.red.bgBlack);
 					return;
 				}
-				
-				const sp = separator();
 				
 				const readDirectory = function(dir_read){
 						return new Promise(function(resolve, reject) {
