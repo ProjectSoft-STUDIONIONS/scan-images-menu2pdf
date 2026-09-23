@@ -1,13 +1,14 @@
 {
 	"name": "scan-images-menu2pdf",
-	"version": "2.9.2.0",
+	"version": "2.9.3.0",
 	"description": "Конвертирование отсканированных изображений меню в PDF файлы",
 	"product": "programm",
 	"main": "index.js",
 	"scripts": {
-		"test": "node index.js --work-days=5 --pad=4",
+		"app": "start /d bin programm.exe",
 		"build": "node build.js",
-		"compile": "node compile.js"
+		"compile": "node compile.js",
+		"test": "node index.js --work-days=5 --pad=4"
 	},
 	"files": [
 		"index.js",

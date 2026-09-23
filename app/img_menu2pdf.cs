@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -10,7 +11,7 @@ namespace Runner
 	class Program
 	{
 
-		#region "Unmanaged"
+		//#region "Unmanaged"
 
 		[DllImport("user32.dll")]
 		static extern bool EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
@@ -31,7 +32,7 @@ namespace Runner
 		internal const uint SC_MINIMIZE = 0xF020;
 		internal const uint SC_RESTORE = 0xF120;
 
-		#endregion
+		//#endregion
 
 		static void Main(string[] args)
 		{
@@ -57,7 +58,8 @@ namespace Runner
 			RemoveMenu(hSystemMenu, SC_RESTORE, MF_BYCOMMAND);
 			// Устанавливаем цвет окна консоли в Чёрный цвет
 			Console.BackgroundColor = System.ConsoleColor.Black;
-			Console.ForegroundColor = System.ConsoleColor.White;
+			Console.ForegroundColor = System.ConsoleColor.Yellow;
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
 			// Console.Clear();
 			// Читаем настройки из файла
 			String ini = Environment.CurrentDirectory + "\\" + "programm.ini";
@@ -82,6 +84,27 @@ namespace Runner
 			p.Start();
 			// Меняем title
 			Console.Title = App;
+			// Выводим свой копирайтинг
+			// НЕ УДАЛЯТЬ!!!
+			Console.WriteLine("");
+			Console.ForegroundColor = System.ConsoleColor.Yellow;
+			Console.Write("                               Author: ");
+			Console.ForegroundColor = System.ConsoleColor.Green;
+			Console.Write("ProjectSoft aka Чернышёв Андрей");
+			Console.WriteLine("");
+			Console.ForegroundColor = System.ConsoleColor.Yellow;
+			Console.Write("                              License: ");
+			Console.ForegroundColor = System.ConsoleColor.Green;
+			Console.Write("GPL-3.0");
+			Console.WriteLine("");
+			Console.ForegroundColor = System.ConsoleColor.Yellow;
+			Console.Write("                           Repository: ");
+			Console.ForegroundColor = System.ConsoleColor.Green;
+			Console.Write("https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf");
+			Console.WriteLine("");
+			Console.ForegroundColor = System.ConsoleColor.Yellow;
+			Console.Write("                             Copyright © 2009 - all right reserved");
+			Console.WriteLine("");
 			// Если ini файл не существует
 			if (File.Exists(ini) == false){
 				// Записываем параметры в файл

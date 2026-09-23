@@ -38,15 +38,15 @@
 			"shell": true
 		},
 		{
-			"name": "Полная сборка проекта",
+			"name": "Запуск app",
 			"working_dir": "${project_path}",
-			"cmd": ["start", "npm", "run", "build"],
-			"shell": true
-		},
-		{
-			"name": "Сборка инсталлятора",
-			"working_dir": "${project_path}",
-			"cmd": ["start", "npm", "run", "compile"],
+			"cmd": [
+				"start",
+				"/wait",
+				"/d",
+				"bin",
+				"programm.exe"
+			],
 			"shell": true
 		}
 	]

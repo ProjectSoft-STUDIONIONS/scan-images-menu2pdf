@@ -1,4 +1,5 @@
 {
+	"author": "Комбинат питания",
 	"closing_in": "Закрытие через",
 	"closing_the_program": "Закрытие программы",
 	"completed_by_user": "Завершено пользователем",
@@ -13,6 +14,7 @@
 	"generating_pdf_files": "Генерация PDF файлов",
 	"image_optimization": "Оптимизация изображений",
 	"processing_will_end": "Обработка закончится через",
+	"produser": "Школа",
 	"selected_date": "Выбранная Дата",
 	"selected_directory": "Выбранная директория",
 	"selected_menu_type": "Выбранный тип меню",

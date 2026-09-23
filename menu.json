@@ -3,8 +3,6 @@
 		"name": "Каждодневное меню",
 		"files": 2,
 		"size": "portrait",
-		"author": "ООО «КДП «Здоров и Сыт»",
-		"produser": "ГБОУ СОШ пос. Комсомольский",
 		"multidir": true,
 		"items": [
 			{
@@ -63,8 +61,6 @@
 		"name": "Двухнедельное меню",
 		"files": 11,
 		"size": "landscape",
-		"author": "ООО «КДП «Здоров и Сыт»",
-		"produser": "ГБОУ СОШ пос. Комсомольский",
 		"multidir": false,
 		"items": [
 			{

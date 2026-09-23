@@ -6,8 +6,8 @@ object Form1: TForm1
   Caption = 
     #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1050#1086#1085#1074#1077#1088#1090#1080#1088#1086#1074#1072#1085#1080#1103' '#1086#1090#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1085#1099#1093' '#1080#1079#1086#1073#1088#1072#1078#1077#1085#1080#1081' '#1084#1077#1085#1102' '#1074' PDF' +
     ' '#1092#1072#1081#1083#1099
-  ClientHeight = 560
-  ClientWidth = 565
+  ClientHeight = 647
+  ClientWidth = 564
   Color = clWindow
   Constraints.MinHeight = 580
   Constraints.MinWidth = 580
@@ -25,7 +25,7 @@ object Form1: TForm1
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 559
+    Width = 558
     Height = 54
     Align = alTop
     Alignment = taLeftJustify
@@ -105,7 +105,7 @@ object Form1: TForm1
       AlignWithMargins = True
       Left = 191
       Top = 3
-      Width = 365
+      Width = 364
       Height = 48
       Align = alClient
       Alignment = taLeftJustify
@@ -118,7 +118,7 @@ object Form1: TForm1
         AlignWithMargins = True
         Left = 5
         Top = 0
-        Width = 355
+        Width = 354
         Height = 16
         Margins.Left = 5
         Margins.Top = 0
@@ -142,7 +142,7 @@ object Form1: TForm1
         AlignWithMargins = True
         Left = 5
         Top = 16
-        Width = 355
+        Width = 354
         Height = 16
         Margins.Left = 5
         Margins.Top = 0
@@ -166,7 +166,7 @@ object Form1: TForm1
         AlignWithMargins = True
         Left = 5
         Top = 32
-        Width = 355
+        Width = 354
         Height = 16
         Margins.Left = 5
         Margins.Top = 0
@@ -191,8 +191,8 @@ object Form1: TForm1
     AlignWithMargins = True
     Left = 0
     Top = 60
-    Width = 565
-    Height = 93
+    Width = 564
+    Height = 149
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -208,8 +208,8 @@ object Form1: TForm1
     object ProduserLabel: TLabel
       AlignWithMargins = True
       Left = 5
-      Top = 42
-      Width = 555
+      Top = 46
+      Width = 554
       Height = 16
       Align = alBottom
       Caption = 'ProduserLabel'
@@ -219,9 +219,23 @@ object Form1: TForm1
       Font.Name = 'Microsoft Sans Serif'
       Font.Style = []
       ParentFont = False
-      ExplicitLeft = 2
-      ExplicitTop = 43
       ExplicitWidth = 89
+    end
+    object AuthorLabel: TLabel
+      AlignWithMargins = True
+      Left = 5
+      Top = 98
+      Width = 554
+      Height = 16
+      Align = alBottom
+      Caption = 'AuthorLabel'
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Microsoft Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      ExplicitWidth = 72
     end
     object MonthBox: TComboBox
       AlignWithMargins = True
@@ -244,11 +258,10 @@ object Form1: TForm1
       ShowHint = True
       TabOrder = 0
       OnChange = CalendarChange
-      ExplicitTop = 5
     end
     object YearBox: TComboBox
       AlignWithMargins = True
-      Left = 461
+      Left = 460
       Top = 18
       Width = 99
       Height = 22
@@ -267,13 +280,12 @@ object Form1: TForm1
       ShowHint = True
       TabOrder = 1
       OnChange = CalendarChange
-      ExplicitLeft = 463
     end
     object ProduserEdit: TEdit
       AlignWithMargins = True
       Left = 5
-      Top = 64
-      Width = 555
+      Top = 68
+      Width = 554
       Height = 24
       Align = alBottom
       Font.Charset = RUSSIAN_CHARSET
@@ -286,16 +298,31 @@ object Form1: TForm1
       ShowHint = True
       TabOrder = 2
       OnChange = ProduserEditChange
-      ExplicitLeft = 304
-      ExplicitTop = 32
-      ExplicitWidth = 121
+    end
+    object AuthorEdit: TEdit
+      AlignWithMargins = True
+      Left = 5
+      Top = 120
+      Width = 554
+      Height = 24
+      Align = alBottom
+      Font.Charset = RUSSIAN_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Microsoft Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      OnChange = AuthorEditChange
     end
   end
   object Calendar1: TCalendar
     AlignWithMargins = True
     Left = 5
-    Top = 153
-    Width = 555
+    Top = 209
+    Width = 554
     Height = 155
     Margins.Left = 5
     Margins.Top = 0
@@ -310,13 +337,12 @@ object Form1: TForm1
     TabOrder = 2
     UseCurrentDate = False
     OnChange = CalendarChange
-    ExplicitTop = 102
   end
   object TypeMenuBox: TComboBox
     AlignWithMargins = True
     Left = 5
-    Top = 314
-    Width = 555
+    Top = 370
+    Width = 554
     Height = 22
     Margins.Left = 5
     Margins.Right = 5
@@ -327,13 +353,12 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 4
     OnChange = TypeMenuChange
-    ExplicitTop = 263
   end
   object GroupBox2: TGroupBox
     Left = 0
-    Top = 339
-    Width = 565
-    Height = 159
+    Top = 395
+    Width = 564
+    Height = 190
     Align = alClient
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clBlack
@@ -344,13 +369,11 @@ object Form1: TForm1
     Padding.Right = 5
     ParentFont = False
     TabOrder = 6
-    ExplicitTop = 288
-    ExplicitHeight = 192
     object Panel4: TScrollBox
       Left = 7
       Top = 18
-      Width = 551
-      Height = 139
+      Width = 550
+      Height = 170
       Align = alClient
       BorderStyle = bsNone
       Font.Charset = RUSSIAN_CHARSET
@@ -363,15 +386,14 @@ object Form1: TForm1
       TabOrder = 0
       OnMouseMove = PanelMouseMove
       OnMouseWheel = PanelMouseWheel
-      ExplicitHeight = 172
     end
   end
   object DialogButton: TButton
     Tag = 100
     AlignWithMargins = True
     Left = 5
-    Top = 501
-    Width = 555
+    Top = 588
+    Width = 554
     Height = 25
     Margins.Left = 5
     Margins.Right = 5
@@ -380,21 +402,19 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 1
     OnClick = DialogButtonClick
-    ExplicitTop = 483
   end
   object StartButton: TButton
     Tag = 101
     AlignWithMargins = True
     Left = 5
-    Top = 532
-    Width = 555
+    Top = 619
+    Width = 554
     Height = 25
     Margins.Left = 5
     Margins.Right = 5
     Align = alBottom
     ModalResult = 1
     TabOrder = 3
-    ExplicitTop = 514
   end
   object ImageList1: TImageList
     Left = 24

@@ -22,7 +22,7 @@
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
 		fMenu = 'menu.json',
-		strLength = 40,
+		strLength = 37,
 		/**
 		 * Размер страниц
 		 */
@@ -68,7 +68,9 @@
 			"time_spent_in_seconds"      : "Затраченное время в секундах",
 			"error_generating_pdf"       : "Ошибка при генерации PDF",
 			"file_menu_error"            : "Файл `%s` поврежден или не существует",
-			"error_close"                : "Для продолжения нажмите любую клавишу..."
+			"error_close"                : "Для продолжения нажмите любую клавишу...",
+			"produser"                   : "Школа",
+			"author"                     : "Комбинат питания"
 		},
 
 		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
@@ -102,7 +104,7 @@
 			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: ((`  {bar}  `).bold.cyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).bold.green).bgBlack, // Шаблон прогресс бара
+			format: ((`  {bar}  `).cyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
 			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -142,7 +144,7 @@
 					barsize: strLength - 2,
 					autopadding: true,
 					autopaddingChar: '000',
-					format: ((`  {bar}  `).bold.brightRed + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).bold.green).bgBlack,
+					format: ((`  {bar}  `).brightRed + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).brightGreen),
 					barCompleteChar: '\u2588',
 					barIncompleteChar: '\u2591',
 					hideCursor: true,
@@ -207,17 +209,18 @@
 					dir = '',
 					typeMenu = false,
 					mapsFiles,
-					produser = "";
+					produser = "",
+					author = "";
 				try{
 					try {
 						json = fs.readFileSync(fMenu);
 					}catch(ee){
 						// Ошибка чтения
 						let arr = lang.file_menu_error.split('|');
-						arr[0] = arr[0].bold.brightYellow;
-						arr[1] = fMenu.bold.red;
-						arr[2] = arr[2].bold.brightYellow;
-						st_reject(`\n\n${arr.join("")}\n\n`.bgBlack);
+						arr[0] = arr[0].brightYellow;
+						arr[1] = fMenu.red;
+						arr[2] = arr[2].brightYellow;
+						st_reject(`\n\n${arr.join("")}\n\n`);
 						return;
 					}
 					jsonPars = JSON.parse(json);
@@ -228,7 +231,7 @@
 					}
 				}catch(EX) {
 					// Ошибка парсинга
-					st_reject(`\n\n${lang.error_reading_json}!\n\n`.bold.red.bgBlack);
+					st_reject(`\n\n${lang.error_reading_json}!\n\n`.red);
 					return;
 				}
 				
@@ -258,7 +261,7 @@
 										await image.crop(0, 0, temp_width, temp_height);
 									} catch(e) {
 										// Ошибка Crop
-										log("\Crop\n".bold.red, e, "\n");
+										log("\Crop\n".red, e, "\n");
 									}
 								}
 								// Поворот
@@ -266,7 +269,7 @@
 									await image.rotate(typeImage == 'portrait' ? 0 : rotate);
 								} catch(e) {
 									// Ошибка Rotate
-									log("\nRotate\n".bold.red, e, "\n");
+									log("\nRotate\n".red, e, "\n");
 								}
 								// Ресайз
 								await image.resize(width, Jimp.AUTO);
@@ -321,7 +324,7 @@
 									/**
 									 * Прогресс PDF
 									 */
-									log(`${lang.generating_pdf_files}...`.bold.brightYellow.bgBlack);
+									log(`${lang.generating_pdf_files}...`.brightYellow);
 									let progressPDfIndex = 0;
 									let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
 									barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
@@ -424,11 +427,10 @@
 											 * Автор документа - откуда получили документ.
 											 * Проще говоря, кто организовывает питание в школе
 											 */
-											pdfDoc.setAuthor(jsonPars[typeMenu]["author"]);
+											pdfDoc.setAuthor(author);
 											/**
 											 * Кто создаёт документ
 											 * Проще говоря - это школа и т. п.
-											 * ????
 											 */
 											pdfDoc.setProducer(produser);
 											/**
@@ -526,7 +528,7 @@
 									barPdf.stop();
 									resolve();
 								}else{
-									reject(String(`${lang.directory_is_empty}: ${imgs}`).bold.red.bgBlack);
+									reject(String(`${lang.directory_is_empty}: ${imgs}`).red);
 								}
 							}catch(e){
 								reject(e);
@@ -545,7 +547,7 @@
 					try {
 						data = JSON.parse(data);
 					} catch(err_json){
-						st_reject(`${lang.error_reading_json}!`.bold.red.bgBlack);
+						st_reject(`${lang.error_reading_json}!`.red);
 						return;
 					}
 					if(parseInt(data.typemenu) > -1 && data.directory != "None" && data.data.length) {
@@ -568,13 +570,24 @@
 							day = 0
 						}
 						produser = data.produser;
+						author = data.author;
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
-						log((`${lang.selected_menu_type}: `.bold.brightYellow + jsonPars[typeMenu]["name"].bold.green).bgBlack);
-						log((`${lang.selected_directory}: `.bold.brightYellow + dir.bold.green).bgBlack);
-						log((`${lang.selected_date}: `.bold.brightYellow + date.toLocaleDateString().bold.green).bgBlack);
-						log("".bgBlack);
+
+						lang.author = (" ".repeat(strLength) + lang.author).slice(-strLength);
+						lang.produser = (" ".repeat(strLength) + lang.produser).slice(-strLength);
+						// Школа
+						log((`${lang.produser}: `.brightYellow + produser.brightGreen));
+						// Комбинат
+						log((`${lang.author}: `.brightYellow + author.brightGreen));
+						// Меню
+						log((`${lang.selected_menu_type}: `.brightYellow + jsonPars[typeMenu]["name"].brightGreen));
+						// Дата
+						log((`${lang.selected_date}: `.brightYellow + date.toLocaleDateString().brightGreen));
+						// Директория
+						log((`${lang.selected_directory}: `.brightYellow + dir.brightGreen));
+						log("");
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
 						date.setDate(date.getDate() + day);
@@ -590,14 +603,14 @@
 							 */
 							readDirectory(dir).then(async function(images){
 								if(await isDir(pdf_dir)){
-									log(`${lang.deleting_pdf_files}\n`.bold.brightYellow.bgBlack);
+									log(`${lang.deleting_pdf_files}\n`.brightYellow);
 									emptyDir(pdf_dir);
 								}
 								/**
 								 * Директория изображений
 								 */
 								if(await isDir(resize_dir)){
-									log(`${lang.deleting_img_files}\n`.bold.brightYellow.bgBlack);
+									log(`${lang.deleting_img_files}\n`.brightYellow);
 									fs.rmSync(resize_dir, { recursive: true, force: true });
 								}
 								try { fs.mkdirSync(resize_dir); }catch(e){}
@@ -630,7 +643,7 @@
 										break;
 								}
 
-								log(`${lang.image_optimization}...`.bold.brightYellow.bgBlack);
+								log(`${lang.image_optimization}...`.brightYellow);
 								/**
 								 * Прогресс по изображениям
 								 */
@@ -664,7 +677,7 @@
 								}
 								barPdf.terminal.cursor(true);
 								barPdf.stop();
-								log("".bgBlack);
+								log("");
 								/**
 								 * Генерация PDF файлов
 								 */
@@ -677,10 +690,10 @@
 									lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
 									lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
 									closePrg(resize_dir);
-									st_resolve(((`${lang.time_spent_in_seconds}:`).bold.brightYellow + ' ' + (time + "s").bold.green + `\n`).bgBlack);
+									st_resolve(((`${lang.time_spent_in_seconds}:`).brightYellow + ' ' + (time + "s").brightGreen + `\n`));
 								}).catch(async function(err){
 									closePrg(resize_dir);
-									st_reject(`\n\n${lang.error_generating_pdf.bold.red}!`.bgBlack);
+									st_reject(`\n\n${lang.error_generating_pdf.red}!`);
 								});
 
 							}).catch(async function(err){
@@ -690,12 +703,12 @@
 								);
 								console.clear();
 								closePrg(resize_dir);
-								st_reject(`\n\n${lang.error}!: ${dir}`.bold.red.bgBlack);
+								st_reject(`\n\n${lang.error}!: ${dir}`.red);
 							})
 						}
 					} else {
 						closePrg();
-						st_resolve(`${lang.completed_by_user}\n`.bold.brightYellow.bgBlack);
+						st_resolve(`${lang.completed_by_user}\n`.brightYellow);
 					}
 				}).catch(async function(error) {
 					barPdf && (
@@ -703,18 +716,18 @@
 						barPdf.stop()
 					);
 					closePrg();
-					st_reject(`${lang.error.bold.red}\n\n${error}`.bgBlack);
+					st_reject(`${lang.error.red}\n\n${error}`);
 				});
 			});
 		},
 		closePrg = async function(imgdir = false){
 			if(typeof imgdir == 'string'){
 				if(await isDir(imgdir)){
-					log(`\n${lang.deleting_img_files}`.bold.brightYellow.bgBlack);
+					log(`\n${lang.deleting_img_files}`.brightYellow);
 					fs.rmSync(imgdir, { recursive: true, force: true });
 				}
 			}
-			runing && log(`\n${lang.closing_the_program}...\n`.bold.brightYellow.bgBlack);
+			runing && log(`\n${lang.closing_the_program}...\n`.brightYellow);
 		};
 	/**
 	 * Перезапишем файл языка
@@ -733,14 +746,14 @@
 	 */
 	// Имя, версия
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log(('\n' + config.description.bold.green + (' v' + version_app).bold.brightYellow + '\n').bgBlack);
+	log('\n' + config.description.brightGreen + (' v' + version_app).brightYellow + '\n');
 	// Старт
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
-	log(`${lang.start}...\n`.bold.brightYellow.bgBlack);
+	log(`${lang.start}...\n`.brightYellow);
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
 	start().then(async function(data) {
-		log(`${data}`.bgBlack);
+		log(`${data}`);
 		/**
 		 * Закрытие консоли
 		 */
@@ -753,7 +766,7 @@
 		process.stdin.resume();
 		process.stdin.pause();
 	}).catch(async function(error) {
-		log(`${error}`.bgBlack);
+		log(`${error}`);
 		/**
 		 * Закрытие консоли
 		 */

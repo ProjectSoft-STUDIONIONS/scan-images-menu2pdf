@@ -100,10 +100,11 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <Icon_MainIcon>favicon.ico</Icon_MainIcon>
         <DCC_DcuOutput>..\windows</DCC_DcuOutput>
-        <VerInfo_MinorVer>8</VerInfo_MinorVer>
-        <VerInfo_Release>4</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=ProjectSoft;FileDescription=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;FileVersion=2.8.4.2;InternalName=dialogs.exe;LegalCopyright=ProjectSoft;LegalTrademarks=ProjectSoft;OriginalFilename=dialogs.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;ProductVersion=2.8.4.0;Comments=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы</VerInfo_Keys>
-        <VerInfo_Build>2</VerInfo_Build>
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Release>3</VerInfo_Release>
+        <VerInfo_Keys>CompanyName=ProjectSoft;FileDescription=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;FileVersion=2.9.3.0;InternalName=dialogs.exe;LegalCopyright=ProjectSoft;LegalTrademarks=ProjectSoft;OriginalFilename=dialogs.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы;ProductVersion=2.9.3.0;Comments=Диалог настроек для Конвертирования отсканированных изображений меню в PDF файлы</VerInfo_Keys>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <Debugger_RunParams>--typemenu &quot;..\..\..\menu.json&quot; /version &quot;2.9.3.0&quot;</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -136,8 +137,10 @@
                     <Source Name="MainSource">dialogs.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k290.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp290.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">

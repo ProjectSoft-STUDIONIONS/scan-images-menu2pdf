@@ -36,6 +36,8 @@ type
         Panel4           : TScrollBox;
     ProduserEdit: TEdit;
     ProduserLabel: TLabel;
+    AuthorLabel: TLabel;
+    AuthorEdit: TEdit;
         procedure FormCreate(Sender: TObject);
         procedure CalendarChange(Sender: TObject);
         procedure DialogButtonClick(Sender: TObject);
@@ -50,6 +52,7 @@ type
       Y: Integer);
         procedure TypeMenuChange(Sender: TObject);
     procedure ProduserEditChange(Sender: TObject);
+    procedure AuthorEditChange(Sender: TObject);
     private
         { Private declarations }
         // Lang
@@ -75,6 +78,8 @@ type
         FileJSON         : string;
         ProduserStr      : string;
         ProduserHintStr  : string;
+        AuthorStr      : string;
+        AuthorHintStr  : string;
         procedure LoadProject;
         procedure WMGetMinMaxInfo (var Msg:TWMGetMinMaxInfo); message WM_GETMINMAXINFO;
     public
@@ -88,6 +93,7 @@ type
         appPath          : string;
         index            : string;
         produser         : string;
+        author           : string;
     end;
 
 var
@@ -235,6 +241,8 @@ begin
     StrErrorIndex         := ini.ReadString('Lang', 'StrErrorIndex',          'Ошибка выбора Меню для генерации');
     ProduserStr           := ini.ReadString('Lang', 'ProduserStr',            'Школа');
     ProduserHintStr       := ini.ReadString('Lang', 'ProduserHintStr',        'Введите название (имя) школы');
+    AuthorStr             := ini.ReadString('Lang', 'AuthorStr',              'Комбинат');
+    AuthorHintStr         := ini.ReadString('Lang', 'AuthorHintStr',          'Введите название комбината питания');
 	  // Пишем назад прочтённые данные
     ini.WriteString('Lang', 'StrSelectDir',          StrSelectDir);
     ini.WriteString('Lang', 'StrError',              StrError);
@@ -257,6 +265,8 @@ begin
     ini.WriteString('Lang', 'MenuGenerate',          MenuGenerate);
     ini.WriteString('Lang', 'ProduserStr',           ProduserStr);
     ini.WriteString('Lang', 'ProduserHintStr',       ProduserHintStr);
+    ini.WriteString('Lang', 'AuthorStr',             AuthorStr);
+    ini.WriteString('Lang', 'AuthorHintStr',         AuthorHintStr);
     ini.Free;
 
     typemenu   := -1;
@@ -268,6 +278,7 @@ begin
     ini        := TIniFile.Create(iniFile);
     directory  := ini.ReadString('Directory', 'SelectDir', '');
     produser   := ini.ReadString('Produser', 'ProduserName', 'ГБОУ СОШ пос. Комсомольский');
+    author     := ini.ReadString('Author', 'AuthorName', 'ООО «КДП «Здоров и Сыт»');
     if not System.SysUtils.DirectoryExists(directory) then
     begin
         directory := '';
@@ -294,6 +305,9 @@ begin
     ProduserLabel.Caption       := ProduserStr;
     ProduserLabel.Hint          := ProduserStr;
     ProduserEdit.Hint           := ProduserHintStr;
+    AuthorLabel.Caption         := AuthorStr;
+    AuthorLabel.Hint            := AuthorStr;
+    AuthorEdit.Hint             := AuthorHintStr;
     // End Локаль
 end;
 
@@ -307,7 +321,7 @@ var
 begin
 	  // Загружаем локаль
     LoadProject;
-    VersionApp := 'v1.0.0';
+    VersionApp := 'v2.9.3';
 	  // Получаем значение даты
     Year    := YearOF(now);
     Month   := MonthOf(now);
@@ -344,6 +358,7 @@ begin
     DirectoryLabel.Caption := directory;
     DirectoryLabel.Hint    := directory;
     ProduserEdit.Text      := produser;
+    AuthorEdit.Text        := author;
     var dt  := Calendar1.CalendarDate;
     intData := DateTimeToUnix(dt);
     Winapi.Windows.Beep(1760, 500);
@@ -656,5 +671,17 @@ begin
     produser := ProduserEdit.Text;
     ini.WriteString('Produser', 'ProduserName', produser);
 end;
+
+procedure TForm1.AuthorEditChange(Sender: TObject);
+var
+    ini     : TIniFile;
+    iniFile : string;
+begin
+    iniFile := TPath.Combine(appPath, 'settings.ini');
+    ini     := TIniFile.Create(iniFile);
+    author := AuthorEdit.Text;
+    ini.WriteString('Author', 'AuthorName', author);
+end;
+
 
 end.
