@@ -16,7 +16,7 @@
 		"modules/**/*"
 	],
 	"author": "ProjectSoft <projectsoft2009@yandex.ru>",
-	"license": "MIT",
+	"license": "GPL-3.0",
 	"soundEnable": "true",
 	"dependencies": {
 		"cli-progress": "^3.12.0",
