@@ -5,12 +5,9 @@
 	"product": "programm",
 	"main": "index.js",
 	"scripts": {
-		"preinstall": "npm i -g less pug-cli",
-		"inst": "npm i",
 		"test": "node index.js --work-days=5 --pad=4",
 		"build": "node build.js",
-		"compile": "node compile.js",
-		"page": "grunt"
+		"compile": "node compile.js"
 	},
 	"files": [
 		"index.js",
@@ -26,25 +23,5 @@
 		"colors": "^1.4.0",
 		"pdf-lib": "^1.17.1",
 		"resize-optimize-images": "^1.1.2"
-	},
-	"devDependencies": {
-		"dotenv": "latest",
-		"grunt": "latest",
-		"grunt-contrib-clean": "latest",
-		"grunt-contrib-concat": "latest",
-		"grunt-contrib-copy": "latest",
-		"grunt-contrib-cssmin": "latest",
-		"grunt-contrib-less": "latest",
-		"grunt-contrib-pug": "latest",
-		"grunt-contrib-requirejs": "latest",
-		"grunt-contrib-uglify-es": "latest",
-		"grunt-replace": "latest",
-		"grunt-ttf2woff2": "latest",
-		"grunt-webfont": "latest",
-		"innosetup-compiler": "github:ProjectSoft-STUDIONIONS/node-innosetup-compiler",
-		"less-plugin-clean-css": "latest",
-		"load-grunt-tasks": "latest",
-		"time-grunt": "github:ProjectSoft-STUDIONIONS/time-grunt",
-		"ttf2woff2": "latest"
 	}
 }
