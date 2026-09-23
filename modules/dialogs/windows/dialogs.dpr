@@ -62,7 +62,7 @@ begin
               if Length(versionApp) > 0 then
                 versionApp := ' v' + versionApp
               else
-                versionApp     := '1.0.0';
+                versionApp     := ' v2.9.3';
               Form1.VersionApp       := versionApp;
               Form1.fileName         := fileName;
               Form1.SendJSON(fileName);
@@ -78,7 +78,7 @@ begin
                 jo.AddPair(TJSONPair.Create('produser', Form1.produser));
                 jo.AddPair(TJSONPair.Create('author', Form1.author));
                 jo.AddPair(TJSONPair.Create('index', Form1.index));
-                jo.AddPair(TJSONPair.Create('error', '0'));
+                jo.AddPair(TJSONPair.Create('error', 0));
                 jsn := jo.ToJSON();
                 jo.Free;
                 writeLn(jsn);
@@ -86,7 +86,7 @@ begin
               end
               else
               begin
-                writeLn('{"message": "Aborted by user", "error": "3"}');
+                writeLn('{"message": "Aborted by user", "error": 3}');
               end;
             finally
               Form1.Free;
@@ -95,7 +95,7 @@ begin
           end
           else
           begin
-            writeLn('{"message": "File '+fileName+' does not exist", "error": "2"}');
+            writeLn('{"message": "File '+fileName+' does not exist", "error": 2}');
             break;
           end;
         end;
@@ -103,7 +103,7 @@ begin
     end
     else
     begin
-      writeLn('{"message": "Launched without parameters", "error": "1"}');
+      writeLn('{"message": "Launched without parameters", "error": 1}');
     end;
   finally
     EnableWindow(Handle, True);

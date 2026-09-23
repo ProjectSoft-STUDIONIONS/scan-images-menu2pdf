@@ -4,6 +4,7 @@
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
 #define MyAppExeName "programm.exe"      
 #define MyAppTitle "Конвертирование отсканированных изображений меню в PDF файлы"
+#define NodeVersion="v26.10.0"
 #define NodeFile "node-v26.10.0-x64.msi"
 
 [Setup]
@@ -37,10 +38,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [CustomMessages]
-english.SetupNode=Install Node.js
-russian.SetupNode=Установить Node.js
-english.InstallNode=Installation Node.js...
-russian.InstallNode=Установка Node.js...
+english.SetupNode=Install Node.js {#NodeVersion}
+russian.SetupNode=Установить Node.js {#NodeVersion}
+english.InstallNode=Installation Node.js {#NodeVersion}...
+russian.InstallNode=Установка Node.js {#NodeVersion}...
 english.Additionally=Additionally:
 russian.Additionally=Дополнительно:
 
