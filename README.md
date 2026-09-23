@@ -151,7 +151,7 @@
 ```Batchfile
 $ git clone https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf.git
 $ cd scan-images-menu2pdf
-$ npm run inst
+$ npm install
 ```
 
 ### Запуск
