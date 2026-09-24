@@ -20,6 +20,7 @@ AppCopyright={#MyAppPublisher}
 VersionInfoVersion={#MyAppVersion}
 DefaultDirName=c:\{#MyAppName}\
 DisableDirPage=no
+DisableWelcomePage=no
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 PrivilegesRequired=admin
@@ -29,9 +30,13 @@ SetupIconFile=..\app\favicon.ico
 UninstallDisplayIcon={app}\bin\{#MyAppExeName},0
 Compression=lzma
 SolidCompression=yes
-WizardStyle=modern
+WizardStyle=dark
+WizardBackImageFile=matrix.png
+WizardImageFile=image.png
+WizardSmallImageFile=smal.png
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
+SetupArchitecture=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -44,35 +49,44 @@ english.InstallNode=Installation Node.js {#NodeVersion}...
 russian.InstallNode=Установка Node.js {#NodeVersion}...
 english.Additionally=Additionally:
 russian.Additionally=Дополнительно:
+english.MyAppTitle=Convert scanned menu images to PDF files
+russian.MyAppTitle=Конвертирование отсканированных изображений меню в PDF файлы
 
 [Tasks]
 Name: "installNode"; Description: "{cm:SetupNode}"; GroupDescription: "{cm:Additionally}"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: ".\{#NodeFile}"; DestDir: "{tmp}"; Flags: deleteafterinstall
-Source: "..\bin\{#MyAppExeName}"; DestDir: "{app}\bin\"; Flags: ignoreversion
-Source: "..\index.js"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\language.de.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\language.en.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\language.ru.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\menu.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\package.json"; DestDir: "{app}"; Flags: ignoreversion 
-Source: "..\modules\dialogs\*"; DestDir: "{app}\modules\dialogs"; Flags: ignoreversion
-Source: "..\modules\dialogs\dist\*"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
-Source: "..\modules\playbeep\*"; DestDir: "{app}\modules\playbeep"; Flags: ignoreversion
-Source: "..\node_modules\*"; DestDir: "{app}\node_modules"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\node_modules\.bin\*"; DestDir: "{app}\node_modules\.bin\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "./{#NodeFile}"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: IsInstallNodeSelected
+// Check параметр выбрана ли задача
+Source: "../bin/{#MyAppExeName}"; DestDir: "{app}/bin/"; Flags: ignoreversion
+Source: "../index.js"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../language.de.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../language.en.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../language.ru.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../menu.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../package.json"; DestDir: "{app}"; Flags: ignoreversion 
+Source: "../modules/dialogs/*"; DestDir: "{app}/modules/dialogs"; Flags: ignoreversion
+Source: "../modules/dialogs/dist/*"; DestDir: "{app}/modules/dialogs/dist"; Flags: ignoreversion
+Source: "../modules/playbeep/*"; DestDir: "{app}/modules/playbeep"; Flags: ignoreversion
+Source: "../node_modules/*"; DestDir: "{app}/node_modules"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "../node_modules/.bin/*"; DestDir: "{app}/node_modules/.bin/"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\{#MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"
+Name: "{autodesktop}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 ; Node.js: тихий режим установки
 Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\{#NodeFile}"" /quiet /norestart"; Tasks: installNode; StatusMsg: "{cm:InstallNode}"; Flags: waituntilterminated
 
 [UninstallDelete]
-Type: files; Name: "{app}\bin\*.*"
-Type: files; Name: "{app}\modules\dialogs\dist\*.*"
+Type: files; Name: "{app}/bin/*.*"
+Type: files; Name: "{app}/modules/dialogs/dist/*.*"
 
+[Code]
+// Функция проверки, выбрана ли задача installNode
+function IsInstallNodeSelected: Boolean;
+begin
+  Result := WizardIsTaskSelected('installNode');
+end;
