@@ -9,6 +9,8 @@ log/
 *.tar
 *.rar
 *.7z
+# bak
+*.bak
 
 # Packages lock
 # *-lock.json

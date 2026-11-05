@@ -1,11 +1,11 @@
-п»ї#define MyAppVersion "2.9.3"
+#define MyAppVersion "2.9.3"
 #define MyAppName "ConvertMenu2pdf"
-#define MyAppPublisher "ProjectSoft В© 2008 - all right reserved"
+#define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
 #define MyAppExeName "programm.exe"      
-#define MyAppTitle "РљРѕРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ РѕС‚СЃРєР°РЅРёСЂРѕРІР°РЅРЅС‹С… РёР·РѕР±СЂР°Р¶РµРЅРёР№ РјРµРЅСЋ РІ PDF С„Р°Р№Р»С‹"
-#define NodeVersion="v26.10.0"
-#define NodeFile "node-v26.10.0-x64.msi"
+#define MyAppTitle "Конвертирование отсканированных изображений меню в PDF файлы"
+#define NodeVersion="v26.13.0"
+#define NodeFile "node-x64.msi"
 
 [Setup]
 AppId={{6366BCA4-F02D-4CFF-A3DA-F50CE9EF1162}
@@ -44,13 +44,13 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [CustomMessages]
 english.SetupNode=Install Node.js {#NodeVersion}
-russian.SetupNode=РЈСЃС‚Р°РЅРѕРІРёС‚СЊ Node.js {#NodeVersion}
+russian.SetupNode=Установить Node.js {#NodeVersion}
 english.InstallNode=Installation Node.js {#NodeVersion}...
-russian.InstallNode=РЈСЃС‚Р°РЅРѕРІРєР° Node.js {#NodeVersion}...
+russian.InstallNode=Установка Node.js {#NodeVersion}...
 english.Additionally=Additionally:
-russian.Additionally=Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ:
+russian.Additionally=Дополнительно:
 english.MyAppTitle=Convert scanned menu images to PDF files
-russian.MyAppTitle=РљРѕРЅРІРµСЂС‚РёСЂРѕРІР°РЅРёРµ РѕС‚СЃРєР°РЅРёСЂРѕРІР°РЅРЅС‹С… РёР·РѕР±СЂР°Р¶РµРЅРёР№ РјРµРЅСЋ РІ PDF С„Р°Р№Р»С‹
+russian.MyAppTitle=Конвертирование отсканированных изображений меню в PDF файлы
 
 [Tasks]
 Name: "installNode"; Description: "{cm:SetupNode}"; GroupDescription: "{cm:Additionally}"
@@ -58,7 +58,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "./{#NodeFile}"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: IsInstallNodeSelected
-// Check РїР°СЂР°РјРµС‚СЂ РІС‹Р±СЂР°РЅР° Р»Рё Р·Р°РґР°С‡Р°
+// Check параметр выбрана ли задача
 Source: "../bin/{#MyAppExeName}"; DestDir: "{app}/bin/"; Flags: ignoreversion
 Source: "../index.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.de.json"; DestDir: "{app}"; Flags: ignoreversion
@@ -77,7 +77,7 @@ Name: "{autoprograms}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"
 Name: "{autodesktop}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-; Node.js: С‚РёС…РёР№ СЂРµР¶РёРј СѓСЃС‚Р°РЅРѕРІРєРё
+; Node.js: тихий режим установки
 Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\{#NodeFile}"" /quiet /norestart"; Tasks: installNode; StatusMsg: "{cm:InstallNode}"; Flags: waituntilterminated
 
 [UninstallDelete]
@@ -85,8 +85,13 @@ Type: files; Name: "{app}/bin/*.*"
 Type: files; Name: "{app}/modules/dialogs/dist/*.*"
 
 [Code]
-// Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё, РІС‹Р±СЂР°РЅР° Р»Рё Р·Р°РґР°С‡Р° installNode
+// Функция проверки, выбрана ли задача installNode
 function IsInstallNodeSelected: Boolean;
 begin
   Result := WizardIsTaskSelected('installNode');
 end;
+
+
+
+
+
