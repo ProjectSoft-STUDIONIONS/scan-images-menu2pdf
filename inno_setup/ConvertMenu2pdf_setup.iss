@@ -65,12 +65,9 @@ Source: "../language.de.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.en.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.ru.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../menu.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../package.json"; DestDir: "{app}"; Flags: ignoreversion 
-Source: "../modules/dialogs/*"; DestDir: "{app}/modules/dialogs"; Flags: ignoreversion
-Source: "../modules/dialogs/dist/*"; DestDir: "{app}/modules/dialogs/dist"; Flags: ignoreversion
-Source: "../modules/playbeep/*"; DestDir: "{app}/modules/playbeep"; Flags: ignoreversion
-Source: "../node_modules/*"; DestDir: "{app}/node_modules"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "../node_modules/.bin/*"; DestDir: "{app}/node_modules/.bin/"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "../package.json"; DestDir: "{app}"; Flags: ignoreversion
+// Все остальные файлы из modules и node_modules
+#include "files.iss"
 
 [Icons]
 Name: "{autoprograms}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"

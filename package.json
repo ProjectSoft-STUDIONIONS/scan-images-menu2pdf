@@ -24,5 +24,8 @@
 		"colors": "^1.4.0",
 		"pdf-lib": "^1.17.1",
 		"resize-optimize-images": "^1.1.2"
+	},
+	"devDependencies": {
+		"innosetup": "github:ProjectSoft-STUDIONIONS/innosetup-compiller"
 	}
 }
