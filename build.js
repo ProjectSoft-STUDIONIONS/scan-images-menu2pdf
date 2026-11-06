@@ -4,28 +4,6 @@ const fs = require('fs'),
 		{ spawn } = require('child_process'),
 		colors = require('colors'),
 		config = require('./package.json'),
-		author = config.author.split(" ")[0],
-		app_manifest = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-	<assemblyIdentity version="${config.version}" name="${config.product}.app"/>
-	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
-		<security>
- 			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
-				<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
-			</requestedPrivileges>
-		</security>
-	</trustInfo>
-</assembly>`,
-		assemblyinfo_cs = `using System.Reflection;
-
-[assembly: AssemblyProduct("${config.product}")]
-[assembly: AssemblyCompany("${author}")]
-[assembly: AssemblyCopyright("Copyright © ${author} 2008 - all right reserved")]
-[assembly: AssemblyTrademark("® ${author}")]
-[assembly: AssemblyVersion("${config.version}")] 
-[assembly: AssemblyFileVersion("${config.version}")]
-[assembly: AssemblyTitle("${config.description} v${config.version}")]
-[assembly: AssemblyDescription("${config.description} v${config.version}")]`,
 	normalize = function(args) {
 		return path.normalize(path.join.apply(null, args));
 	},
@@ -35,7 +13,7 @@ const fs = require('fs'),
 				args = [
 					`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
 					`/resource:${normalize([__dirname, "app", "programm.resource"])}`,
-					`/out:bin\\${config.product}.exe`,
+					`/out:bin\\programm.exe`,
 					`/win32manifest:${normalize([__dirname, "app", "app.manifest"])}`,
 					`/target:exe`,
 					`${normalize([__dirname, "app", "img_menu2pdf.cs"])}`,
@@ -47,23 +25,15 @@ const fs = require('fs'),
 			ls.stderr.on('data', (data) => { reject(data); });
 			ls.on('close', (code) => {
 				if(code == 0){
-					resolve(`Compiled:`.bold.brightYellow + ` ${config.product}.exe`.cyan);
+					resolve(`Compiled: programm.exe`);
 				}else{
-					reject('Error:'.bold.brightRed + ` csc.exe ${args.join(' ')}`.bold.white);
+					reject(`Error: csc.exe ${args.join(' ')}`);
 				}
 			});
 		});
 	};
-	colors.enable();
 
 (async function(){
-	let prg = normalize([__dirname, `${config.product}.exe`]);
-	// В этих трёх строках ошибки не ловим
-	try { await unlink(`${normalize([__dirname, "app", "app.manifest"])}`); } catch (error) { }
-	try { await unlink(`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`); } catch (error) { }
-	try { await unlink(`${prg}`); } catch (error) { }
-	fs.writeFileSync(`${normalize([__dirname, "app", "app.manifest"])}`, app_manifest, {encoding: "utf8"});
-	fs.writeFileSync(`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`, assemblyinfo_cs, {encoding: "utf8"});
 	compile().then(async function(data_a){
 		console.log(data_a);
 	}).catch(async function(error){

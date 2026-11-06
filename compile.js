@@ -15,7 +15,10 @@ const ISS_DIR     = path.join(__dirname, 'inno_setup');
 const FILES_OUT   = path.join(ISS_DIR, 'files.iss');
 const VERSION_OUT = path.join(ISS_DIR, 'version.iss');
 
-const compile = () => {
+const normalize = function(args) {
+	return path.normalize(path.join.apply(null, args));
+},
+compileFiles = () => {
 	return new Promise((resolve, reject) => {
 		// Что пакуем: папки (рекурсивно) и отдельные файлы, пути от корня проекта
 		// Пройдём по директориям
@@ -67,6 +70,31 @@ const compile = () => {
 		resolve(`Список файлов: ${FILES_OUT} (${entries.length} записей)`);
 	});
 },
+compileProgramm = function() {
+	return new Promise(function(resolve, reject){
+		let app = `csc.exe`,
+			args = [
+				`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
+				`/resource:${normalize([__dirname, "app", "programm.resource"])}`,
+				`/out:bin\\programm.exe`,
+				`/win32manifest:${normalize([__dirname, "app", "app.manifest"])}`,
+				`/target:exe`,
+				`${normalize([__dirname, "app", "img_menu2pdf.cs"])}`,
+				`${normalize([__dirname, "app", "img_ini.cs"])}`,
+				`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`
+			],
+			ls = spawn( app, args );
+		ls.stdout.on('data', (data) => {});
+		ls.stderr.on('data', (data) => { reject(data); });
+		ls.on('close', (code) => {
+			if(code == 0){
+				resolve(`Compiled: programm.exe`);
+			}else{
+				reject(`Error: csc.exe ${args.join(' ')}`);
+			}
+		});
+	});
+},
 compilePlayBeep = () => {
 	return new Promise(function(resolve, reject){
 		let app = `csc.exe`,
@@ -110,29 +138,35 @@ execDownload = () => {
 		});
 	});
 },
-normalize = function(args) {
-	return path.normalize(path.join.apply(null, args));
+execInnoSetup = () => {
+	return new Promise((resolve, reject) => {
+		// Запустить InnoSetup
+		innosetup(path.join(ISS_DIR, 'ConvertMenu2pdf_setup.iss'), {
+			verbose: true,
+			colors: true,
+			arch: 'x64'
+		})
+			.then(() => resolve('Compile: ConvertMenu2pdf_setup.exe'))
+			.catch(e => reject(e));
+	})
 };
 
-compilePlayBeep().then((e) => {
-	console.log(e);
-	execDownload()
-		.then((e) => {
-			console.log(e);
-			compile()
-				.then(files => {
-					// Запустить InnoSetup
-					innosetup(path.join(ISS_DIR, 'ConvertMenu2pdf_setup.iss'), {
-						verbose: true,
-						colors: true,
-						arch: 'x64'
-					})
-					.then(() => console.log('Compile'))
-					.catch(e => console.error(e));
-				})
-				.catch(error => console.error(error));
-		})
-		.catch(error => console.error(error));
-}).catch((e) => {
-	console.log(e)
-});
+// Понеслась
+[
+	// Компилируем программу programm.exe
+	compileProgramm,
+	// Компилируем playbeep.exe для модуля playbeep
+	compilePlayBeep,
+	// Обновляем nodejs установщик node-x64.msi
+	execDownload,
+	// Подготавливаем данные для сценария ConvertMenu2pdf_setup.iss
+	compileFiles,
+	// Запускаем сборку ConvertMenu2pdf_setup.iss установщика
+	execInnoSetup
+]
+	.reduce((previosPromise, nextFunction) => {
+		return previosPromise.then(nextFunction);
+	}, Promise.resolve())
+	.then(result => {
+		console.log(result);
+	});
