@@ -58,11 +58,12 @@ const fs = require('fs'),
 
 (async function(){
 	let prg = normalize([__dirname, `${config.product}.exe`]);
+	// В этих трёх строках ошибки не ловим
 	try { await unlink(`${normalize([__dirname, "app", "app.manifest"])}`); } catch (error) { }
 	try { await unlink(`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`); } catch (error) { }
+	try { await unlink(`${prg}`); } catch (error) { }
 	fs.writeFileSync(`${normalize([__dirname, "app", "app.manifest"])}`, app_manifest, {encoding: "utf8"});
 	fs.writeFileSync(`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`, assemblyinfo_cs, {encoding: "utf8"});
-	try { await unlink(`${prg}`); } catch (error) { }
 	compile().then(async function(data_a){
 		console.log(data_a);
 	}).catch(async function(error){

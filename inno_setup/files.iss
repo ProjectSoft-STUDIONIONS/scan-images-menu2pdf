@@ -4037,7 +4037,6 @@ Source: "..\modules\dialogs\dialogs.js"; DestDir: "{app}\modules\dialogs"; Flags
 Source: "..\modules\dialogs\dist\dialogs.exe"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
 Source: "..\modules\dialogs\dist\russian.ini"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
 Source: "..\modules\dialogs\dist\settings.ini"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
-Source: "..\modules\dialogs\linux\redme.md"; DestDir: "{app}\modules\dialogs\linux"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.dpr"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.dproj"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.res"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
@@ -4048,9 +4047,9 @@ Source: "..\modules\dialogs\windows\Unit1.dfm"; DestDir: "{app}\modules\dialogs\
 Source: "..\modules\dialogs\windows\Unit1.pas"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
 Source: "..\modules\playbeep\playbeep.exe"; DestDir: "{app}\modules\playbeep"; Flags: ignoreversion
 Source: "..\modules\playbeep\playbeep.js"; DestDir: "{app}\modules\playbeep"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\playbeep.dpr"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\playbeep.dproj"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\playbeep.res"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\playbeep_Icon.ico"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\ps_150.png"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
-Source: "..\modules\playbeep\windows\ps_44.png"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep\windows\AssemblyInfo.cs"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep\windows\playbeep.cs"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep\windows\playbeep.ico"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep\windows\playbeep.manifest"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep\windows\playbeep.resource"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\playbeep.exe"; DestDir: "{app}\modules"; Flags: ignoreversion
