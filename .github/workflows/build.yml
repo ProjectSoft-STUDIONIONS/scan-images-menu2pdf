@@ -119,7 +119,7 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add package.json
+          git add -A
           git diff --cached --quiet && echo "Нечего коммитить" && exit 0
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           git tag "${{ steps.version.outputs.tag }}"
