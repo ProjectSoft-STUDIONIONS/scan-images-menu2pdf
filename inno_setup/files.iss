@@ -4036,7 +4036,6 @@ Source: "..\node_modules\xtend\test.js"; DestDir: "{app}\node_modules\xtend"; Fl
 Source: "..\modules\dialogs\dialogs.js"; DestDir: "{app}\modules\dialogs"; Flags: ignoreversion
 Source: "..\modules\dialogs\dist\dialogs.exe"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
 Source: "..\modules\dialogs\dist\russian.ini"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
-Source: "..\modules\dialogs\dist\settings.ini"; DestDir: "{app}\modules\dialogs\dist"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.dpr"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.dproj"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
 Source: "..\modules\dialogs\windows\dialogs.res"; DestDir: "{app}\modules\dialogs\windows"; Flags: ignoreversion
