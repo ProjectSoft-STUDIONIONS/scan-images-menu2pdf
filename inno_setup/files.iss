@@ -1,4 +1,4 @@
-; Автогенерируется compile.js — не редактировать вручную
+; Автогенерация files.iss — не редактировать вручную
 Source: "..\node_modules\.bin\innosetup"; DestDir: "{app}\node_modules\.bin"; Flags: ignoreversion
 Source: "..\node_modules\.bin\innosetup.cmd"; DestDir: "{app}\node_modules\.bin"; Flags: ignoreversion
 Source: "..\node_modules\.bin\innosetup.ps1"; DestDir: "{app}\node_modules\.bin"; Flags: ignoreversion

@@ -7,7 +7,7 @@ const fs = require('fs'),
 	normalize = function(args) {
 		return path.normalize(path.join.apply(null, args));
 	},
-	compile = function() {
+	compileProgramm = function() {
 		return new Promise(function(resolve, reject){
 			let app = `csc.exe`,
 				args = [
@@ -25,7 +25,33 @@ const fs = require('fs'),
 			ls.stderr.on('data', (data) => { reject(data); });
 			ls.on('close', (code) => {
 				if(code == 0){
-					resolve(`Compiled: programm.exe`);
+					console.log(`Compiled: programm.exe`);
+					resolve();
+				}else{
+					reject(`Error: csc.exe ${args.join(' ')}`);
+				}
+			});
+		});
+	},
+	compilePlayBeep = () => {
+		return new Promise(function(resolve, reject){
+			let app = `csc.exe`,
+				args = [
+					`/win32icon:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.ico")}`,
+					`/resource:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.resource")}`,
+					`/out:modules\\playbeep\\playbeep.exe`,
+					`/win32manifest:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.manifest")}`,
+					`/target:exe`,
+					`${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.cs")}`,
+					`${path.join(__dirname, "modules", "playbeep", "windows", "AssemblyInfo.cs")}`
+				],
+				ls = spawn( app, args );
+			ls.stdout.on('data', (data) => { });
+			ls.stderr.on('data', (data) => { reject(data); });
+			ls.on('close', (code) => {
+				if(code == 0){
+					console.log(`Compiled: playbeep.exe`);
+					resolve();
 				}else{
 					reject(`Error: csc.exe ${args.join(' ')}`);
 				}
@@ -33,10 +59,16 @@ const fs = require('fs'),
 		});
 	};
 
-(async function(){
-	compile().then(async function(data_a){
-		console.log(data_a);
-	}).catch(async function(error){
-		console.log(error);
-	});
-})();
+// Понеслась
+console.log(' ');
+[
+	// Компилируем программу programm.exe
+	compileProgramm,
+	// Компилируем playbeep.exe для модуля playbeep
+	compilePlayBeep
+]
+.reduce((previousPromise, nextFunction) => previousPromise.then(nextFunction), Promise.resolve())
+.then(() => {
+	console.log(' ');
+	console.log('End Build.');
+}).catch(e => console.error('Build failed:', e));

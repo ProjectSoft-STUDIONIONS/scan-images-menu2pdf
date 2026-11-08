@@ -2,7 +2,7 @@ const {spawn, exec} = require('child_process');
 const path = require('path');
 const root = __dirname;
 
-function playbeep(frequency = 1760, duration = 500) {
+const playbeep = (frequency = 1760, duration = 500) => {
 	var promise = new Promise((resolve, reject) => {
 		/**
 		 * Под Linux будут другие пути и команды
@@ -15,6 +15,10 @@ function playbeep(frequency = 1760, duration = 500) {
 			windowsHide: true
 		});
 		
+		bat.stdout.on('data', data => {
+			// console.log(data);
+		});
+
 		bat.stderr.on('data', (data) => {
 			reject(`${data}`);
 		});

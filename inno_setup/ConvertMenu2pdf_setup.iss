@@ -78,6 +78,7 @@ Name: "{autodesktop}\{cm:MyAppTitle}"; Filename: "{app}\bin\{#MyAppExeName}"; Ta
 Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\{#NodeFile}"" /quiet /norestart"; Tasks: installNode; StatusMsg: "{cm:InstallNode}"; Flags: waituntilterminated
 
 [UninstallDelete]
+; Удаление созданных программой файлов
 Type: files; Name: "{app}/bin/*.*"
 Type: files; Name: "{app}/modules/dialogs/dist/*.*"
 
@@ -87,6 +88,18 @@ function IsInstallNodeSelected: Boolean;
 begin
   Result := WizardIsTaskSelected('installNode');
 end;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

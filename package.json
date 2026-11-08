@@ -8,13 +8,23 @@
 		"app": "start /d bin programm.exe",
 		"build": "node build.js",
 		"compile": "node compile.js",
-		"test": "node index.js --work-days=5 --pad=4"
+		"runtest": "node index.js --work-days=5 --pad=4"
 	},
 	"files": [
-		"index.js",
+		"app/**/*",
+		"bin/**/*",
 		"build.js",
+		"compile.js",
+		"index.js",
 		"menu.json",
-		"modules/**/*"
+		"modules/**/*",
+		"inno_setup/**/*",
+		"language.*.json",
+		"package.json",
+		".gitignore",
+		".npmrc",
+		"*.sublime-project",
+		"*.sublime-settings"
 	],
 	"author": "ProjectSoft <projectsoft2009@yandex.ru>",
 	"license": "GPL-3.0",

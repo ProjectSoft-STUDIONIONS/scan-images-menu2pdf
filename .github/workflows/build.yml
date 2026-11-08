@@ -1,0 +1,136 @@
+name: Monthly build
+
+on:
+  schedule:
+    # 1-го числа каждого месяца в 03:00 UTC
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash   # на windows-latest это Git Bash: jq, curl, find, git на месте
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # нужны теги
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Читаем package.json и проверяем, нужен ли запуск
+        id: gate
+        run: |
+          set -euo pipefail
+
+          # Один раз читаем: версия проекта и сохранённая версия Node.js
+          VERSION=$(jq -r .version package.json)
+          NODE_SAVED=$(jq -r '.nodejsVersion // "none"' package.json)
+          echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Версия проекта: $VERSION, Node.js из package.json: $NODE_SAVED"
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            # Последняя стабильная версия Node.js (без rc/nightly/prerelease)
+            LATEST=$(curl -fsSL https://nodejs.org/dist/index.json | \
+              jq -r '[.[] | select(.version | contains("-") | not)][0].version | ltrimstr("v")')
+            echo "Свежая стабильная Node.js: $LATEST"
+
+            if [ "$LATEST" = "$NODE_SAVED" ]; then
+              echo "Новых стабильных версий Node.js нет — пропускаем сборку."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "node_latest=$LATEST" >> "$GITHUB_OUTPUT"
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # Ручной запуск: только если версия в package.json отличается от последнего тега
+            TAG=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)
+            CUR3=$(echo "$VERSION" | cut -d. -f1-3)
+            echo "package.json: $VERSION, последний тег: ${TAG:-нет}"
+
+            if [ -n "$TAG" ] && [ "$CUR3" = "$TAG" ]; then
+              echo "Версия не менялась с прошлого релиза — пропускаем сборку."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Инкремент версии и запись версии Node.js в package.json
+        if: steps.gate.outputs.should_build == 'true' && github.event_name == 'schedule'
+        id: bump
+        env:
+          NODE_VERSION: ${{ steps.gate.outputs.node_latest }}
+        run: |
+          NEW=$(node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            const [a, b, c, d] = pkg.version.split(".").map(Number);
+            pkg.version = [a, b, c + 1, d].join(".");
+            pkg.nodejsVersion = process.env.NODE_VERSION;
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+            console.log(pkg.version);
+          ')
+          echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
+
+      - name: Определяем версию релиза
+        if: steps.gate.outputs.should_build == 'true'
+        id: version
+        run: |
+          VER=$(jq -r .version package.json)
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VER%.*}" >> "$GITHUB_OUTPUT"   # 2.9.4.0 -> v2.9.4
+
+      - name: Сборка инсталлятора
+        if: steps.gate.outputs.should_build == 'true'
+        env:
+          NODE_VERSION: ${{ steps.gate.outputs.node_latest }}   # версия для скачивания nodejs-x64
+        run: |
+          npm install
+          node compile.js
+
+      - name: Проверяем инсталлятор
+        if: steps.gate.outputs.should_build == 'true'
+        id: artifact
+        run: |
+          INST="inno_setup/ConvertMenu2pdf_setup.exe"
+          if [ ! -f "$INST" ]; then
+            echo "Инсталлятор не найден: $INST — проверьте вывод compile.js" >&2
+            exit 1
+          fi
+          echo "installer=$INST" >> "$GITHUB_OUTPUT"
+          echo "name=ConvertMenu2pdf_setup.exe" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.gate.outputs.should_build == 'true'
+        with:
+          name: installer
+          path: ${{ steps.artifact.outputs.installer }}
+
+      - name: Коммит и тег
+        if: steps.gate.outputs.should_build == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git diff --cached --quiet && echo "Нечего коммитить" && exit 0
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "HEAD:${{ github.ref_name }}" "${{ steps.version.outputs.tag }}"
+
+      - name: Создание релиза с инсталлятором
+        if: steps.gate.outputs.should_build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "${{ steps.artifact.outputs.installer }}#${{ steps.artifact.outputs.name }}" \
+            --title "Release ${{ steps.version.outputs.tag }}" \
+            --generate-notes

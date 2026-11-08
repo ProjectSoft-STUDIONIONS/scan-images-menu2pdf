@@ -48,6 +48,18 @@
 				"programm.exe"
 			],
 			"shell": true
+		},
+		{
+			"name": "Запуск сборки ISS",
+			"working_dir": "${project_path}",
+			"cmd": ["start", "npm", "run", "compile"],
+			"shell": true
+		},
+		{
+			"name": "Запуск сборки playbeep и programm",
+			"working_dir": "${project_path}",
+			"cmd": ["start", "npm", "run", "build"],
+			"shell": true
 		}
 	]
 }

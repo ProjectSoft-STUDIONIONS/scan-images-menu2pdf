@@ -15,10 +15,7 @@ const ISS_DIR     = path.join(__dirname, 'inno_setup');
 const FILES_OUT   = path.join(ISS_DIR, 'files.iss');
 const VERSION_OUT = path.join(ISS_DIR, 'version.iss');
 
-const normalize = function(args) {
-	return path.normalize(path.join.apply(null, args));
-},
-compileFiles = () => {
+const compileFiles = () => {
 	return new Promise((resolve, reject) => {
 		// Что пакуем: папки (рекурсивно) и отдельные файлы, пути от корня проекта
 		// Пройдём по директориям
@@ -41,82 +38,36 @@ compileFiles = () => {
 				}
 				return out;
 			},
-			entries = [];
+			entries = ['; Автогенерация files.iss — не редактировать вручную'];
 			for (const src of SOURCES) {
-			const abs = path.join(__dirname, src);
-			if (!fs.existsSync(abs)) {
-				//console.warn('[WARN] Не найден, пропущен:', src);
-				// Это ошибка. Завершаем
-				return reject(`[ERROR] Не найден, пропущен: ${src}`);
+				const abs = path.join(__dirname, src);
+				if (!fs.existsSync(abs)) {
+					//console.warn('[WARN] Не найден, пропущен:', src);
+					// Это ошибка. Завершаем
+					return reject(`[ERROR] Не найден, пропущен: ${src}`);
+				}
+				for (const file of collectFiles(abs)) {
+					const rel = path.relative(__dirname, file); // напр. bin\modules\foo.js
+					const dir = path.dirname(rel);
+					const dest = dir === '.' ? '{app}' : '{app}\\' + dir;
+					entries.push(`Source: "..\\${rel}"; DestDir: "${dest}"; Flags: ignoreversion`);
+				}
 			}
-			for (const file of collectFiles(abs)) {
-				const rel = path.relative(__dirname, file); // напр. bin\modules\foo.js
-				const dir = path.dirname(rel);
-				const dest = dir === '.' ? '{app}' : '{app}\\' + dir;
-				entries.push(`Source: "..\\${rel}"; DestDir: "${dest}"; Flags: ignoreversion`);
-			}
-		}
+			entries.push(``);
 		fs.writeFileSync(
 			FILES_OUT,
-			'; Автогенерируется compile.js — не редактировать вручную\r\n' +
-			entries.join('\r\n') + '\r\n',
+			entries.join('\n'),
 			{encoding: 'utf8'}
 		);
 		fs.writeFileSync(
 			VERSION_OUT,
 			`#define MyAppVersion "${pack.version.split('.').slice(0, -1).join('.')}"\n`,
 			{encoding: 'utf8'}
-		)
-		resolve(`Список файлов: ${FILES_OUT} (${entries.length} записей)`);
-	});
-},
-compileProgramm = function() {
-	return new Promise(function(resolve, reject){
-		let app = `csc.exe`,
-			args = [
-				`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
-				`/resource:${normalize([__dirname, "app", "programm.resource"])}`,
-				`/out:bin\\programm.exe`,
-				`/win32manifest:${normalize([__dirname, "app", "app.manifest"])}`,
-				`/target:exe`,
-				`${normalize([__dirname, "app", "img_menu2pdf.cs"])}`,
-				`${normalize([__dirname, "app", "img_ini.cs"])}`,
-				`${normalize([__dirname, "app", "AssemblyInfo.cs"])}`
-			],
-			ls = spawn( app, args );
-		ls.stdout.on('data', (data) => {});
-		ls.stderr.on('data', (data) => { reject(data); });
-		ls.on('close', (code) => {
-			if(code == 0){
-				resolve(`Compiled: programm.exe`);
-			}else{
-				reject(`Error: csc.exe ${args.join(' ')}`);
-			}
-		});
-	});
-},
-compilePlayBeep = () => {
-	return new Promise(function(resolve, reject){
-		let app = `csc.exe`,
-			args = [
-				`/win32icon:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.ico")}`,
-				`/resource:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.resource")}`,
-				`/out:modules\\playbeep\\playbeep.exe`,
-				`/win32manifest:${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.manifest")}`,
-				`/target:exe`,
-				`${path.join(__dirname, "modules", "playbeep", "windows", "playbeep.cs")}`,
-				`${path.join(__dirname, "modules", "playbeep", "windows", "AssemblyInfo.cs")}`
-			],
-			ls = spawn( app, args );
-		ls.stdout.on('data', (data) => { });
-		ls.stderr.on('data', (data) => { reject(data); });
-		ls.on('close', (code) => {
-			if(code == 0){
-				resolve(`Compiled: playbeep.exe`);
-			}else{
-				reject(`Error: csc.exe ${args.join(' ')}`);
-			}
-		});
+		);
+		console.log(` `);
+		console.log(`Список файлов: ${FILES_OUT} (${entries.length} записей)`);
+		console.log(` `);
+		resolve();
 	});
 },
 execDownload = () => {
@@ -152,11 +103,8 @@ execInnoSetup = () => {
 };
 
 // Понеслась
+console.log(' ');
 [
-	// Компилируем программу programm.exe
-	compileProgramm,
-	// Компилируем playbeep.exe для модуля playbeep
-	compilePlayBeep,
 	// Обновляем nodejs установщик node-x64.msi
 	execDownload,
 	// Подготавливаем данные для сценария ConvertMenu2pdf_setup.iss
@@ -164,9 +112,7 @@ execInnoSetup = () => {
 	// Запускаем сборку ConvertMenu2pdf_setup.iss установщика
 	execInnoSetup
 ]
-	.reduce((previosPromise, nextFunction) => {
-		return previosPromise.then(nextFunction);
-	}, Promise.resolve())
-	.then(result => {
-		console.log(result);
-	});
+.reduce((previousPromise, nextFunction) => previousPromise.then(nextFunction), Promise.resolve())
+.then(result => {
+	console.log(result);
+});
