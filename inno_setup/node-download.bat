@@ -37,7 +37,7 @@ echo.
 rem ==================================================
 rem  Update #define NodeVersion in Inno Setup script
 rem ==================================================
-set "ISSFILE=%~dp0ConvertMenu2pdf_setup.iss"
+set "ISSFILE=%~dp0ScanMenu2pdf.iss"
 
 if not exist "%ISSFILE%" (
     echo [ERROR] File not found: %ISSFILE%
