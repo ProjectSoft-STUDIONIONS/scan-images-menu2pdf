@@ -4,7 +4,7 @@
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
 #define MyAppExeName "scanmenu2pdf.exe"      
 #define MyAppTitle "Конвертирование отсканированных изображений меню в PDF файлы"
-#define NodeVersion="v26.13.0"
+#define NodeVersion="v26.13.1"
 #define NodeFile "node-x64.msi"
 
 [Setup]
@@ -141,3 +141,4 @@ begin
 		end;
 	end;
 end;
+
