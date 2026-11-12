@@ -34,51 +34,66 @@ jobs:
           VERSION=$(jq -r .version package.json)
           NODE_SAVED=$(jq -r '.nodejsVersion // "none"' package.json)
           echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Версия проекта: $VERSION, Node.js из package.json: $NODE_SAVED"
+
+          # Свежая стабильная Node.js — нужна в обоих режимах:
+          # и для решения о запуске, и для передачи в compile.js
+          LATEST=$(curl -fsSL https://nodejs.org/dist/index.json | \
+            jq -r '[.[] | select(.version | contains("-") | not)][0].version | ltrimstr("v")')
+          echo "node_latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "Версия проекта: $VERSION, Node.js в package.json: $NODE_SAVED, свежая: $LATEST"
+
+          if [ "$LATEST" = "$NODE_SAVED" ]; then
+            NODE_CHANGED=false
+          else
+            NODE_CHANGED=true
+          fi
 
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            # Последняя стабильная версия Node.js (без rc/nightly/prerelease)
-            LATEST=$(curl -fsSL https://nodejs.org/dist/index.json | \
-              jq -r '[.[] | select(.version | contains("-") | not)][0].version | ltrimstr("v")')
-            echo "Свежая стабильная Node.js: $LATEST"
-
-            if [ "$LATEST" = "$NODE_SAVED" ]; then
-              echo "Новых стабильных версий Node.js нет — пропускаем сборку."
-              echo "should_build=false" >> "$GITHUB_OUTPUT"
-            else
-              echo "node_latest=$LATEST" >> "$GITHUB_OUTPUT"
+            # Ежемесячно: собираем только при новой стабильной Node.js
+            if [ "$NODE_CHANGED" = "true" ]; then
+              echo "Новая Node.js: $NODE_SAVED -> $LATEST — запускаем сборку."
               echo "should_build=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Новых версий Node.js нет — пропускаем сборку."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
             fi
           else
-            # Ручной запуск: только если версия в package.json отличается от последнего тега
+            # Вручную: собираем, если изменилась версия проекта ИЛИ Node.js
             TAG=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)
             CUR3=$(echo "$VERSION" | cut -d. -f1-3)
             echo "package.json: $VERSION, последний тег: ${TAG:-нет}"
 
-            if [ -n "$TAG" ] && [ "$CUR3" = "$TAG" ]; then
-              echo "Версия не менялась с прошлого релиза — пропускаем сборку."
-              echo "should_build=false" >> "$GITHUB_OUTPUT"
-            else
+            if [ "$NODE_CHANGED" = "true" ] || [ -z "$TAG" ] || [ "$CUR3" != "$TAG" ]; then
               echo "should_build=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Ни версия проекта, ни Node.js не менялись — пропускаем сборку."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
             fi
           fi
 
-      - name: Инкремент версии и запись версии Node.js в package.json
-        if: steps.gate.outputs.should_build == 'true' && github.event_name == 'schedule'
+      - name: Запись версии Node.js и инкремент версии проекта
+        if: steps.gate.outputs.should_build == 'true'
         id: bump
         env:
           NODE_VERSION: ${{ steps.gate.outputs.node_latest }}
+          IS_SCHEDULE: ${{ github.event_name == 'schedule' }}
         run: |
+          set -euo pipefail
           NEW=$(node -e '
             const fs = require("fs");
             const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            const [a, b, c, d] = pkg.version.split(".").map(Number);
-            pkg.version = [a, b, c + 1, d].join(".");
+            if (process.env.IS_SCHEDULE === "true") {
+              const p = pkg.version.split(".").map(Number);
+              while (p.length < 4) p.push(0);
+              p[2] += 1;
+              pkg.version = p.join(".");
+            }
             pkg.nodejsVersion = process.env.NODE_VERSION;
             fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
             console.log(pkg.version);
           ')
           echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
+          echo "Новая версия: $NEW, Node.js: $NODE_VERSION"
 
       - name: Определяем версию релиза
         if: steps.gate.outputs.should_build == 'true'
@@ -100,6 +115,7 @@ jobs:
         if: steps.gate.outputs.should_build == 'true'
         id: artifact
         run: |
+          set -euo pipefail
           INST="inno_setup/ScanMenu2pdf.exe"
           if [ ! -f "$INST" ]; then
             echo "Инсталлятор не найден: $INST — проверьте вывод compile.js" >&2
@@ -116,17 +132,39 @@ jobs:
 
       - name: Коммит и тег
         if: steps.gate.outputs.should_build == 'true'
+        id: commit
+        env:
+          IS_SCHEDULE: ${{ github.event_name == 'schedule' }}
         run: |
+          set -euo pipefail
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add -A
           git diff --cached --quiet && echo "Нечего коммитить" && exit 0
-          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
-          git tag "${{ steps.version.outputs.tag }}"
-          git push origin "HEAD:${{ github.ref_name }}" "${{ steps.version.outputs.tag }}"
+
+          if [ "$IS_SCHEDULE" = "true" ]; then
+            MSG="chore: bump version to ${{ steps.bump.outputs.new_version }} (Node.js ${{ steps.gate.outputs.node_latest }})"
+          else
+            MSG="chore: update Node.js to ${{ steps.gate.outputs.node_latest }}"
+          fi
+          git commit -m "$MSG"
+
+          TAG="${{ steps.version.outputs.tag }}"
+          TAG_CREATED=false
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Тег $TAG уже существует — релиз не пересоздаём."
+          else
+            git tag "$TAG"
+            TAG_CREATED=true
+          fi
+          echo "tag_created=$TAG_CREATED" >> "$GITHUB_OUTPUT"
+          git push origin "HEAD:${{ github.ref_name }}"
+          if [ "$TAG_CREATED" = "true" ]; then
+            git push origin "$TAG"
+          fi
 
       - name: Создание релиза с инсталлятором
-        if: steps.gate.outputs.should_build == 'true'
+        if: steps.gate.outputs.should_build == 'true' && steps.commit.outputs.tag_created == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
