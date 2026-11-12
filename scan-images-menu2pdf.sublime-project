@@ -55,7 +55,7 @@
 			"shell": true
 		},
 		{
-			"name": "Запуск сборки playbeep и programm",
+			"name": "Запуск сборки playbeep и scanmenu2pdf",
 			"working_dir": "${project_path}",
 			"cmd": ["start", "npm", "run", "build"],
 			"shell": true

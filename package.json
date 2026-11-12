@@ -6,7 +6,7 @@
 	"product": "programm",
 	"main": "index.js",
 	"scripts": {
-		"app": "start /d bin programm.exe",
+		"app": "start /d bin scanmenu2pdf.exe",
 		"build": "node build.js",
 		"compile": "node compile.js",
 		"runtest": "node index.js --work-days=5 --pad=4"

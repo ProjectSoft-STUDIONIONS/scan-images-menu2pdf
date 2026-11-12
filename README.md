@@ -159,10 +159,10 @@ $ npm install
 ```Batchfile
 $ npm run test
 ```
-Или запуск `programm.exe`
+Или запуск `scanmenu2pdf.exe`
 
 ### Дополнительные установки для сборки проекта и диалога
-Установить **.NET 8.0 SDK** для компилирования `programm.exe`
+Установить **.NET 8.0 SDK** для компилирования `scanmenu2pdf.exe`
 ```
 https://dotnetwebsite.azurewebsites.net/en-us/download/dotnet/8.0
 ```
@@ -177,7 +177,7 @@ C:\Windows\Microsoft.NET\Framework\v3.5
 https://altd.embarcadero.com/download/radstudio/11.0/RADStudio_11_3_esd_61_3236.exe
 ```
 
-### Сборка `programm.exe`
+### Сборка `scanmenu2pdf.exe`
 
 ```Batchfile
 $ npm run build
