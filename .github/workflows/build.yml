@@ -163,12 +163,22 @@ jobs:
             git push origin "$TAG"
           fi
 
-      - name: Создание релиза с инсталлятором
-        if: steps.gate.outputs.should_build == 'true' && steps.commit.outputs.tag_created == 'true'
+      - name: Создание релиза и загрузка инсталлятора
+        if: steps.gate.outputs.should_build == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            "${{ steps.artifact.outputs.installer }}#${{ steps.artifact.outputs.name }}" \
-            --title "Release ${{ steps.version.outputs.tag }}" \
-            --generate-notes
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          if [ "${{ steps.commit.outputs.tag_created }}" = "true" ]; then
+            gh release create "$TAG" \
+              "${{ steps.artifact.outputs.installer }}#${{ steps.artifact.outputs.name }}" \
+              --title "Release $TAG" \
+              --generate-notes
+          else
+            # Тег уже существует: перезаливаем ассет в существующий релиз
+            gh release upload "$TAG" \
+              "${{ steps.artifact.outputs.installer }}#${{ steps.artifact.outputs.name }}" \
+              --clobber
+            echo "Ассет перезалить в существующий релиз $TAG."
+          fi
