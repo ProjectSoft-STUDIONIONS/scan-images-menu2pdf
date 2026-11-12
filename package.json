@@ -1,40 +1,40 @@
 {
-	"name": "scan-images-menu2pdf",
-	"version": "2.9.4.0",
-	"nodejsVersion": "26.13.0",
-	"description": "Конвертирование отсканированных изображений меню в PDF файлы",
-	"product": "programm",
-	"main": "index.js",
-	"scripts": {
-		"app": "start /d bin scanmenu2pdf.exe",
-		"build": "node build.js",
-		"compile": "node compile.js",
-		"runtest": "node index.js --work-days=5 --pad=4"
-	},
-	"files": [
-		"app/**/*",
-		"bin/**/*",
-		"build.js",
-		"compile.js",
-		"index.js",
-		"menu.json",
-		"modules/**/*",
-		"inno_setup/**/*",
-		"language.*.json",
-		"package.json",
-		".gitignore",
-		".npmrc",
-		"*.sublime-project",
-		"*.sublime-settings"
-	],
-	"author": "ProjectSoft <projectsoft2009@yandex.ru>",
-	"license": "GPL-3.0",
-	"soundEnable": "true",
-	"dependencies": {
-		"cli-progress": "^3.12.0",
-		"colors": "^1.4.0",
-		"pdf-lib": "^1.17.1",
-		"resize-optimize-images": "^1.1.2",
-		"innosetup": "github:ProjectSoft-STUDIONIONS/innosetup-compiller"
-	}
+  "name": "scan-images-menu2pdf",
+  "version": "2.9.4.0",
+  "nodejsVersion": "26.13.1",
+  "description": "Конвертирование отсканированных изображений меню в PDF файлы",
+  "product": "programm",
+  "main": "index.js",
+  "scripts": {
+    "app": "start /d bin scanmenu2pdf.exe",
+    "build": "node build.js",
+    "compile": "node compile.js",
+    "runtest": "node index.js --work-days=5 --pad=4"
+  },
+  "files": [
+    "app/**/*",
+    "bin/**/*",
+    "build.js",
+    "compile.js",
+    "index.js",
+    "menu.json",
+    "modules/**/*",
+    "inno_setup/**/*",
+    "language.*.json",
+    "package.json",
+    ".gitignore",
+    ".npmrc",
+    "*.sublime-project",
+    "*.sublime-settings"
+  ],
+  "author": "ProjectSoft <projectsoft2009@yandex.ru>",
+  "license": "GPL-3.0",
+  "soundEnable": "true",
+  "dependencies": {
+    "cli-progress": "^3.12.0",
+    "colors": "^1.4.0",
+    "pdf-lib": "^1.17.1",
+    "resize-optimize-images": "^1.1.2",
+    "innosetup": "github:ProjectSoft-STUDIONIONS/innosetup-compiller"
+  }
 }
