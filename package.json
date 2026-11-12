@@ -1,6 +1,6 @@
 {
 	"name": "scan-images-menu2pdf",
-	"version": "2.9.3.0",
+	"version": "2.9.4.0",
 	"nodejsVersion": "26.13.0",
 	"description": "Конвертирование отсканированных изображений меню в PDF файлы",
 	"product": "programm",

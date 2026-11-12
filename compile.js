@@ -92,12 +92,12 @@ execDownload = () => {
 execInnoSetup = () => {
 	return new Promise((resolve, reject) => {
 		// Запустить InnoSetup
-		innosetup(path.join(ISS_DIR, 'ConvertMenu2pdf_setup.iss'), {
+		innosetup(path.join(ISS_DIR, 'ScanMenu2pdf.iss'), {
 			verbose: true,
 			colors: true,
 			arch: 'x64'
 		})
-			.then(() => resolve('Compile: ConvertMenu2pdf_setup.exe'))
+			.then(() => resolve('Compile: ScanMenu2pdf.exe'))
 			.catch(e => reject(e));
 	})
 };

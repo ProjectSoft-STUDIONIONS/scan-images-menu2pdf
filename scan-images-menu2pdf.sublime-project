@@ -42,10 +42,9 @@
 			"working_dir": "${project_path}",
 			"cmd": [
 				"start",
-				"/wait",
-				"/d",
-				"bin",
-				"programm.exe"
+				"npm",
+				"run",
+				"runtest"
 			],
 			"shell": true
 		},

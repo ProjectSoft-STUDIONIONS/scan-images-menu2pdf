@@ -39,6 +39,7 @@ inno_setup/*.msi
 node_modules
 
 /test
+test*
 /docs/*
 /docs/**/*.*
 

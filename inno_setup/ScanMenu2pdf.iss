@@ -1,8 +1,8 @@
 #include "version.iss"
-#define MyAppName "ConvertMenu2pdf"
+#define MyAppName "ScanMenu2pdf"
 #define MyAppPublisher "ProjectSoft © 2008 - all right reserved"
 #define MyAppURL "https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf"
-#define MyAppExeName "programm.exe"      
+#define MyAppExeName "scanmenu2pdf.exe"      
 #define MyAppTitle "Конвертирование отсканированных изображений меню в PDF файлы"
 #define NodeVersion="v26.13.0"
 #define NodeFile "node-x64.msi"
@@ -25,7 +25,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 PrivilegesRequired=admin
 OutputDir=..\inno_setup
-OutputBaseFilename=ConvertMenu2pdf_setup
+OutputBaseFilename=ScanMenu2pdf
 SetupIconFile=..\app\favicon.ico
 UninstallDisplayIcon={app}\bin\{#MyAppExeName},0
 Compression=lzma
@@ -86,10 +86,65 @@ Type: files; Name: "{app}/modules/dialogs/dist/*.*"
 // Функция проверки, выбрана ли задача installNode
 function IsInstallNodeSelected: Boolean;
 begin
-  Result := WizardIsTaskSelected('installNode');
+	Result := WizardIsTaskSelected('installNode');
+end;
+
+// Проверка: установлена ли Node.js.
+// Официальный MSI-установщик Node.js пишет ключ в реестр — по нему и определяем
+function IsNodeInstalled(): Boolean;
+begin
+	Result :=
+		RegKeyExists(HKLM, 'SOFTWARE\Node.js') or
+		RegKeyExists(HKLM, 'SOFTWARE\WOW6432Node\Node.js') or
+		RegKeyExists(HKCU, 'SOFTWARE\Node.js');
+end;
+
+// Поиск задачи SetupNode в списке задач
+function FindNodeTask(): Integer;
+var
+	I: Integer;
+	Wanted: String;
+begin
+	Result := -1;
+	Wanted := Trim(CustomMessage('SetupNode'));
+	for I := 0 to WizardForm.TasksList.Items.Count - 1 do
+	begin
+		if Trim(WizardForm.TasksList.ItemCaption[I]) = Wanted then
+		begin
+			Result := I;
+			Break;
+		end;
+	end;
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+var
+	Idx: Integer;
+begin
+	if CurPageID = wpSelectTasks then
+	begin
+		Idx := FindNodeTask();
+		if Idx >= 0 then
+		begin
+			if IsNodeInstalled() then
+			begin
+				// Node есть: снимаем галочку, чекбокс остаётся доступным — установка по желанию
+				WizardForm.TasksList.CheckItem(Idx, coUncheck);
+				WizardForm.TasksList.ItemEnabled[Idx] := True;
+			end
+			else
+			begin
+				// Node нет: галочка стоит и снять её нельзя — без Node приложение бесполезно
+				WizardForm.TasksList.CheckItem(Idx, coCheck);
+				WizardForm.TasksList.ItemEnabled[Idx] := False;
+			end;
+		end;
+	end;
 end;
 
 
+<<<<<<< HEAD:inno_setup/ScanMenu2pdf.iss
+=======
 
 
 
@@ -130,3 +185,4 @@ end;
 
 
 
+>>>>>>> cc354e4cd8231e3a91d00ad42ed01ab023a93bb1:inno_setup/ConvertMenu2pdf_setup.iss

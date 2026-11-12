@@ -1,6 +1,6 @@
 using System.Reflection;
 
-[assembly: AssemblyProduct("programm")]
+[assembly: AssemblyProduct("scanmenu2pdf")]
 [assembly: AssemblyCompany("ProjectSoft")]
 [assembly: AssemblyCopyright("Copyright © ProjectSoft 2008 - all right reserved")]
 [assembly: AssemblyTrademark("® ProjectSoft")]

@@ -100,13 +100,13 @@ jobs:
         if: steps.gate.outputs.should_build == 'true'
         id: artifact
         run: |
-          INST="inno_setup/ConvertMenu2pdf_setup.exe"
+          INST="inno_setup/ScanMenu2pdf.exe"
           if [ ! -f "$INST" ]; then
             echo "Инсталлятор не найден: $INST — проверьте вывод compile.js" >&2
             exit 1
           fi
           echo "installer=$INST" >> "$GITHUB_OUTPUT"
-          echo "name=ConvertMenu2pdf_setup.exe" >> "$GITHUB_OUTPUT"
+          echo "name=ScanMenu2pdf.exe" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         if: steps.gate.outputs.should_build == 'true'

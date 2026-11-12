@@ -13,7 +13,7 @@ const fs = require('fs'),
 				args = [
 					`/win32icon:${normalize([__dirname, "app", "favicon.ico"])}`,
 					`/resource:${normalize([__dirname, "app", "programm.resource"])}`,
-					`/out:bin\\programm.exe`,
+					`/out:bin\\scanmenu2pdf.exe`,
 					`/win32manifest:${normalize([__dirname, "app", "app.manifest"])}`,
 					`/target:exe`,
 					`${normalize([__dirname, "app", "img_menu2pdf.cs"])}`,
@@ -25,7 +25,7 @@ const fs = require('fs'),
 			ls.stderr.on('data', (data) => { reject(data); });
 			ls.on('close', (code) => {
 				if(code == 0){
-					console.log(`Compiled: programm.exe`);
+					console.log(`Compiled: scanmenu2pdf.exe`);
 					resolve();
 				}else{
 					reject(`Error: csc.exe ${args.join(' ')}`);

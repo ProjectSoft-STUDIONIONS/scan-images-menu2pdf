@@ -135,13 +135,16 @@
 			/**
 			 * Сепаратор по умалчанию
 			 */
-			let sep = "/";
+			let sep;
 			switch (require(`os`).platform().toLowerCase().replace(/[0-9]/g, ``).replace(`darwin`, `macos`)) {
 				case `win`:
 					/**
 					 * Сепаратор в Windows
 					 */
 					sep = "\\";
+					break;
+				default:
+					sep = "/";
 					break;
 			}
 			return sep;
@@ -220,32 +223,33 @@
 				resolve(files);
 			})
 		},
-		resize = function(input, output, width, typeImage) {
-			return new Promise(async function(resolve, reject){
-				try {
-					const image = await Jimp.read(input);
-					// Соотношение сторон
-					// 210x297
-					// Обрезка
-					let temp_width = image.bitmap.width;
-					let temp_height = Math.ceil((image.bitmap.width / 210) * 297);
-					if(image.bitmap.height > temp_height){
-						await image.crop(0, 0, temp_width, temp_height);
+		resize = function(input, output) {
+			return new Promise((resolve, reject) => {
+				// Здесь всё очень просто. Определение идёт от ширины и высоты нужного документа.
+				const typeImage = sizeW > sizeH ? 'landscape' : 'portrait';
+				const A4 = { w: 210, h: 297 };
+				const targetIsPortrait = (typeImage === 'portrait');
+				Jimp.read(input).then(image => {
+					// Поворот нужен, если ориентация скана не совпала с целевой
+					if ((image.bitmap.width > image.bitmap.height) === targetIsPortrait) {
+						//console.log(typeImage, targetIsPortrait, image.bitmap.width, image.bitmap.height);
+						image.rotate(rotate);
 					}
-					// Поворот
-					await image.rotate(typeImage == 'portrait' ? 0 : rotate);
-					// Ресайз
-					await image.resize(width, Jimp.AUTO);
-					// Качество
-					await image.quality(80);
-					// Сохранение
-					await image.writeAsync(output);
-					// Выход
+					const iw = image.bitmap.width;
+					const ih = image.bitmap.height;
+					const pageW = targetIsPortrait ? 1240 : 1754;
+					const pageH = targetIsPortrait
+						? Math.round(pageW / A4.w * A4.h)
+						: Math.round(pageW / A4.h * A4.w);
+					const newW = Math.round(iw * Math.min(pageW / iw, pageH / ih));
+					const newH = Math.round(ih * Math.min(pageW / iw, pageH / ih));
+					return image.resize(newW, newH).quality(80).writeAsync(output);
+				}).then(() => {
 					resolve();
-				}catch(e){
-					log(e);
-					reject(e);
-				}
+				}).catch(err => {
+					log(err);
+					reject(err);
+				});
 			});
 		},
 		pdfGenerator = function (outDir, imgs) {
@@ -317,7 +321,7 @@
 							 */
 							// Имя директории
 							let mask = `${y}.${m}.${dd}`,
-								pdfFile = `${frm}${mapsFiles[k].sufix}.pdf`,
+								pdfFile = `${frm}-${mapsFiles[k].sufix}.pdf`,
 								/**
 								 * Если директория не существует и multidir включен - создаём директорию
 								 */
@@ -350,26 +354,27 @@
 								pdfImage = await pdfDoc.embedPng(image);
 							}
 							if(pdfImage){
-								/**
-								 * Масштабируем страницу
-								 * При сканировании страниц в формате 300dpi
-								 * Изображение нужно уменьшить до ~ 27.44%  (1 - 0.2744)
-								 * Приблизительно выставил 0.7 
-								 * Точное решение - 0.5
-								 */
-								pdfImage.scale(scale);
-								/**
-								 * Добавляем страницу
-								 */
-								let page = pdfDoc.addPage([sizeW * scale, sizeH * scale]);
-								/**
-								 * Рисуем изображение на странице
-								 */
+								// Размеры страницы по ориентации меню (в пикселях * scale):
+								// Каждодневное (portrait)  -> 1240 x 1754
+								// Десятидневное (landscape)-> 1754 x 1240
+								const pageW = sizeW * scale;
+								const pageH = sizeH * scale;
+								// Добавляем страницу нужной ориентации
+								let page = pdfDoc.addPage([pageW, pageH]);
+								// Реальные размеры изображения в pdf-lib
+								const imgW = pdfImage.width;
+								const imgH = pdfImage.height;
+								// Вписываем изображение в страницу без искажений:
+								// один коэффициент на обе стороны, ничего не выходит за края
+								const fit = Math.min(pageW / imgW, pageH / imgH);
+								const drawW = imgW * fit;
+								const drawH = imgH * fit;
+								// Рисуем изображение чётко по центру страницы
 								page.drawImage(pdfImage, {
-									x: 0,
-									y: 0,
-									width: sizeW * scale,
-									height: sizeH * scale,
+									x: (pageW - drawW) / 2,
+									y: (pageH - drawH) / 2,
+									width: drawW,
+									height: drawH,
 								});
 							}
 							/**
@@ -399,9 +404,9 @@
 								 * Приложение, которое создаёт документ.
 								 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
 								 * Производителем файла должна быть программа, которая является официальной версией!
-								 * Мы сюда так же добавляем имена библиотек jimp, pdf-lib
+								 * Мы сюда так же добавляем имена библиотек jimp, pdf-lib и мою программу
 								 */
-								pdfDoc.setCreator("node, jimp, pdf-lib, ProjectSoft®");
+								pdfDoc.setCreator("node, jimp, pdf-lib, scanMenu2pdf");
 								/**
 								 * Заполнение метатегов документа
 								 * Это обязательное действие.
@@ -444,13 +449,11 @@
 								 */
 								mask = !jsonPars[typeMenu]["multidir"] ? `` : `${mask}${sp}`;
 								fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-								/**
-								 * Без суффикса
-								 */
-								if(mapsFiles[k].saveNoSufix){
-									pdfFile =  `${frm}.pdf`;
-									fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-								}
+								// Без суффикса
+								// if(mapsFiles[k].saveNoSufix){
+								// 	pdfFile =  `${frm}.pdf`;
+								// 	fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
+								// }
 								/**
 								 * Увеличиваем счётчик типов меню
 								 */
@@ -653,7 +656,7 @@
 										ext = path.extname(image).toLowerCase(),
 										outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
 										outputFile = path.join(resize_dir, outF);
-									await resize(inputFile, outputFile, sizeW, jsonPars[typeMenu]["size"]);
+									await resize(inputFile, outputFile);
 									/**
 									 * Прогресс Изображений
 									 */
