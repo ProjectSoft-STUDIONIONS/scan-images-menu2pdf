@@ -1,4 +1,11 @@
-(async function(){
+process.on('unhandledRejection', (reason, promise) => {
+	console.log("");
+	console.log("unhandledRejection");
+	console.log(reason);
+	console.log(promise);
+	console.log("");
+});
+
 	const ttl = process.title,
 		argv = (() => {
 			const args = {};
@@ -21,7 +28,7 @@
 		dialogs =  require('./modules/dialogs/dialogs.js'),
 		Beep = require('./modules/playbeep/playbeep.js'),
 		config = require('./package.json'),
-		fMenu = 'menu.json',
+		fileMenu = 'menu.json',
 		strLength = 37,
 		/**
 		 * Размер страниц
@@ -70,7 +77,8 @@
 			"file_menu_error"            : "Файл `%s` поврежден или не существует",
 			"error_close"                : "Для продолжения нажмите любую клавишу...",
 			"produser"                   : "Школа",
-			"author"                     : "Комбинат питания"
+			"author"                     : "Комбинат питания",
+			"workdays"                   : "Кол-во учебных дней"
 		},
 
 		langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
@@ -94,17 +102,11 @@
 		 */
 	const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
 		/**
-		 * Кто запустилприложение
+		 * Кто запустил приложение
 		 * Параметр обязателен только при запуске programm.exe
 		 * Не задаётся
 		 */
 		runing = argv["runing"] ? !!argv["runing"].toLowerCase() : false,
-		/**
-		 * workDays - кол-во рабочих дней в недели
-		 * При запуске из programm.exe задаётся в programm.ini
-		 * По умолчанию = 5
-		 */
-		workDays = argv["work-days"] ? (parseInt(argv["work-days"]) ? parseInt(argv["work-days"]) : 5) : 5,
 		log = function(...args) {
 			console.log.apply(null, args);
 		},
@@ -115,9 +117,9 @@
 			barsize: strLength - 2, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: ((`  {bar}  `).cyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
-			barCompleteChar: '\u2588', // Символ для использования в качестве индикатора завершения
-			barIncompleteChar: '\u2591', // Символ для использования в качестве индикатора незавершенности
+			format: ((`  {bar}  `).brightCyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
+			barCompleteChar: '█',//'\u2588', // Символ для использования в качестве индикатора завершения
+			barIncompleteChar: "░",//'\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
 			emptyOnZero: true, // Отображать прогресс бара с итоговым значением, равным нулю (0), как пустые, а не полные
 			forceRedraw: true // Запускать перерисовку в каждом кадре, даже если прогресс остается прежним
@@ -130,6 +132,13 @@
 		// На сколько сократить основную паузу при ошибке.
 		// Не более значения pauseDelay.
 		pauseError = 17000, // 20 сек. - 17 сек. = 3 сек.
+		// Для получения кол-ва учебных дней.
+		// Не превышаем более 1 недели
+		// Дефолт - 5 дней
+		getWorkDays = (value) => {
+			const n = typeof value === 'boolean' ? NaN : Number(value);
+			return Number.isInteger(n) && n >= 1 && n <= 7 ? n : 5;
+		},
 		// Сепаратор в пути директории
 		separator = function() {
 			/**
@@ -252,11 +261,14 @@
 				});
 			});
 		},
-		pdfGenerator = function (outDir, imgs) {
-			return new Promise(async function(resolve, reject){
-				/**
-				 * Если директория для PDF не существует - создать
-				 */
+		pdfGenerator = (outDir, imgs) => {
+			return new Promise(async (resolve, reject) => {
+				// Определяем кол-во учебных дней
+				let workDays = getWorkDays(jsonPars[typeMenu].workdays);
+				console.log(workDays);
+				// Формат даты для имени файла
+				const format = "%y.%m.%d";
+				// Если директория для PDF не существует - создать
 				let pdfDirs = await isDir(outDir);
 				let startsTime = (new Date()).getTime();
 				if(!pdfDirs){
@@ -268,29 +280,18 @@
 						let tmpArray = jsonPars[typeMenu]["items"];
 						let day;
 						mapsFiles = [];
-						/**
-						 * created.
-						 */
-						//mapsFiles = jsonPars[typeMenu]["items"];
-						indexArr.forEach(function(a, b, c){
+						indexArr.forEach((a, b, c) => {
 							mapsFiles.push(tmpArray[parseInt(a)]);
 						});
-						/**
-						 * done.
-						 */
 						let i = 0;
 						// Кол-во файлов в файле PDF
 						// Зависит от типа меню
 						let c = jsonPars[typeMenu]["files"];
-						// Формат даты для имени файла
-						const format = "%y.%m.%d";
 						let k = 0;
 						// Количество пунктов меню
 						let f = mapsFiles.length;
 						let pdfDoc;
-						/**
-						 * Прогресс PDF
-						 */
+						// Прогресс PDF
 						log(`${lang.generating_pdf_files}...`.brightYellow);
 						let progressPDfIndex = 0;
 						let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
@@ -300,14 +301,10 @@
 							timeRun: timeRun,
 							eta: 0
 						});
-						/**
-						 * Бежим по файлам
-						 */
+						// Бежим по файлам
 						for(let file of files){
-							/**
-							 * Формируем маску имени файла и директории файла
-							 * Формат: dd-mm-yyyy
-							 */
+							// Формируем маску имени файла и директории файла
+							// Формат: dd-mm-yyyy
 							let d = date.getDate(),
 								m = String(date.getMonth() + 1).padStart(2, "0"),
 								y = String(date.getFullYear()),
@@ -316,37 +313,27 @@
 								frm = format.replace("%d", dd).replace("%m", m).replace("%y", y),
 								// Формируем дату для title
 								intlDate = new Intl.DateTimeFormat("ru", {dateStyle: "short"}).format(date.getTime());
-							/**
-							 * Формируем путь и имя файла
-							 */
+							// Формируем путь и имя файла
 							// Имя директории
 							let mask = `${y}.${m}.${dd}`,
 								pdfFile = `${frm}-${mapsFiles[k].sufix}.pdf`,
-								/**
-								 * Если директория не существует и multidir включен - создаём директорию
-								 */
+								// Если директория не существует и multidir включен - создаём директорию
 								pdfDir = await isDir(path.join(outDir, mask)),
 								fImage = path.join(imgs, file),
-								/**
-								 * Читаем изображение в буффер
-								 */
-								image = await fs.readFileSync(fImage),
+								// Читаем изображение в буффер
+								image = fs.readFileSync(fImage),
 								ext = path.extname(file);
 							ext = ext.toLowerCase();
-							/**
-							 * Если счётчик страниц на старте i == 0
-							 * Создаём PDF документ 
-							 */
-							// Сделать сохранении в соответствии с индексами
+							// Если счётчик страниц на старте i == 0
+							// Создаём PDF документ 
+							// Сделать сохранение в соответствии с индексами
 							if(i == 0){
 								if(!pdfDir && jsonPars[typeMenu]["multidir"]){
 									fs.mkdirSync(path.join(outDir, mask));
 								}
 								pdfDoc = await PDFDocument.create();
 							}
-							/**
-							 * Загружаем изображение в PDF файл
-							 */
+							// Загружаем изображение в PDF файл
 							let pdfImage;
 							if(ext == '.jpg' || ext == '.jpeg'){
 								pdfImage = await pdfDoc.embedJpg(image);
@@ -377,102 +364,65 @@
 									height: drawH,
 								});
 							}
-							/**
-							 * Увеличиваем счётчик страниц
-							 */
+							// Увеличиваем счётчик страниц
 							++i;
-							/**
-							 * Если счётчик страниц в PDF равен установленному количеству
-							 */
+							// Если счётчик страниц в PDF равен установленному количеству
 							if(i == c){
-								/**
-								 * Автор
-								 * Создатель
-								 * Продюсер
-								 */
-								/**
-								 * Автор документа - откуда получили документ.
-								 * Проще говоря, кто организовывает питание в школе
-								 */
+								// Автор
+								// Создатель
+								// Продюсер
+								// Автор документа - откуда получили документ.
+								// Проще говоря, кто организовывает питание в школе
 								pdfDoc.setAuthor(author);
-								/**
-								 * Кто создаёт документ
-								 * Проще говоря - это школа и т. п.
-								 */
+								// Кто создаёт документ
+								// Проще говоря - это школа и т. п.
 								pdfDoc.setProducer(produser);
-								/**
-								 * Приложение, которое создаёт документ.
-								 * Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
-								 * Производителем файла должна быть программа, которая является официальной версией!
-								 * Мы сюда так же добавляем имена библиотек jimp, pdf-lib и мою программу
-								 */
+								// Приложение, которое создаёт документ.
+								// Данную строчку по лицензии MIT удалять нельзя ни в коем случае!!!
+								// Производителем файла должна быть программа, которая является официальной версией!
+								// Мы сюда так же добавляем имена библиотек jimp, pdf-lib и мою программу
 								pdfDoc.setCreator("node, jimp, pdf-lib, scanMenu2pdf");
-								/**
-								 * Заполнение метатегов документа
-								 * Это обязательное действие.
-								 **
-								 * Заголовок
-								 * Ключевые слова
-								 * Тема (Описание)
-								 */
+								// Заполнение метатегов документа
+								// Это обязательное действие.
+								// Заголовок
+								// Ключевые слова
+								// Тема (Описание)
 								pdfDoc.setTitle(mapsFiles[k].title + " на " + intlDate);
 								pdfDoc.setKeywords([mapsFiles[k].title + " на " + intlDate]);
 								pdfDoc.setSubject(mapsFiles[k].title + " на " + intlDate);
-								/**
-								 * Время создания файла
-								 * Время модификации файла
-								 */
+								// Время создания файла
+								// Время модификации файла
 								pdfDoc.setCreationDate(new Date());
 								pdfDoc.setModificationDate(new Date());
-								/**
-								 * Включаем отображение title при просмотре в программе просмотра (Adobe PDF Reader, Foxit PDF Reader, etc...)
-								 */
+								// Включаем отображение title при просмотре в программе просмотра (Adobe PDF Reader, Foxit PDF Reader, etc...)
 								pdfDoc.catalog.getOrCreateViewerPreferences().setDisplayDocTitle(true);
-								/**
-								 * Сохраняем
-								 */
+								// Сохраняем
 								let pdfBytes = await pdfDoc.save();
-								/**
-								 * Прогресс PDF
-								 */
+								// Прогресс PDF
 								++progressPDfIndex;
 								let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
 								barPdf.update(progressPDfIndex, {
 									timeRun: eta
 								});
-								/**
-								 * Пишем в файл
-								 */
-								/**
-								 * Если multidir включен, то mask не меняет значение и директория создана
-								 * Иначе оно пустое и файлы сохраняются в pdf директорию
-								 */
+								// Пишем в файл
+								// Если multidir включен, то mask не меняет значение и директория создана
+								// Иначе оно пустое и файлы сохраняются в pdf директорию
 								mask = !jsonPars[typeMenu]["multidir"] ? `` : `${mask}${sp}`;
 								fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-								// Без суффикса
-								// if(mapsFiles[k].saveNoSufix){
-								// 	pdfFile =  `${frm}.pdf`;
-								// 	fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
-								// }
-								/**
-								 * Увеличиваем счётчик типов меню
-								 */
+								// Увеличиваем счётчик типов меню
 								++k;
-								/**
-								 * Если счётчик равен кол-ву типов меню
-								 * Увеличиваем дату
-								 * Счётчик обнуляем
-								 */
+								// Если счётчик равен кол-ву типов меню
+								// Увеличиваем дату
+								// Счётчик обнуляем
 								if(k == f){
 									day = date.getDay();
-									/**
-									 * Если пятница - увеличиваем на 3 дня
-									 * или увеличиваем на один (следующий день).
-									 * 4 дня  - увеличиваем на 4
-									 * 5 дней - увеличиваем на 3
-									 * 6 дней - увеличиваем на 2
-									 * 7 дней - увеличиваем на 1
-									 */
+									// Если пятница - увеличиваем на 3 дня
+									// или увеличиваем на один (следующий день).
+									// НУЖНО ПРОВЕРИТЬ!!!!
+									// 4 дня  - увеличиваем на 4
+									// 5 дней - увеличиваем на 3
+									// 6 дней - увеличиваем на 2
+									// 7 дней - увеличиваем на 1
 									if(day == workDays){
 										day = 8 - workDays;
 									}else{
@@ -482,11 +432,6 @@
 									date.setDate(d + day);
 								}
 								i = 0;
-								/**
-								 * Для красоты
-								 * Сделаем маленькую паузу без прогрессбара
-								 */
-								// await closeDelay(25, false);
 							}
 						}
 						barPdf.terminal.cursor(true);
@@ -500,57 +445,49 @@
 				}
 			});
 		},
-		start = function(){
-			return new Promise(function(st_resolve, st_reject){
+		start = () => {
+			return new Promise((resolve, reject) => {
 				try{
 					try {
-						json = fs.readFileSync(fMenu);
+						// Читаем JSON меню
+						json = fs.readFileSync(fileMenu);
 					}catch(ee){
 						// Ошибка чтения
 						let arr = lang.file_menu_error.split('|');
 						arr[0] = arr[0].brightYellow;
-						arr[1] = fMenu.red;
+						arr[1] = fileMenu.red;
 						arr[2] = arr[2].brightYellow;
-						st_reject(`\n\n${arr.join("")}\n\n`);
+						reject(`\n\n${arr.join("")}\n\n`);
+						// Выходим
 						return;
 					}
 					jsonPars = JSON.parse(json);
-					for(let jsn of jsonPars){
-						if(jsn["name"]) {
-							jsonType.push({"name": jsn["name"]});
-						}
-					}
-				}catch(EX) {
+				}catch(e) {
 					// Ошибка парсинга
-					st_reject(`\n\n${lang.error_reading_json}!\n\n`.red);
+					reject(`\n\n${lang.error_reading_json}!\n\n`.red);
 					return;
 				}
-
-				dialogs(fMenu, version_app).then(async function(data){
-					/**
-					 * Запуск
-					 */;
+				dialogs(fileMenu, version_app).then((data) => {
+					// Запуск
 					startTime = new Date().getTime();
-					/**
-					 * Проверить полученные данные
-					 */
+					// Проверить полученные данные
 					try {
 						data = JSON.parse(data);
 					} catch(err_json){
-						st_reject(`${lang.error_reading_json}!`.red);
+						// Ошибка парсинга JSON
+						throw `${lang.error_reading_json}!`.red;
+						// Выходим
 						return;
 					}
 					if(parseInt(data.typemenu) > -1 && data.directory != "None" && data.data.length) {
 						typeMenu = parseInt(data.typemenu);
 						dir = data.directory;
-						/**
-						 * Самый лучший вариант даты представленной как число.
-						 * Преобразуем строку "1703289600", например, в число,
-						 * обязательно умножив на 1000 (миллисекунды), 
-						 * и применяем его в конструкторе даты
-						 */
+						// Самый лучший вариант даты представленной как число.
+						// Преобразуем строку "1703289600", например, в число,
+						// обязательно умножив на 1000 (миллисекунды), 
+						// и применяем его в конструкторе даты
 						let intDate = parseInt(data.data) * 1000;
-						date = new Date(intDate);
+							date = new Date(intDate);
 						let day = date.getDay();
 						if(day == 6){
 							day = 2
@@ -564,164 +501,165 @@
 						lang.selected_menu_type = (" ".repeat(strLength) + lang.selected_menu_type).slice(-strLength);
 						lang.selected_directory = (" ".repeat(strLength) + lang.selected_directory).slice(-strLength);
 						lang.selected_date      = (" ".repeat(strLength) + lang.selected_date).slice(-strLength);
-
 						lang.author = (" ".repeat(strLength) + lang.author).slice(-strLength);
 						lang.produser = (" ".repeat(strLength) + lang.produser).slice(-strLength);
+						lang.workdays = (" ".repeat(strLength) + lang.workdays).slice(-strLength);
 						// Школа
-						log((`${lang.produser}: `.brightYellow + produser.brightGreen));
+						console.log(`${lang.produser}:`.brightYellow, produser.brightGreen);
 						// Комбинат
-						log((`${lang.author}: `.brightYellow + author.brightGreen));
+						console.log(`${lang.author}:`.brightYellow, author.brightGreen);
 						// Меню
-						log((`${lang.selected_menu_type}: `.brightYellow + jsonPars[typeMenu]["name"].brightGreen));
+						console.log(`${lang.selected_menu_type}:`.brightYellow, jsonPars[typeMenu]["name"].brightGreen);
 						// Дата
-						log((`${lang.selected_date}: `.brightYellow + date.toLocaleDateString().brightGreen));
+						console.log(`${lang.selected_date}:`.brightYellow, date.toLocaleDateString().brightGreen);
+						// Количество рабочих дней
+						console.log(`${lang.workdays}:`.brightYellow, (getWorkDays(jsonPars[typeMenu].workdays) + "").brightGreen);
 						// Директория
-						log((`${lang.selected_directory}: `.brightYellow + dir.brightGreen));
-						log("");
+						console.log(`${lang.selected_directory}:`.brightYellow, dir.brightGreen);
+						console.log("");
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
 						date.setDate(date.getDate() + day);
 						indexStr = data.index;
 						indexArr = indexStr.split(',');
-						//log(indexArr);
-						let is_dir = await isDir(dir);
-						if(is_dir) {
-							/**
-							 * Ресайз изображения
-							 * Каждодневное  меню width = 1134
-							 * Десятидневное меню width = 1604
-							 */
-							readDirectory(dir).then(async function(images){
-								if(await isDir(pdf_dir)){
-									log(`${lang.deleting_pdf_files}\n`.brightYellow);
-									emptyDir(pdf_dir);
-								}
-								/**
-								 * Директория изображений
-								 */
-								if(await isDir(resize_dir)){
-									log(`${lang.deleting_img_files}\n`.brightYellow);
-									fs.rmSync(resize_dir, { recursive: true, force: true });
-								}
-								try { fs.mkdirSync(resize_dir); }catch(e){}
-								/**
-								 * Ресайз изображений
-								 * portrait     - книжная
-								 * landscape    - альбомная
-								 * по умолчанию - книжная    (1130 x 1600)
-								 *
-								 * Если надо добавить, то добавляем новые условия.
-								 * Размер страниц PDF строится только от размера полученных изображений.
-								 * Для изображений мы задаём только ширину страницы. Высота изменяется пропорционально.
-								 * Но теперь в функции resize удалив параметр -thumbnaul и 
-								 * раскомментировав аргументы для -thumbnail и последующие
-								 * мы можем ресайзить под конкретные размеры.
-								 * Может где-то пригодится...
-								 */
-								switch(jsonPars[typeMenu]["size"]){
-									case 'portrait':
-										sizeW = wPortrait;
-										sizeH = wLandscape;
-										break;
-									case 'landscape':
-										sizeW = wLandscape;
-										sizeH = wPortrait;
-										break;
-									default:
-										sizeW = wPortrait;
-										sizeH = wLandscape;
-										break;
-								}
-
-								log(`${lang.image_optimization}...`.brightYellow);
-								/**
-								 * Прогресс по изображениям
-								 */
-								let startsTime = (new Date()).getTime(),
-									progressImgIndex = 0,
-									progressImgTotal = images.length;
-								barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
-								barPdf.start(progressImgTotal, progressImgIndex);
-								barPdf.update(progressImgIndex, {
-									timeRun: "0.00s",
-									eta: "0.00"
+						//let is_dir = await isDir(dir);
+						isDir(dir).then(bool => {
+							if(bool) {
+								// Каждодневное  меню width = 1134
+								// Десятидневное меню width = 1604
+								readDirectory(dir).then((images) => {
+									// Проверить длину массива
+									if(images.length) {
+										isDir(pdf_dir).then(async bool => {
+											// Если директория есть - очищаем
+											bool && emptyDir(pdf_dir);
+											// Удаляем директорию ресайзов
+											try { fs.rmSync(resize_dir, { recursive: true, force: true }) }catch(e){}
+											// Создаём директорию ресайзов
+											try { fs.mkdirSync(resize_dir) }catch(e){}
+											// Ресайз изображений
+											// portrait     - книжная
+											// landscape    - альбомная
+											// по умолчанию - книжная    (1130 x 1600)
+											//
+											// Если надо добавить, то добавляем новые условия.
+											// Размер страниц PDF строится только от размера полученных изображений.
+											// Для изображений мы задаём только ширину страницы. Высота изменяется пропорционально.
+											// Но теперь в функции resize удалив параметр -thumbnaul и 
+											// раскомментировав аргументы для -thumbnail и последующие
+											// мы можем ресайзить под конкретные размеры.
+											// Может где-то пригодится...
+											switch(jsonPars[typeMenu]["size"]){
+												case 'portrait':
+													sizeW = wPortrait;
+													sizeH = wLandscape;
+													break;
+												case 'landscape':
+													sizeW = wLandscape;
+													sizeH = wPortrait;
+													break;
+												default:
+													sizeW = wPortrait;
+													sizeH = wLandscape;
+													break;
+											}
+											log(`${lang.image_optimization}...`.brightYellow);
+											// Прогресс по изображениям
+											let startsTime = (new Date()).getTime(),
+												progressImgIndex = 0,
+												progressImgTotal = images.length;
+											barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
+											barPdf.start(progressImgTotal, progressImgIndex);
+											barPdf.update(progressImgIndex, {
+												timeRun: "0.00s",
+												eta: "0.00"
+											});
+											// Старт ресайза
+											Beep(659, 250);
+											for(let image of images){
+												++progressImgIndex;
+												let inputFile = path.join(dir, image),
+													ext = path.extname(image).toLowerCase(),
+													outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
+													outputFile = path.join(resize_dir, outF);
+												await resize(inputFile, outputFile);
+												// Прогресс Изображений
+												let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
+												barPdf.update(progressImgIndex, {
+													timeRun: eta
+												});
+											}
+											barPdf.terminal.cursor(true);
+											barPdf.stop();
+											log("");
+											// Генерация PDF файлов
+											Beep(659, 250);
+											pdfGenerator(pdf_dir, resize_dir).then((str) => {
+												endTime = new Date().getTime();
+												let time = endTime - startTime;
+												time = parseFloat(time / 1000).toFixed(2);
+												lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
+												lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
+												closePrg(resize_dir);
+												resolve(`${(lang.time_spent_in_seconds + ":").brightYellow} ${(time + "s").brightGreen}\n`);
+											}).catch(function(err){
+												closePrg(resize_dir);
+												reject(`\n\n${lang.error_generating_pdf.red}!`);
+												return;
+											});
+										}).catch(e => {
+											// isDir не возвращает reject
+											reject(`Ошибка pdf_dir`);
+										});
+									} else {
+										console.log('Для обработки изображения не найдены.')
+										reject('Для обработки изображения не найдены.')
+									}
+								}).catch(e => {
+									// Ошибка чтения директории
+									reject(`Ошибка чтения dir`);
 								});
-								/**
-								 * Старт ресайза
-								 */
-								await Beep(659, 250);
-								for(let image of images){
-									++progressImgIndex;
-									let inputFile = path.join(dir, image),
-										ext = path.extname(image).toLowerCase(),
-										outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
-										outputFile = path.join(resize_dir, outF);
-									await resize(inputFile, outputFile);
-									/**
-									 * Прогресс Изображений
-									 */
-									let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
-									barPdf.update(progressImgIndex, {
-										timeRun: eta
-									});
-								}
-								barPdf.terminal.cursor(true);
-								barPdf.stop();
-								log("");
-								/**
-								 * Генерация PDF файлов
-								 */
-								await Beep(659, 250);
-								
-								pdfGenerator(pdf_dir, resize_dir).then(async function(str){
-									endTime = new Date().getTime();
-									let time = endTime - startTime;
-									time = parseFloat(time / 1000).toFixed(2);
-									lang.time_spent_in_seconds = (" ".repeat(strLength) + lang.time_spent_in_seconds).slice(-strLength);
-									lang.open_file_explorer = (" ".repeat(strLength) + lang.open_file_explorer).slice(-strLength);
-									closePrg(resize_dir);
-									st_resolve(((`${lang.time_spent_in_seconds}:`).brightYellow + ' ' + (time + "s").brightGreen + `\n`));
-								}).catch(async function(err){
-									closePrg(resize_dir);
-									st_reject(`\n\n${lang.error_generating_pdf.red}!`);
-								});
-
-							}).catch(async function(err){
-								barPdf && (
-									barPdf.terminal.cursor(true),
-									barPdf.stop()
-								);
-								console.clear();
-								closePrg(resize_dir);
-								st_reject(`\n\n${lang.error}!: ${dir}`.red);
-							})
-						}
+							} else {
+								// Директория обработки не найдена
+								// Закрытие программы
+								// Но пока оставим
+								reject(`Ошибка поиска dir`);
+							}
+						}).catch(e => {
+							// isDir не возвращает reject
+							// Закрытие программы
+							// Но пока оставим
+							reject(`Ошибка поиска dir`);
+						});
 					} else {
 						closePrg();
-						st_resolve(`${lang.completed_by_user}\n`.brightYellow);
+						resolve(`${lang.completed_by_user}\n`.brightYellow);
 					}
-				}).catch(async function(error) {
+				}).catch((error) => {
 					barPdf && (
 						barPdf.terminal.cursor(true),
 						barPdf.stop()
 					);
 					closePrg();
-					st_reject(`${lang.error.red}\n\n${error}`);
+					reject(`${lang.error.red}\n\n${error}`);
 				});
 			});
 		},
 		closePrg = async function(imgdir = false){
 			if(typeof imgdir == 'string'){
 				if(await isDir(imgdir)){
-					log(`\n${lang.deleting_img_files}`.brightYellow);
 					fs.rmSync(imgdir, { recursive: true, force: true });
 				}
 			}
-			runing && log(`\n${lang.closing_the_program}...\n`.brightYellow);
+			runing && console.log(`\n${lang.closing_the_program}...\n`.brightYellow);
+			fnClose();
+		},
+		fnClose = function() {
+			process.stdin.setRawMode(false);
+			process.stdin.resume();
+			process.stdin.pause();
 		};
-	/**
-	 * Перезапишем файл языка
-	 */
+	// Перезапишем файл языка
 	fs.writeFileSync(
 		`language.${locale}.json`,
 		JSON.stringify(lang, null, "\t"),
@@ -731,43 +669,23 @@
 	);
 
 	process.stdin.resume();
-	/**
-	 * Запускаем диалоги
-	 */
+	// Запускаем диалоги
 	// Имя, версия
 	config.description = (" ".repeat(75) + config.description).slice(-75);
-	log('\n' + config.description.brightGreen + (' v' + version_app).brightYellow + '\n');
+	console.log('\n' + config.description.brightGreen + (' v' + version_app).brightYellow + '\n');
 	// Старт
 	lang.start = (" ".repeat(50) + lang.start).slice(-50);
-	log(`${lang.start}...\n`.brightYellow);
+	console.log(`${lang.start}...\n`.brightYellow);
 	process.stdin.setRawMode(true);
 	process.stdin.setEncoding('utf8');
-	start().then(async function(data) {
-		log(`${data}`);
-		/**
-		 * Закрытие консоли
-		 */
-		runing && await closeDelay(pauseDelay - pauseError);
-		/**
-		 * Завершение
-		 */
-		await Beep(1760, 200);
-		await Beep(1760, 200);
-		process.stdin.setRawMode(false);
-		process.stdin.resume();
-		process.stdin.pause();
-	}).catch(async function(error) {
-		log(`${error}`);
-		/**
-		 * Закрытие консоли
-		 */
-		runing && await closeDelay(pauseDelay - pauseError);
-		/**
-		 * Завершение
-		 */
-		await Beep(1760, 200);
-		process.stdin.setRawMode(false);
-		process.stdin.resume();
-		process.stdin.pause();
+	start().then(data => {
+		console.log(data);
+		Beep(1760, 200);
+		// Закрытие консоли
+		runing && closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose);
+	}).catch(error => {
+		Beep(1760, 200);
+		// Закрытие консоли
+		runing && closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose);
 	});
-})();
+

@@ -4,6 +4,7 @@
 		"files": 2,
 		"size": "portrait",
 		"multidir": true,
+		"workdays": 5,
 		"items": [
 			{
 				"title": "Меню питания для учащихся 1-4 классов",
@@ -52,6 +53,7 @@
 		"files": 11,
 		"size": "landscape",
 		"multidir": false,
+		"workdays": 5,
 		"items": [
 			{
 				"title": "Примерное двухнедельное меню рациона питания для учащихся 1-4 класса",

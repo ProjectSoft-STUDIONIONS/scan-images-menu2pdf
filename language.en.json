@@ -19,5 +19,6 @@
 	"selected_directory": "Выбранная директория",
 	"selected_menu_type": "Выбранный тип меню",
 	"start": "ЗАПУСК",
-	"time_spent_in_seconds": "Затраченное время в секундах"
+	"time_spent_in_seconds": "Затраченное время в секундах",
+	"workdays": "Кол-во учебных дней"
 }
