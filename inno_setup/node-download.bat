@@ -46,7 +46,7 @@ if not exist "%ISSFILE%" (
 
 copy /y "%ISSFILE%" "%ISSFILE%.bak" >nul
 
-powershell -NoProfile -Command "$q = [char]34; $c = Get-Content -Raw '%ISSFILE%'; $c = $c -replace '(#define\s+NodeVersion\s*=?\s*)\x22[^\x22]*\x22', ('$1' + $q + '%VERSION%' + $q); Set-Content -Path '%ISSFILE%' -Value $c -Encoding Default"
+powershell -NoProfile -Command "$q = [char]34; $c = Get-Content -Raw '%ISSFILE%'; $c = $c -replace '(#define\s+NodeVersion\s*=?\s*)\x22[^\x22]*\x22', ('$1' + $q + '%VERSION%' + $q); Set-Content -Path '%ISSFILE%' -Value $c -Encoding Default -NoNewline"
 if errorlevel 1 (
     echo [ERROR] Failed to update %ISSFILE%
     exit /b 1

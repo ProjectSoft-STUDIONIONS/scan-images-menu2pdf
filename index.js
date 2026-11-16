@@ -5,7 +5,13 @@ process.on('unhandledRejection', (reason, promise) => {
 	console.log(promise);
 	console.log("");
 });
-
+function DeleteException(value) {
+	this.value = value;
+	this.message = "Невшзможно удалить";
+	this.toString = function () {
+		return this.value + this.message;
+	};
+}
 	const ttl = process.title,
 		argv = (() => {
 			const args = {};
@@ -114,10 +120,10 @@ process.on('unhandledRejection', (reason, promise) => {
 		lang = Object.fromEntries(Object.entries(Object.assign(langOld, langLoad)).sort()),
 		// Опции для создания прогресс бара
 		optionsBar = {
-			barsize: strLength - 2, // Длина прогресс бара в символах 
+			barsize: strLength - 1, // Длина прогресс бара в символах 
 			autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
-			autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
-			format: ((`  {bar}  `).brightCyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
+			autopaddingChar: '0000000000', // Последовательность символов, используемая для автозаполнения
+			format: ((`  {bar} `).brightCyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
 			barCompleteChar: '█',//'\u2588', // Символ для использования в качестве индикатора завершения
 			barIncompleteChar: "░",//'\u2591', // Символ для использования в качестве индикатора незавершенности
 			hideCursor: true, // Скрыть курсор
@@ -216,8 +222,18 @@ process.on('unhandledRejection', (reason, promise) => {
 					} else {
 						fs.unlinkSync(fullPath);
 					}
-				} catch (ex) {
-					console.error(ex.message);
+				} catch (e) {
+					// Если не удалось что-то удалить
+					// По сути должен быть выход
+					const errDir = path.join(dirPath, fileOrDirPath);
+					closeDelay(pauseDelay - pauseError).then(() => {
+						console.log(errDir);
+						process.exit();
+					}).catch(() => {
+						console.log(errDir);
+						process.exit();
+					});
+					throw errDir;
 				}
 			}
 		},
@@ -534,7 +550,7 @@ process.on('unhandledRejection', (reason, promise) => {
 											// Если директория есть - очищаем
 											bool && emptyDir(pdf_dir);
 											// Удаляем директорию ресайзов
-											try { fs.rmSync(resize_dir, { recursive: true, force: true }) }catch(e){}
+											try {fs.rmSync(resize_dir, { recursive: true, force: true }) }catch(e){}
 											// Создаём директорию ресайзов
 											try { fs.mkdirSync(resize_dir) }catch(e){}
 											// Ресайз изображений
@@ -658,6 +674,7 @@ process.on('unhandledRejection', (reason, promise) => {
 			process.stdin.setRawMode(false);
 			process.stdin.resume();
 			process.stdin.pause();
+			process.exit();
 		};
 	// Перезапишем файл языка
 	fs.writeFileSync(

@@ -44,13 +44,17 @@ const compileFiles = () => {
 				if (!fs.existsSync(abs)) {
 					//console.warn('[WARN] Не найден, пропущен:', src);
 					// Это ошибка. Завершаем
-					return reject(`[ERROR] Не найден, пропущен: ${src}`);
+					return reject(`[ERROR] Не найден, пропущен: ${src}\n`);
 				}
 				for (const file of collectFiles(abs)) {
-					const rel = path.relative(__dirname, file); // напр. bin\modules\foo.js
+					const rel = path.relative(__dirname, file);
 					const dir = path.dirname(rel);
 					const dest = dir === '.' ? '{app}' : '{app}\\' + dir;
-					entries.push(`Source: "..\\${rel}"; DestDir: "${dest}"; Flags: ignoreversion`);
+					const { base } = path.parse(rel);
+					// Проверка settings.ini
+					if(base !== "settings.ini"){
+						entries.push(`Source: "..\\${rel}"; DestDir: "${dest}"; Flags: ignoreversion`);
+					}
 				}
 			}
 			entries.push(``);
@@ -64,9 +68,7 @@ const compileFiles = () => {
 			`#define MyAppVersion "${pack.version.split('.').slice(0, -1).join('.')}"\n`,
 			{encoding: 'utf8'}
 		);
-		console.log(` `);
-		console.log(`Список файлов: ${FILES_OUT} (${entries.length} записей)`);
-		console.log(` `);
+		console.log(`Список файлов: ${FILES_OUT} (${entries.length} записей)\n`);
 		resolve();
 	});
 },
@@ -84,7 +86,7 @@ execDownload = () => {
 			if (code === 0) {
 				resolve();
 			} else {
-				reject(new Error(`Команда завершилась с кодом ${code}`));
+				reject(new Error(`Команда завершилась с кодом ${code}\n`));
 			}
 		});
 	});
@@ -97,7 +99,7 @@ execInnoSetup = () => {
 			colors: true,
 			arch: 'x64'
 		})
-			.then(() => resolve('Compile: ScanMenu2pdf.exe'))
+			.then(() => resolve('Compile: ScanMenu2pdf.exe\n'))
 			.catch(e => reject(e));
 	})
 };
@@ -105,10 +107,10 @@ execInnoSetup = () => {
 // Понеслась
 console.log(' ');
 [
-	// Обновляем nodejs установщик node-x64.msi
-	execDownload,
 	// Подготавливаем данные для сценария ConvertMenu2pdf_setup.iss
 	compileFiles,
+	// Обновляем nodejs установщик node-x64.msi
+	execDownload,
 	// Запускаем сборку ConvertMenu2pdf_setup.iss установщика
 	execInnoSetup
 ]
