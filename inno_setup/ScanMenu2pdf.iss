@@ -58,7 +58,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "./{#NodeFile}"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: IsInstallNodeSelected
-// Check параметр выбрана ли задача
+; Check параметр выбрана ли задача
 Source: "../bin/{#MyAppExeName}"; DestDir: "{app}/bin/"; Flags: ignoreversion
 Source: "../index.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.de.json"; DestDir: "{app}"; Flags: ignoreversion
@@ -66,7 +66,7 @@ Source: "../language.en.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.ru.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../menu.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../package.json"; DestDir: "{app}"; Flags: ignoreversion
-// Все остальные файлы из modules и node_modules
+; Все остальные файлы из modules и node_modules
 #include "files.iss"
 
 [Icons]

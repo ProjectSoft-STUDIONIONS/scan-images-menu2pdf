@@ -4051,3 +4051,4 @@ Source: "..\modules\playbeep\windows\playbeep.cs"; DestDir: "{app}\modules\playb
 Source: "..\modules\playbeep\windows\playbeep.ico"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
 Source: "..\modules\playbeep\windows\playbeep.manifest"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
 Source: "..\modules\playbeep\windows\playbeep.resource"; DestDir: "{app}\modules\playbeep\windows"; Flags: ignoreversion
+Source: "..\modules\utils\index.js"; DestDir: "{app}\modules\utils"; Flags: ignoreversion

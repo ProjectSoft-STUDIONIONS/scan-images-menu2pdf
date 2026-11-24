@@ -13,6 +13,8 @@
 	"file_menu_error": "Файл `%s` поврежден или не существует",
 	"generating_pdf_files": "Генерация PDF файлов",
 	"image_optimization": "Оптимизация изображений",
+	"information": "ИНФОРМАЦИЯ",
+	"processing": "ПРОЦЕСС",
 	"processing_will_end": "Обработка закончится через",
 	"produser": "Школа",
 	"selected_date": "Выбранная Дата",
