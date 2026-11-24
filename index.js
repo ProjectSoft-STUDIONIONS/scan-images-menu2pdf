@@ -742,17 +742,17 @@ start().then(data => {
 	console.log(data);
 	Beep(1760, 200);
 	// Закрытие консоли
-	// runing
+	runing
 	// Если запущено через programm.exe
-	/*?*/ closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
+	? closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
 	// Прочто закрываем
-	// : fnClose();
+	: fnClose();
 }).catch(error => {
 	Beep(1760, 200);
 	// Закрытие консоли
-	// runing
+	runing
 	// Если запущено через programm.exe
-	/*?*/ closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
+	? closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
 	// Прочто закрываем
-	// : fnClose();
+	: fnClose();
 });
