@@ -521,17 +521,17 @@ function DeleteException(value) {
 						lang.produser = (" ".repeat(strLength) + lang.produser).slice(-strLength);
 						lang.workdays = (" ".repeat(strLength) + lang.workdays).slice(-strLength);
 						// Школа
-						console.log(`${lang.produser}:`.brightYellow, produser.brightGreen);
+						console.log(`${lang.produser}:`.brightYellow, produser.brightCyan);
 						// Комбинат
-						console.log(`${lang.author}:`.brightYellow, author.brightGreen);
+						console.log(`${lang.author}:`.brightYellow, author.brightCyan);
 						// Меню
-						console.log(`${lang.selected_menu_type}:`.brightYellow, jsonPars[typeMenu]["name"].brightGreen);
+						console.log(`${lang.selected_menu_type}:`.brightYellow, jsonPars[typeMenu]["name"].brightCyan);
 						// Дата
-						console.log(`${lang.selected_date}:`.brightYellow, date.toLocaleDateString().brightGreen);
+						console.log(`${lang.selected_date}:`.brightYellow, date.toLocaleDateString().brightCyan);
 						// Количество рабочих дней
-						console.log(`${lang.workdays}:`.brightYellow, (getWorkDays(jsonPars[typeMenu].workdays) + "").brightGreen);
+						console.log(`${lang.workdays}:`.brightYellow, (getWorkDays(jsonPars[typeMenu].workdays) + "").brightCyan);
 						// Директория
-						console.log(`${lang.selected_directory}:`.brightYellow, dir.brightGreen);
+						console.log(`${lang.selected_directory}:`.brightYellow, dir.brightCyan);
 						console.log("");
 						const resize_dir = path.join(dir, `opimization`),
 							pdf_dir = path.join(dir, `pdf`);
