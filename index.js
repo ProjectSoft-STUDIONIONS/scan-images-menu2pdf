@@ -34,6 +34,16 @@ const ttl = process.title,
 	dialogs =  require('./modules/dialogs/dialogs.js'),
 	Beep = require('./modules/playbeep/playbeep.js'),
 	utils = require('./modules/utils'),
+	{
+		stripAnsi,
+		visibleLength,
+		centerText,
+		decorationText,
+		cursor,
+		clearLine,
+		clearScreen,
+		alignToCenter
+	} = require('./modules/utils'),
 	config = require('./package.json'),
 	fileMenu = 'menu.json',
 	// Центр
@@ -310,7 +320,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					let f = mapsFiles.length;
 					let pdfDoc;
 					// Прогресс PDF
-					console.log(utils.decorationText(`  ${lang.generating_pdf_files}...`, 'brightYellow'));
+					console.log(decorationText(`  ${lang.generating_pdf_files}...`, 'brightYellow'));
 					let progressPDfIndex = 0;
 					let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
 					barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
@@ -486,10 +496,10 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 				return;
 			}
 			console.log("");
-			console.log(utils.centerText(utils.decorationText(config.description, 'brightGreen') + utils.decorationText(' v' + version_app, 'brightYellow')));
+			console.log(centerText(decorationText(config.description, 'brightGreen') + decorationText(' v' + version_app, 'brightYellow')));
 			console.log("");
 			// Вывод ЗАПУСК...
-			console.log(utils.centerText(utils.decorationText(`${lang.start}...`, 'brightYellow')));
+			console.log(centerText(decorationText(`${lang.start}...`, 'brightYellow')));
 			console.log("");
 			dialogs(fileMenu, version_app).then((data) => {
 				// Запуск
@@ -524,43 +534,43 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 						day = 0
 					}
 					// Очищение консоли
-					utils.clearLine();
+					clearLine();
 					process.stdout.moveCursor(0, -1);
-					utils.clearLine();
+					clearLine();
 					process.stdout.moveCursor(0, -1);
-					utils.clearLine();
-					console.log(utils.centerText(utils.decorationText(`${lang.information}`, 'brightYellow')));
+					clearLine();
+					console.log(centerText(decorationText(`${lang.information}`, 'brightYellow')));
 					console.log("");
-					console.log(utils.alignToCenter([
+					console.log(alignToCenter([
 						// Школа
 						{
-							key:   utils.decorationText(`${lang.produser}:`, 'brightYellow'),
-							value: utils.decorationText(produser, 'brightCyan')
+							key:   decorationText(`${lang.produser}:`, 'brightYellow'),
+							value: decorationText(produser, 'brightCyan')
 						},
 						// Комбинат
 						{
-							key:   utils.decorationText(`${lang.author}:`, 'brightYellow'),
-							value: utils.decorationText(author, 'brightCyan')
-						},
-						// Меню
-						{
-							key:   utils.decorationText(`${lang.selected_menu_type}:`, 'brightYellow'),
-							value: utils.decorationText(jsonPars[typeMenu]["name"], 'brightCyan')
-						},
-						// Дата
-						{
-							key:   utils.decorationText(`${lang.selected_date}:`, 'brightYellow'),
-							value: utils.decorationText(date.toLocaleDateString(), 'brightCyan')
+							key:   decorationText(`${lang.author}:`, 'brightYellow'),
+							value: decorationText(author, 'brightCyan')
 						},
 						// Количество рабочих дней
 						{
-							key:   utils.decorationText(`${lang.workdays}:`, 'brightYellow'),
-							value: utils.decorationText(getWorkDays(jsonPars[typeMenu].workdays) + "", 'brightCyan')
+							key:   decorationText(`${lang.workdays}:`, 'brightYellow'),
+							value: decorationText(getWorkDays(jsonPars[typeMenu].workdays) + "", 'brightCyan')
+						},
+						// Меню
+						{
+							key:   decorationText(`${lang.selected_menu_type}:`, 'brightYellow'),
+							value: decorationText(jsonPars[typeMenu]["name"], 'brightCyan')
+						},
+						// Дата
+						{
+							key:   decorationText(`${lang.selected_date}:`, 'brightYellow'),
+							value: decorationText(date.toLocaleDateString(), 'brightCyan')
 						},
 						// Директория
 						{
-							key:   utils.decorationText(`${lang.selected_directory}:`, 'brightYellow'),
-							value: utils.decorationText(dir, 'brightCyan')
+							key:   decorationText(`${lang.selected_directory}:`, 'brightYellow'),
+							value: decorationText(dir, 'brightCyan')
 						}
 					]));
 					console.log("");
@@ -610,7 +620,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 												sizeH = wLandscape;
 												break;
 										}
-										console.log(utils.decorationText(`  ${lang.image_optimization}...`, 'brightYellow'));
+										console.log(decorationText(`  ${lang.image_optimization}...`, 'brightYellow'));
 										// Прогресс по изображениям
 										let startsTime = (new Date()).getTime(),
 											progressImgIndex = 0,
@@ -648,15 +658,15 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 											closePrg(resize_dir);
 											console.log("\n");
 											console.log(
-												utils.alignToCenter([
+												alignToCenter([
 													{
-														key: utils.decorationText(lang.time_spent_in_seconds + ":", 'brightYellow'),
-														value: utils.decorationText(time + "s", 'brightGreen'),
+														key: decorationText(lang.time_spent_in_seconds + ":", 'brightYellow'),
+														value: decorationText(time + "s", 'brightGreen'),
 													}
 												])
 											);
 											console.log("\n");
-											resolve(utils.decorationText(`  ${closing_the_program}...`, 'brightYellow'));
+											resolve(decorationText(`  ${closing_the_program}...`, 'brightYellow'));
 										}).catch(function(err){
 											closePrg(resize_dir);
 											reject(`\n\n${lang.error_generating_pdf.red}!`);
@@ -688,7 +698,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					});
 				} else {
 					closePrg();
-					console.log(utils.decorationText(`  ${lang.completed_by_user}`, 'brightYellow'));
+					console.log(decorationText(`  ${lang.completed_by_user}`, 'brightYellow'));
 					resolve(`\n`);
 				}
 			}).catch((error) => {
@@ -697,7 +707,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					barPdf.stop()
 				);
 				closePrg();
-				reject(`  ${utils.decorationText(lang.error, 'red')}\n\n  ${error}`);
+				reject(`  ${decorationText(lang.error, 'red')}\n\n  ${error}`);
 			});
 		});
 	},

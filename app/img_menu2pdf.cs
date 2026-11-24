@@ -83,26 +83,6 @@ namespace Runner
 			p.Start();
 			// Меняем title
 			Console.Title = App;
-			// Выводим свой копирайтинг
-			// НЕ УДАЛЯТЬ!!!
-			Console.WriteLine("");
-			Console.ForegroundColor = System.ConsoleColor.Yellow;
-			Console.Write("                               Author: ");
-			Console.ForegroundColor = System.ConsoleColor.Green;
-			Console.Write("ProjectSoft aka Чернышёв Андрей");
-			Console.WriteLine("");
-			Console.ForegroundColor = System.ConsoleColor.Yellow;
-			Console.Write("                              License: ");
-			Console.ForegroundColor = System.ConsoleColor.Green;
-			Console.Write("GPL-3.0");
-			Console.WriteLine("");
-			Console.ForegroundColor = System.ConsoleColor.Yellow;
-			Console.Write("                           Repository: ");
-			Console.ForegroundColor = System.ConsoleColor.Green;
-			Console.Write("https://github.com/ProjectSoft-STUDIONIONS/scan-images-menu2pdf");
-			Console.WriteLine("");
-			Console.ForegroundColor = System.ConsoleColor.Yellow;
-			Console.Write("                             Copyright © 2009 - all right reserved");
 			Console.WriteLine("");
 			// Если ini файл не существует
 			if (File.Exists(ini) == false){
