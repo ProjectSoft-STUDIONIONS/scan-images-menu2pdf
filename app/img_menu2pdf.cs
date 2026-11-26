@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-using img_ini;
-
 namespace Runner
 {
 	class Program
@@ -22,6 +20,13 @@ namespace Runner
 		[DllImport("user32.dll")]
 		static extern IntPtr RemoveMenu(IntPtr hMenu, uint nPosition, uint wFlags);
 
+		// P/Invoke для работы с заголовком консоли
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+		static extern int GetConsoleTitle(StringBuilder text, int size);
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+		static extern bool SetConsoleTitle(string text);
+
 		internal const int GWL_STYLE = -16;
 		internal const uint WS_THICKFRAME = 0x00040000;
 
@@ -36,6 +41,9 @@ namespace Runner
 
 		static void Main(string[] args)
 		{
+			// 1. Сохраняем текущий заголовок ДО запуска Node
+			var oldTitle = new StringBuilder(512);
+			GetConsoleTitle(oldTitle, oldTitle.Capacity);
 			// System.Diagnostics.
 			// Если программа запущена
 			// Имя окна приложения
@@ -60,13 +68,9 @@ namespace Runner
 			Console.BackgroundColor = System.ConsoleColor.Black;
 			Console.ForegroundColor = System.ConsoleColor.Yellow;
 			Console.OutputEncoding = System.Text.Encoding.UTF8;
-			// Читаем настройки из файла
-			String ini = Environment.CurrentDirectory + "\\" + "programm.ini";
-			IniFile iniFile = new IniFile(ini);
-			String pad = iniFile.Read("pad", "Programm", "4");
 			// Применяем аргументы
 			// Аргумент pause ОБЯЗАТЕЛЕН!
-			String arguments = dir + "\\index.js" + " --pad=" + pad + " --runing=True";
+			String arguments = dir + "\\index.js" + " --runing=True";
 			// Готовим к запуску NodeJS
 			Process p = new Process();
 			p.StartInfo = new ProcessStartInfo("node.exe");
@@ -82,12 +86,10 @@ namespace Runner
 			p.Start();
 			// Меняем title
 			Console.Title = App;
-			// Console.WriteLine("");
-			// Если ini файл не существует
-			if (File.Exists(ini) == false){
-				// Записываем параметры в файл
-				iniFile.Write("pad", pad, "Programm");
-			}
+			// 2. Ждём окончания процесса
+			p.WaitForExit();
+			// 3. Возвращаем заголовок
+			SetConsoleTitle(oldTitle.ToString());
 		}
 	}
 }

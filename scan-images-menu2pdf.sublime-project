@@ -38,17 +38,6 @@
 			"shell": true
 		},
 		{
-			"name": "Запуск app",
-			"working_dir": "${project_path}",
-			"cmd": [
-				"start",
-				"npm",
-				"run",
-				"runtest"
-			],
-			"shell": true
-		},
-		{
 			"name": "Запуск сборки ISS",
 			"working_dir": "${project_path}",
 			"cmd": ["start", "npm", "run", "compile"],

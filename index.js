@@ -40,7 +40,7 @@ const ttl = process.title,
 		return args;
 	})(),
 	fs = require('fs'),
-	path = require('path'),
+	{ join, extname, } = require('path'),
 	cliProgress = require('cli-progress'),
 	{ spawn, exec } = require('child_process'),
 	{ PDFDocument } =  require('pdf-lib'),
@@ -85,8 +85,6 @@ let barPdf,
 		"information"                : "ИНФОРМАЦИЯ",
 		"processing"                 : "ПРОЦЕСС",
 		"error"                      : "Ошибка",
-		"processing_will_end"        : "Осталось",
-		"closing_in"                 : "Закрытие через",
 		"generating_pdf_files"       : "Генерация PDF файлов",
 		"directory_is_empty"         : "Директория пустая",
 		"error_reading_json"         : "Ошибка при чтении JSON",
@@ -104,7 +102,10 @@ let barPdf,
 		"error_close"                : "Для продолжения нажмите любую клавишу...",
 		"produser"                   : "Школа",
 		"author"                     : "Комбинат питания",
-		"workdays"                   : "Кол-во учебных дней"
+		"workdays"                   : "Кол-во учебных дней",
+		"images_not_found"           : "Для обработки изображения не найдены",
+		"error_read"                 : "Ошибка чтения",
+		"error_search"               : "Ошибка поиска",
 	},
 	langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
 	indexStr = '',
@@ -114,31 +115,36 @@ config.description = config.description.trim();
 config.soundEnable = (String(config.soundEnable).toLowerCase() === 'true') || false;
 process.title = ((process.title != config.description) ? config.description : process.title) + ` v${version_app}`;
 
-/**
- * pad - Формирование имени файла изображения длиною в 4 символа
- * При запуске из programm.exe задаётся в programm.ini
- * По умолчанию = 4
- */
-const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
-	/**
-	 * Кто запустил приложение
-	 * Параметр обязателен только при запуске programm.exe
-	 * Не задаётся
-	 */
+// pad - Формирование имени файла изображения длиною в 4 символа
+// По умолчанию = 4
+const pad = 10,
+	// Кто запустил приложение
+	// Параметр обязателен только при запуске programm.exe
+	// Не задаётся
 	runing = argv["runing"] ? !!argv["runing"].toLowerCase() : false,
-	//log = function(...args) {
-	//	console.log.apply(null, args);
-	//},
+	// Длина прогресс бара в символах
+	barWidth = Math.max(10, Math.floor((process.stdout.columns || 145) / 2)) - 3,
 	timeRun = "0.00s",
 	lang = Object.fromEntries(Object.entries(Object.assign(langOld, langLoad)).sort()),
 	// Опции для создания прогресс бара
 	optionsBar = {
-		barsize: Math.max(10, Math.floor((process.stdout.columns || 145) / 2)) - 3, // Длина прогресс бара в символах 
+		barsize: barWidth,  
 		autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 		autopaddingChar: '0000000000', // Последовательность символов, используемая для автозаполнения
-		format: (decorationText(`  {bar} `, 'brightCyan') + decorationText(`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`, 'brightGreen')), // Шаблон прогресс бара
-		barCompleteChar: '█',//'\u2588'2591, // Символ для использования в качестве индикатора завершения
-		barIncompleteChar: "░",//'\u2591', // Символ для использования в качестве индикатора незавершенности
+		format: (decorationText(`  {bar} `, 'brightCyan') + decorationText(`{percentage}% | {value}/{total} | {timeRun} | {eta}s`, 'brightGreen')), // Шаблон прогресс бара
+		barCompleteChar: '█', // Символ для использования в качестве индикатора завершения
+		barIncompleteChar: "░", // Символ для использования в качестве индикатора незавершенности
+		hideCursor: true, // Скрыть курсор
+		emptyOnZero: true, // Отображать прогресс бара с итоговым значением, равным нулю (0), как пустые, а не полные
+		forceRedraw: true // Запускать перерисовку в каждом кадре, даже если прогресс остается прежним
+	},
+	optionsBarClose = {
+		barsize: barWidth,
+		autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
+		autopaddingChar: '000', // Последовательность символов, используемая для автозаполнения
+		format: (decorationText(`  {bar}  `, 'brightRed') + decorationText(`{percentage}% | {eta}s/{total}s`, 'brightGreen')), // Шаблон прогресс бара
+		barCompleteChar: '█', // Символ для использования в качестве индикатора завершения
+		barIncompleteChar: "░", // Символ для использования в качестве индикатора незавершенности
 		hideCursor: true, // Скрыть курсор
 		emptyOnZero: true, // Отображать прогресс бара с итоговым значением, равным нулю (0), как пустые, а не полные
 		forceRedraw: true // Запускать перерисовку в каждом кадре, даже если прогресс остается прежним
@@ -182,17 +188,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 		if (rtn) {
 			let value = 0,
 				mms = Math.ceil(ms / 1000);
-			barPdf = new cliProgress.Bar({
-				barsize: Math.max(10, Math.floor((process.stdout.columns || 145) / 2)) - 3,
-				autopadding: true,
-				autopaddingChar: '000',
-				format: (decorationText(`  {bar}  `, 'brightRed') + decorationText(`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`, 'brightGreen')),
-				barCompleteChar: '\u2588',
-				barIncompleteChar: '\u2591',
-				hideCursor: true,
-				emptyOnZero: true,
-				forceRedraw: true
-			});
+			barPdf = new cliProgress.Bar(optionsBarClose, cliProgress.Presets.shades_classic);
 			barPdf.start(mms, value);
 			let inCal = setInterval(function(){
 				value += 0.1;
@@ -225,7 +221,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 		let dirContents = fs.readdirSync(dirPath);
 		for (let fileOrDirPath of dirContents) {
 			try {
-				let fullPath = path.join(dirPath, fileOrDirPath);
+				let fullPath = join(dirPath, fileOrDirPath);
 				let stat = fs.statSync(fullPath);
 				if (stat.isDirectory()) {
 					if (fs.readdirSync(fullPath).length) {
@@ -238,7 +234,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 			} catch (e) {
 				// Если не удалось что-то удалить
 				// По сути должен быть выход
-				const errDir = path.join(dirPath, fileOrDirPath);
+				const errDir = join(dirPath, fileOrDirPath);
 				closeDelay(pauseDelay - pauseError).then(() => {
 					console.log(errDir);
 					process.exit();
@@ -318,7 +314,12 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					let f = mapsFiles.length;
 					let pdfDoc;
 					// Прогресс PDF
-					console.log(decorationText(`  ${lang.generating_pdf_files}...`, 'brightYellow'));
+					console.log(alignToCenter([
+						{
+							key:   decorationText(`${lang.generating_pdf_files}... `, 'brightYellow'),
+							value: ``
+						}
+					]));
 					let progressPDfIndex = 0;
 					let progressPdfTotal = parseInt(files.length / jsonPars[typeMenu]["files"]);
 					barPdf = new cliProgress.Bar(optionsBar, cliProgress.Presets.shades_classic);
@@ -344,18 +345,18 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 						let mask = `${y}.${m}.${dd}`,
 							pdfFile = `${frm}-${mapsFiles[k].sufix}.pdf`,
 							// Если директория не существует и multidir включен - создаём директорию
-							pdfDir = await isDir(path.join(outDir, mask)),
-							fImage = path.join(imgs, file),
+							pdfDir = await isDir(join(outDir, mask)),
+							fImage = join(imgs, file),
 							// Читаем изображение в буффер
 							image = fs.readFileSync(fImage),
-							ext = path.extname(file);
+							ext = extname(file);
 						ext = ext.toLowerCase();
 						// Если счётчик страниц на старте i == 0
 						// Создаём PDF документ 
 						// Сделать сохранение в соответствии с индексами
 						if(i == 0){
 							if(!pdfDir && jsonPars[typeMenu]["multidir"]){
-								fs.mkdirSync(path.join(outDir, mask));
+								fs.mkdirSync(join(outDir, mask));
 							}
 							pdfDoc = await PDFDocument.create();
 						}
@@ -434,7 +435,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 							// Если multidir включен, то mask не меняет значение и директория создана
 							// Иначе оно пустое и файлы сохраняются в pdf директорию
 							mask = !jsonPars[typeMenu]["multidir"] ? `` : `${mask}${sp}`;
-							fs.writeFileSync(path.join(outDir, mask, pdfFile), pdfBytes);
+							fs.writeFileSync(join(outDir, mask, pdfFile), pdfBytes);
 							// Увеличиваем счётчик типов меню
 							++k;
 							// Если счётчик равен кол-ву типов меню
@@ -577,8 +578,8 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 						}
 					]));
 					console.log("");
-					const resize_dir = path.join(dir, `opimization`),
-						pdf_dir = path.join(dir, `pdf`);
+					const resize_dir = join(dir, `opimization`),
+						pdf_dir = join(dir, `pdf`);
 					date.setDate(date.getDate() + day);
 					indexStr = data.index;
 					indexArr = indexStr.split(',');
@@ -623,7 +624,12 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 												sizeH = wLandscape;
 												break;
 										}
-										console.log(decorationText(`  ${lang.image_optimization}...`, 'brightYellow'));
+										console.log(alignToCenter([
+											{
+												key:   decorationText(`${lang.image_optimization}... `, 'brightYellow'),
+												value: ``
+											}
+										]));
 										// Прогресс по изображениям
 										let startsTime = (new Date()).getTime(),
 											progressImgIndex = 0,
@@ -638,10 +644,10 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 										Beep(659, 250);
 										for(let image of images){
 											++progressImgIndex;
-											let inputFile = path.join(dir, image),
-												ext = path.extname(image).toLowerCase(),
+											let inputFile = join(dir, image),
+												ext = extname(image).toLowerCase(),
 												outF = ("0".repeat(pad) + progressImgIndex).slice(-pad) + ext,
-												outputFile = path.join(resize_dir, outF);
+												outputFile = join(resize_dir, outF);
 											await resize(inputFile, outputFile);
 											// Прогресс Изображений
 											let eta = parseFloat(((new Date()).getTime() - startsTime) / 1000).toFixed(2) + 's';
@@ -668,7 +674,6 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 													}
 												])
 											);
-											//console.log("\n");
 											resolve(decorationText(`  ${closing_the_program}...`, 'brightYellow'));
 										}).catch(function(err){
 											closePrg(resize_dir);
@@ -680,30 +685,29 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 									}).catch(e => {
 										// isDir не возвращает reject
 										cursor(true);
-										reject(decorationText(`  Ошибка pdf_dir`, 'red'));
+										reject(decorationText(`  ${lang.error} pdf_dir`, 'red'));
 									});
 								} else {
 									cursor(true);
-									// console.log(decorationText('  Для обработки изображения не найдены.', 'red'));
-									reject(decorationText('  Для обработки изображения не найдены.', 'red'));
+									reject(decorationText(`  ${lang.images_not_found}.`, 'red'));
 								}
 							}).catch(e => {
 								// Ошибка чтения директории
 								cursor(true);
-								reject(decorationText(`  Ошибка чтения dir`, 'red'));
+								reject(decorationText(`  ${lang.error_read} dir`, 'red'));
 							});
 						} else {
 							// Директория обработки не найдена
 							// Но пока оставим
 							cursor(true);
-							reject(decorationText(`  Ошибка поиска dir`, 'red'));
+							reject(decorationText(`  ${lang.error_search} dir`, 'red'));
 						}
 					}).catch(e => {
 						// isDir не возвращает reject
 						// Закрытие программы
 						// Но пока оставим
 						cursor(true);
-						reject(decorationText(`  Ошибка поиска dir`, 'red'));
+						reject(decorationText(`  ${lang.error_search} dir`, 'red'));
 					});
 				} else {
 					closePrg();
@@ -721,25 +725,28 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 			});
 		});
 	},
-	closePrg = async function(imgdir = false){
+	closePrg = async (imgdir = false) =>{
 		if(typeof imgdir == 'string'){
 			if(await isDir(imgdir)){
 				fs.rmSync(imgdir, { recursive: true, force: true });
 			}
 		}
 	},
-	fnClose = function() {
+	fnClose = (clear = false) => {
 		cursor(true);
+		clear && clearScreen();
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
-		process.stdin.pause();
-		process.exit();
-	};
+		//process.stdin.pause();
+		clear && process.exit();
+	},
+	escapeUnicode = (str) => str.replace(/[\u0080-\uFFFF]/g, ch => '\\u' + ch.charCodeAt(0).toString(16).padStart(4, '0'));
 
 // Перезапишем файл языка
+// Для своей локали пользователь сделает сам.
 fs.writeFileSync(
 	`language.${locale}.json`,
-	JSON.stringify(lang, null, "\t"),
+	escapeUnicode(JSON.stringify(lang, null, "\t")) + "\n",
 	{
 		encoding: "utf8"
 	}
@@ -756,7 +763,7 @@ start().then(data => {
 	// Закрытие консоли
 	runing
 	// Если запущено через programm.exe
-	? closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
+	? closeDelay(pauseDelay - pauseError).then(() => fnClose(true)).catch(fnClose)
 	// Прочто закрываем
 	: fnClose();
 }).catch(error => {
@@ -765,7 +772,7 @@ start().then(data => {
 	// Закрытие консоли
 	runing
 	// Если запущено через programm.exe
-	? closeDelay(pauseDelay - pauseError).then(fnClose).catch(fnClose)
+	? closeDelay(pauseDelay - pauseError).then(() => fnClose(true)).catch(fnClose)
 	// Прочто закрываем
 	: fnClose();
 });

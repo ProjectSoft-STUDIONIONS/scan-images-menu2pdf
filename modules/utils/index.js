@@ -42,7 +42,7 @@ const cursor = (type = false) => process.stdout.write(`${ESC}[?25${type ? 'h' : 
 const clearLine = () => process.stdout.write(`${ESC}[1K${ESC}[K`);
 
 // Очистка экрана
-const clearScreen = () => process.stdout.write(`${ESC}[2J`);
+const clearScreen = () => process.stdout.write(`${ESC}[2J${ESC}[H`);
 
 // Текст: Окрашивание/Подчёркивание/Зачёркивание/Инверсия
 const decorationText = (text, color) => {

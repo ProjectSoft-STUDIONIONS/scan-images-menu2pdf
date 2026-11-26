@@ -61,8 +61,6 @@ Source: "./{#NodeFile}"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: IsI
 ; Check параметр выбрана ли задача
 Source: "../bin/{#MyAppExeName}"; DestDir: "{app}/bin/"; Flags: ignoreversion
 Source: "../index.js"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../language.de.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "../language.en.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../language.ru.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../menu.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../package.json"; DestDir: "{app}"; Flags: ignoreversion

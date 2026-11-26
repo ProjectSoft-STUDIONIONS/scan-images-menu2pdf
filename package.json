@@ -9,7 +9,7 @@
     "app": "start /d bin scanmenu2pdf.exe",
     "build": "node build.js",
     "compile": "node compile.js",
-    "runtest": "node index.js --work-days=5 --pad=4"
+    "runtest": "node index.js"
   },
   "files": [
     "app/**/*",
