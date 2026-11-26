@@ -272,20 +272,20 @@ begin
     typemenu   := -1;
     data       := '';
     directory  := '';
-	  // Мелкие настройки программы.
-	  // Они только для удобства использования программы
+	// Мелкие настройки программы.
+	// Они только для удобства использования программы
     iniFile    := TPath.Combine(appPath, 'settings.ini');
     ini        := TIniFile.Create(iniFile);
     directory  := ini.ReadString('Directory', 'SelectDir', '');
-    produser   := ini.ReadString('Produser', 'ProduserName', 'ГБОУ СОШ пос. Комсомольский');
-    author     := ini.ReadString('Author', 'AuthorName', 'ООО «КДП «Здоров и Сыт»');
+    produser   := ini.ReadString('Produser', 'ProduserName', '');
+    author     := ini.ReadString('Author', 'AuthorName', '');
     if not System.SysUtils.DirectoryExists(directory) then
     begin
         directory := '';
         ini.WriteString('Directory', 'SelectDir', directory);
     end;
     // Локаль
-	  // Устанавливаем локальные значения в контроллах программы
+	// Устанавливаем локальные значения в контроллах программы
     GroupBox1.Caption           := GroupBox1Str + ' (' + lang + ')';
     Label1.Caption              := Label1Str;
     Label2.Caption              := Label2Str;
