@@ -58,7 +58,7 @@ const fs = require('fs'),
 	// Компилируем программу programm.exe
 	compileProgramm,
 	// Компилируем playbeep.exe для модуля playbeep
-	compilePlayBeep
+	// compilePlayBeep
 ]
 .reduce((previousPromise, nextFunction) => previousPromise.then(text => {
 	text && console.log(text);

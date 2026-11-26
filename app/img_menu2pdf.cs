@@ -27,6 +27,9 @@ namespace Runner
 		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
 		static extern bool SetConsoleTitle(string text);
 
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool Beep(uint dwFreq, uint dwDuration);
+
 		internal const int GWL_STYLE = -16;
 		internal const uint WS_THICKFRAME = 0x00040000;
 
@@ -90,6 +93,8 @@ namespace Runner
 			p.WaitForExit();
 			// 3. Возвращаем заголовок
 			SetConsoleTitle(oldTitle.ToString());
+			// Сигнал
+			Beep(1760, 500);
 		}
 	}
 }

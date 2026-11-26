@@ -46,7 +46,6 @@ const ttl = process.title,
 	{ PDFDocument } =  require('pdf-lib'),
 	Jimp = require('jimp'),
 	dialogs =  require('./modules/dialogs/dialogs.js'),
-	Beep = require('./modules/playbeep/playbeep.js'),
 	utils = require('./modules/utils'),
 	{
 		stripAnsi,
@@ -460,7 +459,7 @@ const pad = 10,
 							}
 							i = 0;
 							// Пауза для красоты?
-							await sleep(200);
+							await sleep(100);
 						}
 					}
 					barPdf.terminal.cursor(true);
@@ -653,7 +652,6 @@ const pad = 10,
 											eta: "0.00"
 										});
 										// Старт ресайза
-										Beep(659, 250);
 										for(let image of images){
 											++progressImgIndex;
 											let inputFile = join(dir, image),
@@ -676,7 +674,6 @@ const pad = 10,
 										process.stdout.moveCursor(0, -1);
 										// console.log("");
 										// Генерация PDF файлов
-										Beep(659, 250);
 										pdfGenerator(pdf_dir, resize_dir).then((str) => {
 											// Поднятся на две + две строки и очистить
 											clearLine();
@@ -794,9 +791,8 @@ process.stdin.resume();
 process.stdin.setRawMode(true);
 process.stdin.setEncoding('utf8');
 // Старт
-start().then(data => {
+start().then(async data => {
 	console.log(data);
-	Beep(1760, 200);
 	cursor(true);
 	// Закрытие консоли
 	runing
@@ -806,7 +802,6 @@ start().then(data => {
 	// Закрываем
 	: fnClose(true);
 }).catch(error => {
-	Beep(1760, 200);
 	cursor(true);
 	// Выводим ошибку
 	// Окно не закрываем

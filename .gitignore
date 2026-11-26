@@ -37,6 +37,7 @@ Desktop.ini
 inno_setup/*.exe
 inno_setup/*.msi
 node_modules
+modules/_play*
 
 /test
 test*

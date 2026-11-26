@@ -26,6 +26,7 @@ const compileFiles = () => {
 					.map(file => path.join('node_modules', file)),
 				// Директория modules
 				...fs.readdirSync('modules')
+					.filter(file => file != '_playbeep')
 					.map(file => path.join('modules', file))
 			],
 			// Пройдём рекурсивно по субдиректориям и сформируем путь до файлов и директорий
@@ -51,8 +52,10 @@ const compileFiles = () => {
 					const dir = path.dirname(rel);
 					const dest = dir === '.' ? '{app}' : '{app}\\' + dir;
 					const { base } = path.parse(rel);
+					const folderPath = path.dirname(rel); // '/home/user/project/src'
+					const folderName = path.basename(folderPath); // 'src'
 					// Проверка settings.ini
-					if(base !== "settings.ini"){
+					if(base !== "settings.ini" && folderName !== "windows"){
 						entries.push(`Source: "..\\${rel}"; DestDir: "${dest}"; Flags: ignoreversion`);
 					}
 				}
