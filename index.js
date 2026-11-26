@@ -184,6 +184,9 @@ const pad = 10,
 		return sep;
 	},
 	sp = separator(),
+	sleep = (ms) => {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	},
 	closeDelay = function(ms, rtn = true) {
 		if (rtn) {
 			let value = 0,
@@ -237,10 +240,8 @@ const pad = 10,
 				const errDir = join(dirPath, fileOrDirPath);
 				closeDelay(pauseDelay - pauseError).then(() => {
 					console.log(errDir);
-					process.exit();
 				}).catch(() => {
 					console.log(errDir);
-					process.exit();
 				});
 				throw errDir;
 			}
@@ -445,7 +446,6 @@ const pad = 10,
 								day = date.getDay();
 								// Если пятница - увеличиваем на 3 дня
 								// или увеличиваем на один (следующий день).
-								// НУЖНО ПРОВЕРИТЬ!!!!
 								// 4 дня  - увеличиваем на 4
 								// 5 дней - увеличиваем на 3
 								// 6 дней - увеличиваем на 2
@@ -459,6 +459,8 @@ const pad = 10,
 								date.setDate(d + day);
 							}
 							i = 0;
+							// Пауза для красоты?
+							await sleep(200);
 						}
 					}
 					barPdf.terminal.cursor(true);
@@ -522,6 +524,9 @@ const pad = 10,
 					produser = data.produser;
 					author = data.author;
 					dir = data.directory;
+					// Вот здесь на всякий случай
+					let tm = jsonPars[typeMenu].workdays || 5;
+					jsonPars[typeMenu].workdays = tm;
 					// Самый лучший вариант даты представленной как число.
 					// Преобразуем строку "1703289600", например, в число,
 					// обязательно умножив на 1000 (миллисекунды), 
@@ -530,13 +535,20 @@ const pad = 10,
 						date = new Date(intDate);
 					let day = date.getDay();
 					// Перепроверить!!!
-					if(day == 6){
-						day = 2
+					// С количеством учебных дней
+					// От 1 до 7 т. е. неделя полностью
+					// 0 - воскресенье и он по-любому выходной
+					//console.log(tm, 'in', day);
+					if(day > tm){
+						day = 7 - tm;
 					}else if(day == 0){
 						day = 1;
-					}else{
-						day = 0
+					} else {
+						day = 0;
 					}
+					//console.log(tm, 'new', day);
+					//console.log(tm, 'new', day);
+					//console.log(tm, 'new', day);
 					// Очищение консоли
 					clearLine();
 					process.stdout.moveCursor(0, -1);
@@ -657,10 +669,24 @@ const pad = 10,
 										}
 										barPdf.terminal.cursor(true);
 										barPdf.stop();
-										console.log("");
+										// Поднятся на две строки и очистить
+										clearLine();
+										process.stdout.moveCursor(0, -1);
+										clearLine();
+										process.stdout.moveCursor(0, -1);
+										// console.log("");
 										// Генерация PDF файлов
 										Beep(659, 250);
 										pdfGenerator(pdf_dir, resize_dir).then((str) => {
+											// Поднятся на две + две строки и очистить
+											clearLine();
+											process.stdout.moveCursor(0, -1);
+											clearLine();
+											process.stdout.moveCursor(0, -1);
+											clearLine();
+											process.stdout.moveCursor(0, -1);
+											clearLine();
+											process.stdout.moveCursor(0, -1);
 											endTime = new Date().getTime();
 											let time = endTime - startTime;
 											time = parseFloat(time / 1000).toFixed(2);
@@ -674,7 +700,13 @@ const pad = 10,
 													}
 												])
 											);
-											resolve(decorationText(`  ${closing_the_program}...`, 'brightYellow'));
+											console.log("");
+											resolve(alignToCenter([
+												{
+													key: decorationText(lang.closing_the_program + "... ", 'brightYellow'),
+													value: ``,
+												}
+											]));
 										}).catch(function(err){
 											closePrg(resize_dir);
 											cursor(true);
@@ -711,8 +743,14 @@ const pad = 10,
 					});
 				} else {
 					closePrg();
-					console.log(decorationText(`  ${lang.completed_by_user}`, 'brightYellow'));
-					resolve(`\n`);
+					resolve(
+						alignToCenter([
+							{
+								key: decorationText(lang.completed_by_user + " ", 'brightYellow'),
+								value: ' ',
+							}
+						])
+					);
 				}
 			}).catch((error) => {
 				barPdf && (
@@ -732,7 +770,7 @@ const pad = 10,
 			}
 		}
 	},
-	fnClose = (clear = false) => {
+	fnClose = (clear) => {
 		cursor(true);
 		clear && clearScreen();
 		process.stdin.setRawMode(false);
@@ -763,16 +801,14 @@ start().then(data => {
 	// Закрытие консоли
 	runing
 	// Если запущено через programm.exe
+	// Если ошибка в closeDelay - оставляем на всякий случай.
 	? closeDelay(pauseDelay - pauseError).then(() => fnClose(true)).catch(fnClose)
-	// Прочто закрываем
-	: fnClose();
+	// Закрываем
+	: fnClose(true);
 }).catch(error => {
 	Beep(1760, 200);
 	cursor(true);
-	// Закрытие консоли
-	runing
-	// Если запущено через programm.exe
-	? closeDelay(pauseDelay - pauseError).then(() => fnClose(true)).catch(fnClose)
-	// Прочто закрываем
-	: fnClose();
+	// Выводим ошибку
+	// Окно не закрываем
+	console.log(error);
 });
