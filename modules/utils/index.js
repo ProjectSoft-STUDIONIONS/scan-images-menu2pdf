@@ -3,6 +3,9 @@
 // ESC-символ, с которого начинается любая ANSI-команда (код 27)
 const ESC = String.fromCharCode(27);
 
+//
+const width = process.stdout.columns || 100;
+
 // Шаблон ANSI-команды: ESC + [ + параметры (цифры и ; ) + буква-команда.
 // g-флаг — заменить ВСЕ вхождения, не только первое.
 // Внимание: слэш-шаблон собирается из частей, чтобы не зависеть от записи \u001B.
@@ -18,14 +21,12 @@ const visibleLength = (s) => stripAnsi(s).length;
 // Центрирование строки в окне терминала.
 // Считает отступ по видимой длине, цвет в строке не мешает.
 const centerText = (text = "") => {
-	const width = process.stdout.columns || 145;
 	const pad = Math.max(10, Math.floor((width - visibleLength(text)) / 2));
 	return " ".repeat(pad) + text;
 };
 
 // Выравнивание "ключ: значение" — двоеточие ровно по центру экрана
 const alignToCenter = (pairs) => {
-	const width = process.stdout.columns || 145;
 	const colonPos = Math.floor(width / 2); // колонка, в которую встанет ":"
 	return pairs.map(p => {
 		const key = String(p.key);

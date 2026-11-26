@@ -60,7 +60,6 @@ namespace Runner
 			Console.BackgroundColor = System.ConsoleColor.Black;
 			Console.ForegroundColor = System.ConsoleColor.Yellow;
 			Console.OutputEncoding = System.Text.Encoding.UTF8;
-			// Console.Clear();
 			// Читаем настройки из файла
 			String ini = Environment.CurrentDirectory + "\\" + "programm.ini";
 			IniFile iniFile = new IniFile(ini);
@@ -83,7 +82,7 @@ namespace Runner
 			p.Start();
 			// Меняем title
 			Console.Title = App;
-			Console.WriteLine("");
+			// Console.WriteLine("");
 			// Если ini файл не существует
 			if (File.Exists(ini) == false){
 				// Записываем параметры в файл

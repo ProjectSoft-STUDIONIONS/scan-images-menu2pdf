@@ -12,6 +12,21 @@ function DeleteException(value) {
 		return this.value + this.message;
 	};
 }
+
+var date,
+	jsonPars,
+	json,
+	startTime, 
+	endTime,
+	jsonType = [],
+	dir = '',
+	typeMenu = false,
+	mapsFiles,
+	produser = "",
+	author = "";
+
+require('events').EventEmitter.defaultMaxListeners = 15;
+
 const ttl = process.title,
 	argv = (() => {
 		const args = {};
@@ -26,7 +41,6 @@ const ttl = process.title,
 	})(),
 	fs = require('fs'),
 	path = require('path'),
-	colors = require('colors'),
 	cliProgress = require('cli-progress'),
 	{ spawn, exec } = require('child_process'),
 	{ PDFDocument } =  require('pdf-lib'),
@@ -46,10 +60,6 @@ const ttl = process.title,
 	} = require('./modules/utils'),
 	config = require('./package.json'),
 	fileMenu = 'menu.json',
-	// Центр
-	simbolsLength = parseInt((process.stdout.columns || 145) / 2) - 18,
-	// Отступ справа для двух колонок
-	strLength = simbolsLength,
 	/**
 	 * Размер страниц
 	 */
@@ -57,14 +67,9 @@ const ttl = process.title,
 	wLandscape = 1754,
 	rotate = 90,
 	scale = .5,
-	version_app = config.version.slice(0, 5); // 1.2.3
-colors.enable();
-config.description = config.description.trim();
-config.soundEnable = (String(config.soundEnable).toLowerCase() === 'true') || false;
-process.title = ((process.title != config.description) ? config.description : process.title) + ` v${version_app}`;
-
-require('events').EventEmitter.defaultMaxListeners = 15;
-
+	// 1.2.3
+	version_app = config.version.slice(0, 5);
+// console.log(process.stdout.columns);
 let barPdf,
 	sizeW = wPortrait,
 	sizeH = wLandscape,
@@ -80,7 +85,7 @@ let barPdf,
 		"information"                : "ИНФОРМАЦИЯ",
 		"processing"                 : "ПРОЦЕСС",
 		"error"                      : "Ошибка",
-		"processing_will_end"        : "Обработка закончится через",
+		"processing_will_end"        : "Осталось",
 		"closing_in"                 : "Закрытие через",
 		"generating_pdf_files"       : "Генерация PDF файлов",
 		"directory_is_empty"         : "Директория пустая",
@@ -101,26 +106,19 @@ let barPdf,
 		"author"                     : "Комбинат питания",
 		"workdays"                   : "Кол-во учебных дней"
 	},
-
 	langLoad = fs.existsSync(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) ? require(`./language.${Intl.DateTimeFormat().resolvedOptions().locale}.json`) : langOld,
 	indexStr = '',
 	indexArr = [];
-var date,
-	jsonPars,
-	json,
-	startTime, 
-	endTime,
-	jsonType = [],
-	dir = '',
-	typeMenu = false,
-	mapsFiles,
-	produser = "",
-	author = "";
-	/**
-	 * pad - Формирование имени файла изображения длиною в 4 символа
-	 * При запуске из programm.exe задаётся в programm.ini
-	 * По умолчанию = 4
-	 */
+
+config.description = config.description.trim();
+config.soundEnable = (String(config.soundEnable).toLowerCase() === 'true') || false;
+process.title = ((process.title != config.description) ? config.description : process.title) + ` v${version_app}`;
+
+/**
+ * pad - Формирование имени файла изображения длиною в 4 символа
+ * При запуске из programm.exe задаётся в programm.ini
+ * По умолчанию = 4
+ */
 const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 4,
 	/**
 	 * Кто запустил приложение
@@ -138,8 +136,8 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 		barsize: Math.max(10, Math.floor((process.stdout.columns || 145) / 2)) - 3, // Длина прогресс бара в символах 
 		autopadding: true, // Символы заполнения к отформатированному времени и процентам, чтобы обеспечить фиксированную ширину
 		autopaddingChar: '0000000000', // Последовательность символов, используемая для автозаполнения
-		format: ((`  {bar} `).brightCyan + (`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`).brightGreen), // Шаблон прогресс бара
-		barCompleteChar: '█',//'\u2588', // Символ для использования в качестве индикатора завершения
+		format: (decorationText(`  {bar} `, 'brightCyan') + decorationText(`{percentage}% | {value}/{total} | {timeRun} | ${lang.processing_will_end}: {eta}s`, 'brightGreen')), // Шаблон прогресс бара
+		barCompleteChar: '█',//'\u2588'2591, // Символ для использования в качестве индикатора завершения
 		barIncompleteChar: "░",//'\u2591', // Символ для использования в качестве индикатора незавершенности
 		hideCursor: true, // Скрыть курсор
 		emptyOnZero: true, // Отображать прогресс бара с итоговым значением, равным нулю (0), как пустые, а не полные
@@ -188,7 +186,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 				barsize: Math.max(10, Math.floor((process.stdout.columns || 145) / 2)) - 3,
 				autopadding: true,
 				autopaddingChar: '000',
-				format: ((`  {bar}  `).brightRed + (`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`).brightGreen),
+				format: (decorationText(`  {bar}  `, 'brightRed') + decorationText(`{percentage}% | ${lang.closing_in}: {eta}s/${mms}s`, 'brightGreen')),
 				barCompleteChar: '\u2588',
 				barIncompleteChar: '\u2591',
 				hideCursor: true,
@@ -466,7 +464,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					barPdf.stop();
 					resolve();
 				}else{
-					reject(String(`  ${lang.directory_is_empty}: ${imgs}`).red);
+					reject(decorationText(String(`  ${lang.directory_is_empty}: ${imgs}`), 'red'));
 				}
 			}catch(e){
 				reject(e);
@@ -475,6 +473,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 	},
 	start = () => {
 		return new Promise((resolve, reject) => {
+			cursor(false);
 			try{
 				try {
 					// Читаем JSON меню
@@ -482,9 +481,10 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 				}catch(ee){
 					// Ошибка чтения
 					let arr = lang.file_menu_error.split('|');
-					arr[0] = arr[0].brightYellow;
-					arr[1] = fileMenu.red;
-					arr[2] = arr[2].brightYellow;
+					arr[0] = decorationText(arr[0], 'brightYellow');
+					arr[1] = decorationText(fileMenu, 'red');
+					arr[2] = decorationText(arr[2], 'brightYellow');
+					cursor(true);
 					reject(`\n\n  ${arr.join("")}\n\n`);
 					// Выходим
 					return;
@@ -492,7 +492,9 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 				jsonPars = JSON.parse(json);
 			}catch(e) {
 				// Ошибка парсинга
-				reject(`\n\n  ${lang.error_reading_json}!\n\n`.red);
+				cursor(true);
+				console.log("\n\n");
+				reject(decorationText(`  ${lang.error_reading_json}!\n\n`, 'red'));
 				return;
 			}
 			console.log("");
@@ -509,7 +511,8 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					data = JSON.parse(data);
 				} catch(err_json){
 					// Ошибка парсинга JSON
-					throw `${lang.error_reading_json}!`.red;
+					cursor(true);
+					throw decorationText(`  ${lang.error_reading_json}!`, 'red');
 					// Выходим
 					return;
 				}
@@ -665,36 +668,42 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 													}
 												])
 											);
-											console.log("\n");
+											//console.log("\n");
 											resolve(decorationText(`  ${closing_the_program}...`, 'brightYellow'));
 										}).catch(function(err){
 											closePrg(resize_dir);
-											reject(`\n\n${lang.error_generating_pdf.red}!`);
+											cursor(true);
+											console.log("\n\n");
+											reject(decorationText(`  ${lang.error_generating_pdf}!`, 'red'));
 											return;
 										});
 									}).catch(e => {
 										// isDir не возвращает reject
-										reject(`  Ошибка pdf_dir`);
+										cursor(true);
+										reject(decorationText(`  Ошибка pdf_dir`, 'red'));
 									});
 								} else {
-									console.log('  Для обработки изображения не найдены.')
-									reject('  Для обработки изображения не найдены.')
+									cursor(true);
+									// console.log(decorationText('  Для обработки изображения не найдены.', 'red'));
+									reject(decorationText('  Для обработки изображения не найдены.', 'red'));
 								}
 							}).catch(e => {
 								// Ошибка чтения директории
-								reject(`  Ошибка чтения dir`);
+								cursor(true);
+								reject(decorationText(`  Ошибка чтения dir`, 'red'));
 							});
 						} else {
 							// Директория обработки не найдена
-							// Закрытие программы
 							// Но пока оставим
-							reject(`  Ошибка поиска dir`);
+							cursor(true);
+							reject(decorationText(`  Ошибка поиска dir`, 'red'));
 						}
 					}).catch(e => {
 						// isDir не возвращает reject
 						// Закрытие программы
 						// Но пока оставим
-						reject(`  Ошибка поиска dir`);
+						cursor(true);
+						reject(decorationText(`  Ошибка поиска dir`, 'red'));
 					});
 				} else {
 					closePrg();
@@ -706,6 +715,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 					barPdf.terminal.cursor(true),
 					barPdf.stop()
 				);
+				cursor(true);
 				closePrg();
 				reject(`  ${decorationText(lang.error, 'red')}\n\n  ${error}`);
 			});
@@ -719,6 +729,7 @@ const pad = argv["pad"] ? (parseInt(argv["pad"]) ? parseInt(argv["pad"]) : 4) : 
 		}
 	},
 	fnClose = function() {
+		cursor(true);
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
 		process.stdin.pause();
@@ -741,6 +752,7 @@ process.stdin.setEncoding('utf8');
 start().then(data => {
 	console.log(data);
 	Beep(1760, 200);
+	cursor(true);
 	// Закрытие консоли
 	runing
 	// Если запущено через programm.exe
@@ -749,6 +761,7 @@ start().then(data => {
 	: fnClose();
 }).catch(error => {
 	Beep(1760, 200);
+	cursor(true);
 	// Закрытие консоли
 	runing
 	// Если запущено через programm.exe
